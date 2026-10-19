@@ -16,7 +16,7 @@ def main():
     page = (SRC / "index.html").read_text()
     swaps = [('const MODE = "explorer";', 'const MODE = "guided";'),
              ("<title>Borgaralaun Explorer</title>", "<title>Borgaralaun Guide</title>"),
-             ('<h1>Borgaralaun <span>Explorer</span> <small class="ver">1.0</small></h1>',
+             ('<h1>Borgaralaun <span>Explorer</span> <small class="ver">1.0.1</small></h1>',
               '<h1>Borgaralaun <span>Guide</span></h1>'),
              ]
     for old, new in swaps:

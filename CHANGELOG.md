@@ -8,6 +8,22 @@ published: the model's own v0–v6.1 (2026-09-15 to 2026-09-18; sections 9–30 
 describe each step), then explorer versions v1 to v10 (from 2026-09-18). Comments in the code and in ABM.md refer to
 those development versions as v1, v2 and so on. From 1.0 on, each release is a git tag.
 
+## 1.0.1 (2026-10-20)
+
+Fixes to the pages, found by testing them in a browser. The model and its results are unchanged.
+
+* **Sliders:** dragging a slider no longer rebuilds the whole lever panel on every movement. The figures are redrawn
+  at most once a frame while dragging and the panel when the slider is let go. A long drag could make Safari reload
+  the page.
+* **Phones:** the pages now declare a document type and a viewport, so phones lay them out at their own width
+  instead of a shrunken desktop page.
+* **Settings outside the runs:** a setting farther from every model run than the runs lie from each other is now
+  marked as an extrapolation ([VALIDATION.md](docs/VALIDATION.md) §4).
+* **Floors:** shares, counts and spreads that the fitted surface put slightly below zero are shown as zero.
+* **Formatting:** differences between two rates are given in percentage points rather than as relative changes;
+  no more "−0.0%" or a "+" before a negative number; net debt below zero is stated as net assets.
+* **Saved comparisons:** names typed by the viewer are shown as text, not interpreted as markup.
+
 ## 1.0.0 (2026-10-19)
 
 The first public release. The model and its results are those of development version 10; the text of the pages and

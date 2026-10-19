@@ -97,6 +97,15 @@ anchors at the page's defaults, and adaptive rounds around its scenarios). Its e
 
 The budget, debt and household income fit at 0.98, unemployment at 0.69.
 
+**Coverage.** The surface is reliable only near the runs it was fitted to. The pages measure how far the current
+setting lies from the nearest run (in lever units, each lever's range being 0 to 1) and compare it with the largest
+distance between a run and its nearest neighbour. Beyond that, the pages say that the figures are an extrapolation
+and can be far off. This happens when many levers are pushed to the ends of their ranges at once; for example,
+every lever at its minimum gives net assets of nearly three times GDP by 2060, a figure no run supports.
+
+**Floors.** Shares of people, counts and spreads cannot fall below zero. Where the fitted surface puts one a little
+below zero, the pages show zero.
+
 **Against the model's own runs** at the page's nine named scenarios: the surface puts the 2035 budget within −50
 to +140 ma.kr. of the model, about 40 on average. Each scenario's note on the page gives the model's own figures,
 and `data/processed/scenarios_verified.json` has both.

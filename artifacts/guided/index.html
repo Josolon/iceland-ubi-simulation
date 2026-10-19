@@ -1,4 +1,8 @@
+<!doctype html>
+<html lang="en">
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314201e'/%3E%3Cpath d='M7 23h4v-7H7zm7 0h4V9h-4zm7 0h4v-11h-4z' fill='%23eef2f1'/%3E%3C/svg%3E">
 <title>Borgaralaun Guide</title>
 <meta name="description" content="Interactive results from the Iceland UBI agent-based model">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -562,6 +566,41 @@ function kernelAt(k, x) {
   }
   return out;
 }
+/* How far a setting lies from the nearest of the runs the surface was fitted to, in lever units (each lever's range
+   is 0 to 1). The reach is the largest such distance between a run and its nearest neighbour, over a fixed sample
+   of the runs: a setting farther than that from every run is outside what the runs cover, and its figures are an
+   extrapolation. Pushing many levers to the ends of their ranges at once does this. */
+function nearestRun(x) {
+  let best = Infinity;
+  for (let r = 0; r < E.X.length; r++) {
+    const row = E.X[r];
+    let d2 = 0;
+    for (let a = 0; a < x.length && d2 < best; a++) { const d = x[a] - row[a]; d2 += d * d; }
+    if (d2 < best) best = d2;
+  }
+  return Math.sqrt(best);
+}
+let RUN_REACH = null;
+function runReach() {
+  if (RUN_REACH == null) {
+    let reach = 0;
+    for (let r = 0; r < E.X.length; r += 29) {
+      const row = E.X[r];
+      let best = Infinity;
+      for (let q = 0; q < E.X.length; q++) {
+        if (q === r) continue;
+        const other = E.X[q];
+        let d2 = 0;
+        for (let a = 0; a < row.length && d2 < best; a++) { const d = row[a] - other[a]; d2 += d * d; }
+        if (d2 < best) best = d2;
+      }
+      reach = Math.max(reach, Math.sqrt(best));
+    }
+    RUN_REACH = reach;
+  }
+  return RUN_REACH;
+}
+const outsideRuns = () => E && E.X && nearestRun(EL.map(l => state.x[l.key] ?? 0)) > runReach();
 /* Outputs that follow from the levers by formula — checked against every run before the build would use it. */
 function exactSeries(ex, x) {
   const n = E.meta.years;
@@ -583,7 +622,19 @@ function exactSeries(ex, x) {
    held at mid-range in the surface and their exact accounting is added instead, in 2025 krónur. */
 const ACCOUNTED = { per_diem: () => 12.96, prison_ubi: () => 180 * levelOf(EL[0]) * 1000 * 12 / 1e9 };
 const ACCOUNTED_OUT = new Set(["balance", "balance_op", "debt"]);
+/* Shares of people, counts and spreads cannot fall below zero. Far from the runs the fitted surface can, by a little;
+   such a value is shown as zero, here, so that every table and chart on the page shows the same figure. */
+const NONNEG = new Set(["emp", "fte", "unemp", "part", "poverty", "poverty_anchored", "child_poverty",
+  "pensioner_poverty", "poverty_gap", "hardship", "gini", "struggling", "thriving", "tertiary", "automated",
+  "housing_burden", "housing_over_40", "service_unmet", "health_unmet", "teaching_unmet", "childcare_short",
+  "income_fell_20", "income_fell_40", "income_volatility", "no_buffer", "no_emergency", "forced_idle",
+  "involuntary_part", "ownership_under35", "crowded", "spare_room", "claims", "teens_moved_out", "essential_gap",
+  "students", "students_full_time", "ventures", "weekly_hours", "standard_weeks"]);
 function emuSeries(key, x, base) {
+  const s = emuSeriesRaw(key, x, base);
+  return s && NONNEG.has(key) ? s.map(v => v == null ? v : Math.max(0, v)) : s;
+}
+function emuSeriesRaw(key, x, base) {
   if (!E) return null;
   if (ACCOUNTED_OUT.has(key) && !base.accounted) {
     const idx = Object.keys(ACCOUNTED).map(k => EL.findIndex(l => l.key === k)).filter(i => i >= 0);
@@ -633,7 +684,10 @@ const cell = (k, v, f) => fitted(k) ? `${f(v)}${star(k)}` : unfit;
 const named = (lab, k) => SMOOTHED.has(k)
   ? `${lab} <span class="avg" title="This measure jumps about from year to year for no reason but chance, so it is shown as the average of the last three years, for the status quo as well.">3-yr avg</span>`
   : lab;
-const diff = (k, r) => fitted(k) ? `<td class="${r > 0 ? "pos" : r < 0 ? "neg" : ""}">${r == null ? "\u2013" : signed(100 * r, 1, "%")}</td>` : "<td>\u2013</td>";
+/* A rate against a rate is a difference in percentage points, not a relative change. */
+const diffPts = (k, a, b) => !fitted(k) ? "<td>\u2013</td>" : (a == null || b == null) ? "<td>\u2013</td>"
+  : `<td class="${unsignedZero(100 * (a - b), 1) === 0 ? "" : a > b ? "pos" : "neg"}">${signed(100 * (a - b), 1, " points")}</td>`;
+const diff = (k, r) => fitted(k) ? `<td class="${r == null || unsignedZero(100 * r, 1) === 0 ? "" : r > 0 ? "pos" : "neg"}">${r == null ? "\u2013" : signed(100 * r, 1, "%")}</td>` : "<td>\u2013</td>";
 
 /* A lever's effect is measured at a few UBI levels and interpolated between them — the deltas move smoothly with
    the amount, unlike the levels. Exact at an anchor, straight-line between two. */
@@ -656,11 +710,17 @@ function deltaAt(name, i, u) {
 }
 
 /* ---------------- formatting ---------------- */
-const nf = (v, d = 0) => v == null ? "–" : v.toLocaleString("en", { minimumFractionDigits: d, maximumFractionDigits: d });
+/* A value that rounds to zero is shown as zero, never "-0" or "-0.0". */
+{ const toFixed = Number.prototype.toFixed;
+  Number.prototype.toFixed = function (d) { const t = toFixed.call(this, d); return /^-0(\.0*)?$/.test(t) ? t.slice(1) : t; }; }
+const unsignedZero = (v, d) => Math.abs(v) < .5 * 10 ** -d ? 0 : v;
+const nf = (v, d = 0) => v == null ? "–" : unsignedZero(v, d).toLocaleString("en", { minimumFractionDigits: d, maximumFractionDigits: d });
 const pct = (v, d = 1) => v == null ? "–" : `${(100 * v).toFixed(d)}%`;
 const fx2 = v => v == null ? "–" : v.toFixed(2);
 const signed = (v, d = 1, suffix = "") =>
-  v == null ? "–" : `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(d)}${suffix}`;
+  v == null ? "–" : `${unsignedZero(v, d) === 0 ? "" : v > 0 ? "+" : "−"}${Math.abs(v).toFixed(d)}${suffix}`;
+/* Net debt below zero is net assets, and is said so. */
+const debtText = v => v == null ? "–" : unsignedZero(v, 0) < 0 ? `net public assets ${nf(-v)}% of GDP` : `net public debt ${nf(v)}% of GDP`;
 const rel = (a, b) => (a == null || b == null || !b) ? null : a / b - 1;
 
 /* ---------------- the verdict strip: the four questions ---------------- */
@@ -684,7 +744,7 @@ function verdict() {
         with that taken out as well. Debt below is as a share of the economy's output.`,
       d: (bal == null || sqBal == null) ? "" : `${signed(bal - sqBal, 0)} vs status quo`,
       ok: bal != null && bal >= 0,
-      note: `Net public debt ${nf(at(series, "debt", y))}% of GDP.` },
+      note: (t => t[0].toUpperCase() + t.slice(1) + ".")(debtText(at(series, "debt", y))) },
     { id: "income", q: "Are people better off?", n: inc == null ? "–" : nf(inc / 1000), u: "þús. kr. a month, after tax and transfers",
       explain: `What a household has to live on, per person, in 2025 krónur a month: pay, pensions, benefits,
         the borgaralaun and child payments, less income tax, property tax and any wealth tax. A household's
@@ -944,7 +1004,13 @@ function drawEmuBoard() {
       const have = keys.filter(k => byKey[k]);
       return have.length ? `<div class="group"><h3>${title}</h3>${have.map(slider).join("")}</div>` : "";
     }).join("")}`;
-  document.getElementById("year").addEventListener("input", e => { state.year = +e.target.value; render(); });
+  const year = document.getElementById("year");
+  year.addEventListener("input", e => {
+    state.year = +e.target.value;
+    year.parentElement.querySelector(".val").textContent = yearOf(state.year);
+    renderLive();
+  });
+  year.addEventListener("change", e => { state.year = +e.target.value; render(); });
   document.getElementById("to-guide")?.addEventListener("click", () => { state.view = "guide"; render(); });
   board.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => {
     applyPreset(b.dataset.preset);
@@ -954,10 +1020,17 @@ function drawEmuBoard() {
     state.x[e.target.dataset.bin] = e.target.checked ? 1 : 0;
     render();
   }));
-  board.querySelectorAll("[data-lev]").forEach(s => s.addEventListener("input", e => {
-    state.x[e.target.dataset.lev] = +e.target.value / 1000;
-    render();
-  }));
+  board.querySelectorAll("[data-lev]").forEach(s => {
+    s.addEventListener("input", e => {
+      const key = e.target.dataset.lev, l = EL.find(l => l.key === key);
+      state.x[key] = +e.target.value / 1000;
+      const val = document.getElementById("lb-" + key).parentElement.querySelector(".val"), txt = fmtLevel(l);
+      val.textContent = txt;
+      e.target.setAttribute("aria-valuetext", txt);
+      renderLive();
+    });
+    s.addEventListener("change", e => { state.x[e.target.dataset.lev] = +e.target.value / 1000; render(); });
+  });
   board.querySelectorAll("[data-info]").forEach(b => b.addEventListener("click", () => {
     state.open = state.open === b.dataset.info ? null : b.dataset.info;
     render();
@@ -1160,8 +1233,8 @@ function income(s) {
       <em>1 = poorest, 10 = richest, against the status quo</em></figcaption></figure>
     ${chart(s, "poverty_anchored", "Poverty against a fixed 2025 line", { fmt: v => pct(v, 0), zero: true })}</div>
   ${table(["Measure", "This scenario", "Status quo", "Difference"], rows.map(([lab, k, f]) => {
-    const a = at(s, k, y), b = at(sq, k, y), r = rel(a, b);
-    return `<tr><td>${named(lab, k)}</td><td>${cell(k, a, f)}</td><td>${f(b)}</td>${diff(k, r)}</tr>`;
+    const a = at(s, k, y), b = at(sq, k, y);
+    return `<tr><td>${named(lab, k)}</td><td>${cell(k, a, f)}</td><td>${f(b)}</td>${f === pct ? diffPts(k, a, b) : diff(k, rel(a, b))}</tr>`;
   }).join(""))}`;
 }
 
@@ -1176,17 +1249,19 @@ function work(s) {
     ["Mean job tenure, years", "tenure", v => v == null ? "–" : v.toFixed(1)],
     ["Kept from a króna of pay on taking a job", "ptr", v => v == null ? "–" : pct(1 - v, 0)],
     ["Work done by machines", "automated", pct]];
+  /* Shares of work not done cannot fall below zero; a fitted value that does is shown as zero. */
+  const share = v => v == null ? "–" : pct(Math.max(0, v));
   /* A shortage in the public services is not one number. Posts that stay empty become pay rises, work that is
      not done, and load on the people who stay — and the third of those makes the first two worse next year. */
   const services = [
     ["Essential services short, full-time posts", "essential_gap", v => nf(v)],
-    ["— of that, work that does not happen", "service_unmet", pct],
+    ["— of that, work that does not happen", "service_unmet", share],
     ["— carried by the people who stay (1.00 = a normal load)", "workload",
       v => v == null ? "–" : v.toFixed(3)],
-    ["Health care not delivered", "health_unmet", pct],
-    ["Teaching and childcare not delivered", "teaching_unmet", pct],
+    ["Health care not delivered", "health_unmet", share],
+    ["Teaching and childcare not delivered", "teaching_unmet", share],
     ["Public pay above the going rate, where posts go unfilled", "shortage_premium",
-      v => v == null ? "–" : `+${(100 * (v - 1)).toFixed(1)}%`],
+      v => v == null ? "–" : signed(100 * Math.max(0, v - 1), 1, "%")],
     ["What that premium costs, ma.kr. a year", "shortage_pay", v => nf(v)],
     ["Social distress the state staffs against (1.00 = today)", "distress",
       v => v == null ? "–" : v.toFixed(3)],
@@ -1390,8 +1465,8 @@ function wellbeing(s) {
     ${chart(s, "income_fell_20", "Income fell more than 20% in a year", { fmt: v => pct(v, 0), zero: true })}
   </div>
   ${table(["Measure", "This scenario", "Status quo", "Difference"], rows.map(([lab, k, f]) => {
-    const a = at(s, k, y), b = at(sq, k, y), r = rel(a, b);
-    return `<tr><td>${named(lab, k)}</td><td>${cell(k, a, f)}</td><td>${f(b)}</td>${diff(k, r)}</tr>`;
+    const a = at(s, k, y), b = at(sq, k, y);
+    return `<tr><td>${named(lab, k)}</td><td>${cell(k, a, f)}</td><td>${f(b)}</td>${f === pct ? diffPts(k, a, b) : diff(k, rel(a, b))}</tr>`;
   }).join(""))}`;
 }
 
@@ -1563,7 +1638,7 @@ function summary(s) {
     <p class="lead">A borgaralaun of <b>${nf(ubi)} þús. kr. a month</b>, with ${moved.length} of the reform's policy levers
       moved from where they are today, seen in ${yr} against the status quo in the same year.</p>
     ${para("The budget", `The public balance is <b>${signed(bal, 0)} ma.kr.</b> a year (${signed(bal - b("balance"), 0)} against
-      the status quo), and net public debt ${nf(debt)}% of GDP against ${nf(sqDebt)}%. ${bal == null ? "" : bal >= 0
+      the status quo), and ${debtText(debt)}, against ${debtText(sqDebt).replace(/^net public /, "")} in the status quo. ${bal == null ? "" : bal >= 0
         ? "The budget is in surplus in that year." : debt > sqDebt + 20 ? "The budget is in deficit and the debt rises year on year." : "The budget is in deficit, with the debt within 20 points of the status quo's."}`)}
     ${para("What pays for it, and what costs most", `Measured one at a time against today, the levers adding most to the
       balance are ${list(pays)}; those taking most from it are ${list(costs)}. Figures are ma.kr. a year in ${yr}.`)}
@@ -1650,6 +1725,8 @@ const intro = () => `<div class="exec">
    Any setting of the levers can be saved under a name — up to six — and set side by side: a table for the year
    shown, and small multiples, one chart per scenario against the status quo, so four or more stay readable without
    leaning on colour (past three, lines on one chart cannot be told apart reliably). Saved on this device only. */
+/* Names typed by the viewer are text, never markup. */
+const escHTML = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const SAVE_KEY = "ubi-compare-v3", MAX_SAVED = 6;
 /* v6 widened the borgaralaun slider from 0-600 to 0-800 þús.; comparisons saved under v2 hold slider positions, so
    their payment is rescaled to keep the same krónur. */
@@ -1703,15 +1780,15 @@ function compare() {
     <p class="muted" style="font-size:12.5px">Up to ${MAX_SAVED} scenarios, kept on this device. Load one to go on changing it.</p>`;
   if (!runs.length) return `${controls}<p class="hint">Nothing saved yet. Set the levers, give the scenario a name and save it;
     save three or four and they appear side by side here.</p>`;
-  const head = ["Measure, " + yr, "Status quo", ...runs.map((r, i) => `${r.sc.name}
+  const head = ["Measure, " + yr, "Status quo", ...runs.map((r, i) => `${escHTML(r.sc.name)}
       <span class="cmp-act"><button type="button" class="linkish" data-cmp="load-${i}">Load</button><button type="button"
       class="linkish" data-cmp="del-${i}">Remove</button></span>`)];
   const rows = CMP_ROWS.map(([lab, f]) => `<tr><td>${lab}</td><td>${f({ x: Object.fromEntries(EL.map(l => [l.key, l.today ?? 0])) }, sq, y)}</td>${
     runs.map(r => `<td>${f(r.sc, r.s, y)}</td>`).join("")}</tr>`).join("");
   const multiples = (key, caption, opts) => `<h3 class="cmp-h">${caption}</h3><div class="cmp-grid">${runs.map(r => `<figure>
       ${lineChart([{ data: sq[key], color: "var(--ref)", dash: true }, { data: r.s[key], color: "var(--scn)" }],
-                  { ...opts, label: `${caption}: ${r.sc.name}` })}
-      <figcaption>${r.sc.name}</figcaption></figure>`).join("")}</div>`;
+                  { ...opts, label: `${caption}: ${escHTML(r.sc.name)}` })}
+      <figcaption>${escHTML(r.sc.name)}</figcaption></figure>`).join("")}</div>`;
   return `${controls}
     <div class="scroll"><table class="cmp"><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
     <p class="muted" style="font-size:12.5px">Each small chart is one scenario (solid) against the status quo (dashed).</p>
@@ -1839,7 +1916,7 @@ function past() {
   const shockRows = Object.entries(P.shocks).map(([name, rows]) => {
     const body = Object.entries(rows).map(([lab, r]) => {
       const u = r.unit === "%" ? "%" : " pts";
-      const sg = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + u;
+      const sg = v => signed(v, 1, u);
       return `<tr><td>${lab}</td><td>${sg(r.status_quo)}</td><td>${sg(r.platform)}</td></tr>`;
     }).join("");
     return `<h3 style="margin-top:22px">${name}</h3>${table(["Change across the shock", "As it happened", "With the reform"], body)}`;
@@ -2108,9 +2185,22 @@ function neutralise(root) {
     if (v && /platform/i.test(v)) el.setAttribute(at, NEUTRAL.reduce((t, [re, to]) => t.replace(re, to), v));
   }));
 }
+/* While a slider is dragged the board is left as it is: rebuilding it on every input event replaced the very
+   slider under the pointer and re-created a hundred others each time, which could take Safari's page down on a
+   long drag. Only the figures are redrawn, at most once a frame; the board follows when the slider is let go. */
+let live = false, liveFrame = 0;
+function renderLive() {
+  if (liveFrame) return;
+  liveFrame = requestAnimationFrame(() => {
+    liveFrame = 0;
+    live = true;
+    try { render(); } finally { live = false; }
+  });
+}
 function render() {
+  if (!live && liveFrame) { cancelAnimationFrame(liveFrame); liveFrame = 0; }
   renderPage();
-  if (MODE === "guided") document.querySelectorAll("#main, #board, #verdict, footer").forEach(neutralise);
+  if (MODE === "guided") document.querySelectorAll(live ? "#main, #verdict" : "#main, #board, #verdict, footer").forEach(neutralise);
 }
 function renderPage() {
   const shell = document.querySelector(".shell");
@@ -2141,7 +2231,7 @@ function renderPage() {
   }
   board.hidden = false;
   shell.classList.remove("guiding");
-  drawBoard();
+  if (!live) drawBoard();
   verdict();
   const { series, moved } = scenario();
   let label, approx;
@@ -2165,6 +2255,12 @@ function renderPage() {
     approx = worst == null || worst < .85;
     label = worst == null ? "Fitted from model runs"
       : `Fitted from ${nf(E.meta.draws)} model runs — this view reproduces them to R² ${worst.toFixed(2)}`;
+    if (outsideRuns()) {
+      approx = true;
+      label = `This setting lies farther from every one of the ${nf(E.meta.draws)} model runs than the runs lie from
+        each other, so its figures are an extrapolation of the fitted surface and can be far off. Move some levers
+        back from the ends of their ranges`;
+    }
   } else {
     const onAnchor = ANCHORS.includes(UBI[state.ubi]);
     approx = moved > 1;
