@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this model or its results, please cite it as below."
+title: "iceland-ubi-simulation: an agent-based model of a universal basic income in Iceland"
+type: software
+authors:
+  - family-names: "Sólon"
+    given-names: "Jónatan"
+version: "1.0.0"
+date-released: 2026-10-19
+license: MIT
+repository-code: "https://github.com/Josolon/iceland-ubi-simulation"
+url: "https://ubi.josolon.com"
+keywords:
+  - agent-based model
+  - universal basic income
+  - Iceland
+  - microsimulation
+  - public finance

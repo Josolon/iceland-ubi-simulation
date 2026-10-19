@@ -1,0 +1,15 @@
+Documentation, text and figures
+
+Copyright (c) 2026 Jónatan Sólon
+
+The documentation in this repository (README.md, CHANGELOG.md, the docs/ directory), the text of the explorer
+pages in artifacts/, and the figures and data the model produces are licensed under the Creative Commons
+Attribution 4.0 International licence (CC BY 4.0).
+
+You may share and adapt them for any purpose, including commercially, provided you give appropriate credit,
+link to the licence, and indicate if changes were made.
+
+Full licence text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Source data from Statistics Iceland (Hagstofa Íslands) and other public bodies remain under their publishers'
+terms. The code is licensed separately under the MIT licence (LICENSE).

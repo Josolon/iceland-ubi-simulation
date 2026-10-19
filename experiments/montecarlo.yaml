@@ -1,0 +1,23 @@
+# Scenarios for the Monte Carlo uncertainty run.
+base:
+  policy:
+    immigration_cap_multiple: 1.0
+    residence_rules_strictness: 1.0
+    prop_tax_extra_pp: 1.0
+
+experiments:
+  ubi_300:
+    label: "300k reform"
+    policy: {ubi_adult: 300000, ubi_child: 300000}
+  ubi_450:
+    label: "450k reform"
+    policy: {ubi_adult: 450000, ubi_child: 450000}
+  package_350:
+    label: "350k with anti-inflation package"
+    policy: {ubi_adult: 350000, ubi_child: 350000, adult_ubi_invested: 0.25, platform_income_tax_scale: 1.2,
+             ubi_phase_in_years: 4, low_value_jobs_productivity_gain: 0.05, capital_controls: 1.0}
+    markets: {taylor_inflation: 1.5}
+  ubi_450_smelters:
+    label: "450k with the smelter contracts ended and a 10% productivity gain"
+    policy: {ubi_adult: 450000, ubi_child: 450000, low_value_jobs_productivity_gain: 0.10}
+    energy: {smelter_exit_share: 1.0}

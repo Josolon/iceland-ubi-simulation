@@ -1,0 +1,260 @@
+{
+ "note": "Iceland's tax and contribution rules, 2015-2025, kept by hand. Rates are staðgreiðsla (state plus the national average municipal tax); thresholds are monthly, in that year's krónur. Where a rule changed mid-year the annual value is the average by months and both are given.",
+ "sources": {
+  "income_tax": "Skatturinn, Helstu tölur og prósentur, 2016-2025 (skatturinn.is/einstaklingar/helstutolur/<year>/); 2015: Skatturinn, Staðgreiðsla 2015",
+  "payroll_tax": "the same pages (tryggingagjald)",
+  "employer_pension": "SA-ASÍ agreement of 21 January 2016: employer contribution 8% rising to 8.5% (1 July 2016), 10% (1 July 2017), 11.5% (1 July 2018)",
+  "vat": "VAT 24% and 11% from 1 January 2015 (from 25.5% and 7%)",
+  "inheritance_floor": "1.5 m kr. 2011-2020 and 5 m in 2021 (lög 14/2004 as amended; Alþingi 5/151); indexed to the CPI from 2022: 2022-2023 estimated from the CPI, 2024-2025 Skatturinn"
+ },
+ "income_tax": {
+  "2015": {
+   "brackets": [
+    [
+     0,
+     0.373
+    ],
+    [
+     309141,
+     0.3974
+    ],
+    [
+     836405,
+     0.4624
+    ]
+   ],
+   "personal_credit": 50902
+  },
+  "2016": {
+   "brackets": [
+    [
+     0,
+     0.3713
+    ],
+    [
+     336036,
+     0.3835
+    ],
+    [
+     836991,
+     0.4625
+    ]
+   ],
+   "personal_credit": 51920
+  },
+  "2017": {
+   "brackets": [
+    [
+     0,
+     0.3694
+    ],
+    [
+     834708,
+     0.4624
+    ]
+   ],
+   "personal_credit": 52907
+  },
+  "2018": {
+   "brackets": [
+    [
+     0,
+     0.3694
+    ],
+    [
+     893714,
+     0.4624
+    ]
+   ],
+   "personal_credit": 53895
+  },
+  "2019": {
+   "brackets": [
+    [
+     0,
+     0.3694
+    ],
+    [
+     927088,
+     0.4624
+    ]
+   ],
+   "personal_credit": 56447
+  },
+  "2020": {
+   "brackets": [
+    [
+     0,
+     0.3504
+    ],
+    [
+     336917,
+     0.3719
+    ],
+    [
+     945874,
+     0.4624
+    ]
+   ],
+   "personal_credit": 54628
+  },
+  "2021": {
+   "brackets": [
+    [
+     0,
+     0.3145
+    ],
+    [
+     349019,
+     0.3795
+    ],
+    [
+     979848,
+     0.4625
+    ]
+   ],
+   "personal_credit": 50792
+  },
+  "2022": {
+   "brackets": [
+    [
+     0,
+     0.3145
+    ],
+    [
+     370483,
+     0.3795
+    ],
+    [
+     1040107,
+     0.4625
+    ]
+   ],
+   "personal_credit": 53916
+  },
+  "2023": {
+   "brackets": [
+    [
+     0,
+     0.3145
+    ],
+    [
+     409987,
+     0.3795
+    ],
+    [
+     1151013,
+     0.4625
+    ]
+   ],
+   "personal_credit": 59665
+  },
+  "2024": {
+   "brackets": [
+    [
+     0,
+     0.3148
+    ],
+    [
+     446137,
+     0.3798
+    ],
+    [
+     1252502,
+     0.4628
+    ]
+   ],
+   "personal_credit": 64926
+  },
+  "2025": {
+   "brackets": [
+    [
+     0,
+     0.3149
+    ],
+    [
+     472006,
+     0.3799
+    ],
+    [
+     1325128,
+     0.4629
+    ]
+   ],
+   "personal_credit": 68691
+  }
+ },
+ "payroll_tax": {
+  "2015": 0.0749,
+  "2016": 0.071,
+  "2017": 0.0685,
+  "2018": 0.0685,
+  "2019": 0.066,
+  "2020": 0.0635,
+  "2021": 0.061,
+  "2022": 0.0635,
+  "2023": 0.0635,
+  "2024": 0.0635,
+  "2025": 0.0635,
+  "_2016": "7.35% January-June, 6.85% July-December"
+ },
+ "employer_pension": {
+  "2015": 0.08,
+  "2016": 0.0825,
+  "2017": 0.0925,
+  "2018": 0.1075,
+  "2019": 0.115,
+  "2020": 0.115,
+  "2021": 0.115,
+  "2022": 0.115,
+  "2023": 0.115,
+  "2024": 0.115,
+  "2025": 0.115
+ },
+ "employee_pension": 0.04,
+ "vat": {
+  "standard": 0.24,
+  "reduced": 0.11,
+  "from": "2015-01-01"
+ },
+ "capital_income_tax": {
+  "2015": 0.2,
+  "2016": 0.2,
+  "2017": 0.2,
+  "2018": 0.22,
+  "2019": 0.22,
+  "2020": 0.22,
+  "2021": 0.22,
+  "2022": 0.22,
+  "2023": 0.22,
+  "2024": 0.22,
+  "2025": 0.22
+ },
+ "inheritance_floor": {
+  "2015": 1500000.0,
+  "2016": 1500000.0,
+  "2017": 1500000.0,
+  "2018": 1500000.0,
+  "2019": 1500000.0,
+  "2020": 1500000.0,
+  "2021": 5000000.0,
+  "2022": 5415000.0,
+  "2023": 5889000.0,
+  "2024": 6203409,
+  "2025": 6498129,
+  "_note": "1.5 m kr. 2011-2020 and 5 m in 2021 (lög 14/2004 as amended; Alþingi 5/151); indexed to the CPI from 2022: 2022-2023 estimated from the CPI, 2024-2025 Skatturinn"
+ },
+ "crisis_support_pct_gdp": {
+  "2020": 3.0,
+  "2021": 2.0,
+  "_note": "COVID measures above the line: about 3% of GDP (IMF 2021 Article IV, for 2020); 2021 EST. Automatic stabilisers come from the model itself."
+ },
+ "one_offs": {
+  "2016": "stability contributions from the old banks' estates (+12.7% of GDP balance): excluded when comparing the budget"
+ },
+ "job_retention": {
+  "2020": 0.6,
+  "2021": 0.3,
+  "_note": "EST: share of the tourism jobs a collapse would end that hlutabætur (partial unemployment benefit with reduced hours) kept on the payroll. Its cost is inside crisis_support_pct_gdp."
+ }
+}

@@ -1,0 +1,4 @@
+# Restricted arrivals: foreign inflow capped at the 2025 level, strict residence rules.
+policy:
+  immigration_cap_multiple: 1.0
+  residence_rules_strictness: 1.0

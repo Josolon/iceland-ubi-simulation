@@ -1,0 +1,12 @@
+data/raw
+data/processed/*.pkl
+__pycache__/
+.venv/
+.DS_Store
+data/processed/explorer_build.log
+data/processed/*.params
+data/processed/*.log
+data/processed/timeline_runs/
+
+# raw design runs: hundreds of MB with 35-year runs; rebuilt by build_emulator.py
+data/processed/emulator_runs.json

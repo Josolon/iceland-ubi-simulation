@@ -1,0 +1,49 @@
+{
+ "note": "Annual averages, nominal US dollars. Aluminium $/t (LME), Brent $/bbl.",
+ "sources": {
+  "2014-2024": "World Bank, Commodity Markets (Pink Sheet), CMO-Historical-Data-Annual.xlsx, Annual Prices (Nominal)",
+  "2025": "World Bank, Commodity Markets Outlook April 2026, Table 1",
+  "partner_inflation_pct": "Euro-area HICP, annual average rate of change (Eurostat prc_hicp_aind), as the stand-in for Iceland's trading partners"
+ },
+ "aluminium_usd_t": {
+  "2014": 1867.42,
+  "2015": 1664.68083333333,
+  "2016": 1604.18166666667,
+  "2017": 1967.65416666667,
+  "2018": 2108.475,
+  "2019": 1794.48833333333,
+  "2020": 1703.98666666667,
+  "2021": 2472.84833333333,
+  "2022": 2705.01916666667,
+  "2023": 2255.73916666667,
+  "2024": 2419.01666666667,
+  "2025": 2632.0
+ },
+ "brent_usd_bbl": {
+  "2014": 98.9375,
+  "2015": 52.37,
+  "2016": 44.0475,
+  "2017": 54.3925,
+  "2018": 71.07166666667,
+  "2019": 64.03166666667,
+  "2020": 42.3,
+  "2021": 70.44333333333,
+  "2022": 99.82416666667,
+  "2023": 82.61625,
+  "2024": 80.69866666667,
+  "2025": 69.0
+ },
+ "partner_inflation_pct": {
+  "2015": 0.2,
+  "2016": 0.2,
+  "2017": 1.5,
+  "2018": 1.8,
+  "2019": 1.2,
+  "2020": 0.3,
+  "2021": 2.6,
+  "2022": 8.4,
+  "2023": 5.4,
+  "2024": 2.4,
+  "2025": 2.1
+ }
+}

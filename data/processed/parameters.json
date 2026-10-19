@@ -1,0 +1,7808 @@
+[
+{
+"section": "(top)",
+"key": "seed",
+"value": 1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 111
+},
+{
+"section": "(top)",
+"key": "years",
+"value": 10,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 112
+},
+{
+"section": "policy",
+"key": "regime",
+"value": "platform",
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 124
+},
+{
+"section": "policy",
+"key": "ubi_adult",
+"value": 300000,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 125
+},
+{
+"section": "policy",
+"key": "ubi_child",
+"value": 300000,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 126
+},
+{
+"section": "policy",
+"key": "ubi_indexed",
+"value": true,
+"status": "POLICY",
+"note": "UBI follows consumer prices (lagged one year)",
+"context": "",
+"line": 127
+},
+{
+"section": "policy",
+"key": "ubi_indexation",
+"value": 1.0,
+"status": "POLICY",
+"note": "share of price increases passed into the UBI (0 = fixed in krónur)",
+"context": "",
+"line": 128
+},
+{
+"section": "policy",
+"key": "ubi_wage_indexation",
+"value": 0.0,
+"status": "POLICY",
+"note": "share of real wage growth passed into the UBI too (benefits: .8)",
+"context": "",
+"line": 129
+},
+{
+"section": "policy",
+"key": "ubi_phase_in_years",
+"value": 1,
+"status": "POLICY",
+"note": "UBI rises linearly to its full level over this many years",
+"context": "",
+"line": 130
+},
+{
+"section": "policy",
+"key": "transition_years",
+"value": 3,
+"status": "POLICY",
+"note": "v8: the payroll cut, pension fold and benefit protection phase over this",
+"context": "",
+"line": 131
+},
+{
+"section": "policy",
+"key": "adult_ubi_invested",
+"value": 0.0,
+"status": "POLICY",
+"note": "share of working-age adults' UBI paid into a personal savings account",
+"context": "",
+"line": 132
+},
+{
+"section": "policy",
+"key": "independent_earnings_share",
+"value": 0.25,
+"status": "EST",
+"note": "EST: what self-directed work earns, as a share of the person's wage",
+"context": "",
+"line": 133
+},
+{
+"section": "policy",
+"key": "platform_personal_credit",
+"value": 0.0,
+"status": "POLICY",
+"note": "monthly personal tax credit under the reform (persónuafsláttur abolished = 0)",
+"context": "",
+"line": 134
+},
+{
+"section": "policy",
+"key": "platform_income_tax_brackets",
+"value": null,
+"status": "POLICY",
+"note": "[[threshold, rate], ...]; None = same brackets as today",
+"context": "",
+"line": 135
+},
+{
+"section": "policy",
+"key": "child_invested",
+"value": {
+"1": 0.5,
+"2": 0.5,
+"3": 0.6,
+"4": 0.7,
+"5": 0.7,
+"6": 0.8,
+"7": 0.9
+},
+"status": "POLICY",
+"note": "",
+"context": "The graduated schedule below invests more of each additional child's payment — a guard against a household living off its children. Setting child_invested_flat overrides it with one share for every child, which removes that guard on purpose: at .5, five children bring in 5 x 225,000 a month with nothing taken back. Whether people then have children for a living is for the model to answer.",
+"line": 140
+},
+{
+"section": "policy",
+"key": "child_invested_flat",
+"value": 0.5,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 141
+},
+{
+"section": "policy",
+"key": "fund_payout_age",
+"value": 25,
+"status": "POLICY",
+"note": "",
+"context": "The fund is paid out at 25, to a home or to starting something — the age both decisions are made.",
+"line": 143
+},
+{
+"section": "policy",
+"key": "teen_moveout_share",
+"value": 0.05,
+"status": "EST",
+"note": "EST: 3% today, from troubled homes; a little more once the payment is theirs",
+"context": "16-17-year-olds living on their own, paid their borgaralaun in full (policy.moved_out). EST: about 3% of the cohort; Hagstofa does not publish it directly. A scenario setting.",
+"line": 146
+},
+{
+"section": "policy",
+"key": "fund_venture_decay",
+"value": 0.2,
+"status": "EST",
+"note": "EST",
+"context": "The payout is the person's own money, to use as they like. Having it in hand makes starting something easier, as a windfall does (Blanchflower and Oswald 1998: inheritances raise self-employment); `fund_venture_decay` is how fast that advantage wears off as the money is used.",
+"line": 150
+},
+{
+"section": "policy",
+"key": "fund_deposit_share",
+"value": 0.15,
+"status": "POLICY",
+"note": "a payout worth this much of a dwelling buys a way in",
+"context": "",
+"line": 151
+},
+{
+"section": "policy",
+"key": "wage_setting",
+"value": "free_market",
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 152
+},
+{
+"section": "policy",
+"key": "income_tax_brackets",
+"value": [
+[
+0,
+0.3149
+],
+[
+498122,
+0.3799
+],
+[
+1398450,
+0.4629
+]
+],
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 153
+},
+{
+"section": "policy",
+"key": "platform_income_tax_scale",
+"value": 1.0,
+"status": "POLICY",
+"note": "multiply bracket rates under the reform",
+"context": "",
+"line": 154
+},
+{
+"section": "policy",
+"key": "personal_credit",
+"value": 72492,
+"status": "POLICY",
+"note": "status quo only; abolished under the reform",
+"context": "",
+"line": 155
+},
+{
+"section": "policy",
+"key": "threshold_real_growth",
+"value": 0.01,
+"status": "POLICY",
+"note": "",
+"context": "Thresholds and the credit move each January with the CPI plus the law's estimate of productivity growth (1%, lög nr. 90/2003 as amended 2019; stjornarradid.is, \"Breytingar á staðgreiðslu um áramótin\", 2025).",
+"line": 158
+},
+{
+"section": "policy",
+"key": "threshold_index",
+"value": 1.0,
+"status": "POLICY",
+"note": "where the thresholds stand against the base year's, beyond prices (model-kept)",
+"context": "",
+"line": 159
+},
+{
+"section": "policy",
+"key": "pension_contrib_employee",
+"value": 0.04,
+"status": "POLICY",
+"note": "status quo",
+"context": "",
+"line": 160
+},
+{
+"section": "policy",
+"key": "pension_contrib_employer",
+"value": 0.115,
+"status": "POLICY",
+"note": "status quo",
+"context": "",
+"line": 160
+},
+{
+"section": "policy",
+"key": "social_security_employee",
+"value": 0.0775,
+"status": "POLICY",
+"note": "reform",
+"context": "",
+"line": 161
+},
+{
+"section": "policy",
+"key": "social_security_employer",
+"value": 0.0775,
+"status": "POLICY",
+"note": "reform",
+"context": "",
+"line": 161
+},
+{
+"section": "policy",
+"key": "payroll_tax",
+"value": 0.0635,
+"status": "POLICY",
+"note": "tryggingagjald, both regimes",
+"context": "",
+"line": 162
+},
+{
+"section": "policy",
+"key": "vat_effective_status_quo",
+"value": 0.18,
+"status": "EST",
+"note": "EST: effective VAT on household consumption (24%/11%/exempt mix)",
+"context": "",
+"line": 163
+},
+{
+"section": "policy",
+"key": "vat_platform",
+"value": 0.25,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 164
+},
+{
+"section": "policy",
+"key": "vat_platform_capture",
+"value": 0.88,
+"status": "POLICY",
+"note": "",
+"context": "EST: the share of household consumption (housing excluded) a flat rate actually reaches. Across the OECD consumption taxes raise 58% of what they would with no carve-outs and no evasion (OECD Consumption Tax Trends, the VAT revenue ratio). A single rate ends the 11% band but not the exemptions every VAT keeps — health, education, financial services, ~10% of this base — nor evasion. Today's 18% effective on a 24/11 mix (~65/25, the rest exempt) implies ~.88: a flat 25% raises ~22% effective, not 25%.",
+"line": 170
+},
+{
+"section": "policy",
+"key": "state_venture_stake",
+"value": 0.5,
+"status": "POLICY",
+"note": "the stake in a firm funded by the borgaralaun alone",
+"context": "A reform option that treats the state as an investor in its citizens: it pays for their upbringing, schooling, health and the borgaralaun, and in return takes a share of the firms they found. The share follows where the money came from: half if the founder lived on the borgaralaun alone, falling in proportion to outside funding — 25% at half outside money, 10% at 80% — with a floor of 5% (ventures.stake_floor). There is no seed money per firm; RANNÍS goes on funding ventures as it does now.",
+"line": 176
+},
+{
+"section": "policy",
+"key": "staked_corporate_tax_share",
+"value": 1.0,
+"status": "POLICY",
+"note": "share of corporate tax still paid by firms with a stake (lever)",
+"context": "The premise of the option: everyone who founds or funds a firm has had schooling, health care and the payment, so the state is deemed to have paid at least one start-of-life fund into every company, each time it raises capital — the premise of a corporate tax, held as ownership instead. A firm's stake is today's rule or one deemed fund's share of it, whichever is larger (ventures, `public_equity`). Whether corporate tax is still due on what the state partly owns is a choice:",
+"line": 182
+},
+{
+"section": "policy",
+"key": "state_seed_money",
+"value": 0,
+"status": "POLICY",
+"note": "v3: none. Was 3 m kr. a firm, a cost the reform does not intend",
+"context": "",
+"line": 183
+},
+{
+"section": "policy",
+"key": "public_payroll_cut",
+"value": 0.2,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 184
+},
+{
+"section": "policy",
+"key": "pension_topup_share",
+"value": 1.0,
+"status": "POLICY",
+"note": "transition top-up max(0, occupational pension - UBI), share paid",
+"context": "",
+"line": 185
+},
+{
+"section": "policy",
+"key": "eea_years_to_permanent",
+"value": 5,
+"status": "POLICY",
+"note": "",
+"context": "Eligibility follows EEA law. An EEA citizen who works — 10-12 hours a week, judged month by month — has worker status and equal treatment, the borgaralaun included; one who is involuntarily unemployed keeps it. Otherwise EEA citizens qualify with the permanent right of residence after five years (Directive 2004/38, art. 16). Every part-time job in the model is over that threshold.",
+"line": 190
+},
+{
+"section": "policy",
+"key": "non_eea_years_to_ubi",
+"value": 5,
+"status": "POLICY",
+"note": "",
+"context": "Non-EEA citizens qualify with permanent residence: four years of residence under the Foreign Nationals Act (útlendingalög, 58. gr.), with conditions on income and conduct; citizenship takes seven. EST: 5, allowing for the time the conditions take to meet.",
+"line": 194
+},
+{
+"section": "policy",
+"key": "immigration_cap_multiple",
+"value": null,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 195
+},
+{
+"section": "policy",
+"key": "residence_rules_strictness",
+"value": 0.5,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 196
+},
+{
+"section": "policy",
+"key": "prop_tax_extra_pp",
+"value": 1.0,
+"status": "POLICY",
+"note": "extra recurrent property tax, percentage points of market value",
+"context": "",
+"line": 197
+},
+{
+"section": "policy",
+"key": "defer_pensioner_property_tax",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "v9 option: households with someone 67+ defer the extra until sale or inheritance (~29 ma.kr. in year 1); 0 = off",
+"line": 200
+},
+{
+"section": "policy",
+"key": "floor_loan",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "v10 option: the top-up (benefit_floor_topup) paid to owners 67+ is a loan secured on the home, up to `floor_loan_ltv` of its equity, repaid on sale or from the estate (housing.py); 0 = off",
+"line": 203
+},
+{
+"section": "policy",
+"key": "floor_loan_ltv",
+"value": 0.5,
+"status": "EST",
+"note": "EST: lenders of lifetime mortgages lend 20-55% of value by age",
+"context": "",
+"line": 204
+},
+{
+"section": "policy",
+"key": "indexation_phaseout",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "Taking CPI indexation out of household lending (verðtrygging). The government plans to cut its weight in stages from 2026-27, starting with minimum principal payments on indexed mortgages, to strengthen how interest rates reach demand; the IMF (2025 Article IV) asks that it be timed with care. Government bonds and pension-fund assets — the long-term securities — keep their indexation here. 0 = today, 1 = none.",
+"line": 209
+},
+{
+"section": "policy",
+"key": "indexation_phase_years",
+"value": 5,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 210
+},
+{
+"section": "policy",
+"key": "abolish_tariffs",
+"value": true,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 211
+},
+{
+"section": "policy",
+"key": "customs_kept",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "share of today's customs duties kept (7.7 ma.kr., THJ05132). The reform abolishes them (\"afnema tolla\").",
+"line": 213
+},
+{
+"section": "policy",
+"key": "agriculture_subsidy_cut",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "Budget lines the reform cuts, as shares. Farm support is 19.7 ma.kr. and all other subsidies 55.3 (THJ05161, 2024). The reform asks that farm support go to innovation rather than to established production, and that there be no subsidies at all; the model carries the first as the share cut.",
+"line": 217
+},
+{
+"section": "policy",
+"key": "subsidy_cut_innovation",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "The other 55.3 ma.kr. of subsidies (THJ05161, 2024), in three groups: innovation and film, 21.7: R&D tax credits paid out (11.1, Rannís), film reimbursements (~6.1) and R&D grants (4.5); energy and transport, 17.7: road transport (6.0: buses and regional routes), electricity (4.5: rural heating and distribution), and the rest of \"economic affairs n.e.c.\" (7.2: mostly the electric-car grants, EST); everything else, 15.9: culture, sport and private media (5.7), waste handling (4.7), education (1.6), labour-market and business support (3.0), tourism (0.8) and small items. v3: RANNÍS continues in the reform, so the innovation support is kept",
+"line": 227
+},
+{
+"section": "policy",
+"key": "subsidy_cut_energy_transport",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 228
+},
+{
+"section": "policy",
+"key": "subsidy_cut_heating",
+"value": null,
+"status": "POLICY",
+"note": "",
+"context": "v3: the energy-and-transport line in its three parts, each with its own effects (energy_split below). None = follow subsidy_cut_energy_transport, as before.",
+"line": 231
+},
+{
+"section": "policy",
+"key": "subsidy_cut_transition",
+"value": null,
+"status": "EST",
+"note": "electric-car and energy-transition grants, 7.2 ma.kr. (EST)",
+"context": "",
+"line": 232
+},
+{
+"section": "policy",
+"key": "subsidy_cut_transport",
+"value": null,
+"status": "POLICY",
+"note": "buses and regional routes, 6.0 ma.kr.",
+"context": "",
+"line": 233
+},
+{
+"section": "policy",
+"key": "green_heat_bn",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "Local green heat for the cold areas (a reform option): grants towards heat pumps, small hydro and wind that a household or landowner installs, so remote homes need less expensive heat and less support.",
+"line": 236
+},
+{
+"section": "policy",
+"key": "subsidy_cut_other",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 237
+},
+{
+"section": "policy",
+"key": "vat_input_restriction_gain",
+"value": 459.5,
+"status": "POLICY",
+"note": "",
+"context": "Input VAT reclaimable only on inputs to the value chain. v9: from the input VAT firms claimed in 2025 (about 997 ma.kr.), the full restriction yields 459.5 ma.kr. net of dearer government purchases and corporate tax (509 gross, range 385-574; EST from Skatturinn's input VAT and Hagstofa's supply-use tables). v8 assumed 200 (EST, 100-350). The lever sets how much of it is applied. It also raises exporters' costs (markets.vat_input_export_burden_bn).",
+"line": 242
+},
+{
+"section": "policy",
+"key": "vat_input_restriction_full_bn",
+"value": 459.5,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 243
+},
+{
+"section": "policy",
+"key": "pension_fund_real_return",
+"value": 0.0381,
+"status": "EST",
+"note": "1997-2025 (pension_funds_returns_1997_2025.csv); was .03 EST",
+"context": "The real return on pension-fund assets (187% of GDP) paid to the UBI instead of to pensions. EST 3%.",
+"line": 245
+},
+{
+"section": "policy",
+"key": "pension_fold",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "How far the pension system is folded into the UBI. 1 = the reform: contributions (15.5%) go to the state as social security, the funds' returns go to the UBI, and occupational pensions stop, with a top-up for anyone whose pension was worth more than the UBI. 0 = pensions as today, the UBI paid on top.",
+"line": 249
+},
+{
+"section": "policy",
+"key": "pension_keep_earned",
+"value": 0.0,
+"status": "POLICY",
+"note": "v9 option: with the fold, the funds still pay earned pensions (no top-up)",
+"context": "",
+"line": 250
+},
+{
+"section": "policy",
+"key": "venture_support",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "Seed money of 3 m kr. for every new firm, and a 30% state stake in it, with the easier access to capital that comes with it. 0 = today, 1 = the reform.",
+"line": 253
+},
+{
+"section": "policy",
+"key": "per_diem_cut",
+"value": 1.0,
+"status": "EST",
+"note": "dagpeningar abolished (EST ~13 ma.kr. saved or taxed)",
+"context": "",
+"line": 254
+},
+{
+"section": "policy",
+"key": "inheritance_tax_rate",
+"value": 0.1,
+"status": "POLICY",
+"note": "",
+"context": "Inheritance tax. Today 10% above an exemption of 6.79 m kr. for the estate (2026; 6.5 m in 2025 krónur), and a surviving spouse pays nothing. The floor is in 2025 krónur and indexed.",
+"line": 257
+},
+{
+"section": "policy",
+"key": "inheritance_tax_floor",
+"value": 6500000.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 258
+},
+{
+"section": "policy",
+"key": "gift_tax_rate",
+"value": 0.1,
+"status": "POLICY",
+"note": "",
+"context": "Advance inheritance and gifts. Taxed like inheritance today, 10%. Set below the inheritance rate and estates move into gifts while the giver is alive.",
+"line": 261
+},
+{
+"section": "policy",
+"key": "exit_tax_rate",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "A tax on moving assets abroad: on the unrealised gains of people who emigrate with financial wealth above the threshold (2025 krónur), as Norway (about 38% on gains above NOK 3 m) and Denmark (27-42%) levy them. Iceland has none. It also closes moving abroad as a way round the inheritance tax.",
+"line": 265
+},
+{
+"section": "policy",
+"key": "exit_tax_threshold",
+"value": 50000000.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 266
+},
+{
+"section": "policy",
+"key": "tax_enforcement_fte",
+"value": 0,
+"status": "POLICY",
+"note": "",
+"context": "Staff moved into tax enforcement: a UBI needs no one to check who is entitled to unemployment or other benefits, and they can work on tax enforcement instead.",
+"line": 269
+},
+{
+"section": "policy",
+"key": "prison_ubi_withheld",
+"value": 0.6,
+"status": "POLICY",
+"note": "share of prison time without the borgaralaun (today's rule: after 4 months)",
+"context": "",
+"line": 270
+},
+{
+"section": "policy",
+"key": "ubi_protected",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "The borgaralaun cannot be pledged, assigned or seized by creditors — as benefits cannot be today — so no lender can treat it as collateral. 1 = protected, 0 = it can back a loan.",
+"line": 273
+},
+{
+"section": "policy",
+"key": "gambling_payment_block",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "Payments to unlicensed foreign gambling sites blocked, as Norway does (with DNS blocking since 2025).",
+"line": 275
+},
+{
+"section": "policy",
+"key": "free_health_care",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "Free health care, GP first (Danish model) (v3): no charge for GP, specialist, outpatient, test or therapy visits, and a GP referral before a specialist. Medicines and adult dental care stay paid as today — in Denmark too.",
+"line": 278
+},
+{
+"section": "policy",
+"key": "free_internet",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "The internet as infrastructure (v3): the state pays for the network on publicly laid lines and for the international capacity (Farice's cables), and the connection is free. Companies go on selling phones, routers, installation and service.",
+"line": 282
+},
+{
+"section": "policy",
+"key": "custodianship",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "Custodianship instead of ownership for ever: whoever holds an asset keeps it, and their heirs after them, for as long as they keep investing in it and it keeps earning; what is neglected goes back to the market for others to bid on. 0 = ownership as today, 1 = the rule in full, for every kind of property.",
+"line": 286
+},
+{
+"section": "policy",
+"key": "capital_controls",
+"value": 0.5,
+"status": "POLICY",
+"note": "0 = open capital account, 1 = strict: damps debt-driven risk premia",
+"context": "",
+"line": 287
+},
+{
+"section": "policy",
+"key": "pension_fx_support_bn",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "pension funds sell foreign assets to finance the current account and hold the króna up (bn ISK/yr)",
+"line": 289
+},
+{
+"section": "policy",
+"key": "corporate_tax_rate",
+"value": 0.2,
+"status": "POLICY",
+"note": "economy-wide corporate income tax",
+"context": "",
+"line": 290
+},
+{
+"section": "policy",
+"key": "frontier_programmes",
+"value": [],
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 291
+},
+{
+"section": "policy",
+"key": "infrastructure_programmes",
+"value": [],
+"status": "POLICY",
+"note": "tunnels, Keflavík rail, city light rail, ring railway",
+"context": "",
+"line": 292
+},
+{
+"section": "policy",
+"key": "commercial_ownership_cap",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "The state stops carrying sick pay for its own employees; private insurance takes the risk instead. EST: sickness absence runs about 5.5% of public hours, so this is worth roughly 39 ma.kr. a year — more than every governing-cost cut combined. It is not free: whoever falls ill without cover loses income, which the model carries through hardship into health and wellbeing. No company or affiliated group may hold more than this share of the total square metres. Set to 1.0 for no cap. The reform's setting is 10% commercial and 5% residential.",
+"line": 299
+},
+{
+"section": "policy",
+"key": "residential_ownership_cap",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 300
+},
+{
+"section": "policy",
+"key": "developer_exemption",
+"value": 1.0,
+"status": "POLICY",
+"note": "share of newly built stock exempt from the cap",
+"context": "",
+"line": 301
+},
+{
+"section": "policy",
+"key": "ownership_term_years",
+"value": 0,
+"status": "POLICY",
+"note": "",
+"context": "0 = ownership for ever. Otherwise the term in years before a property reverts to the public.",
+"line": 303
+},
+{
+"section": "policy",
+"key": "state_leave_ended",
+"value": 0.0,
+"status": "POLICY",
+"note": "1 = the state's sick pay and parental leave fund both end",
+"context": "Sick pay and parental leave once the borgaralaun is the floor (a reform option). The state's own schemes end — public sick pay and the parental leave fund — and what is paid above the borgaralaun becomes the employer's: the period the law and agreements already give, rising with seniority, then mandatory private insurance, as occupational pensions work now. Job protection is unchanged: no one may be dismissed for taking leave. The level of the top-up is left to bargaining, so the model states an assumption and gives it a lever.",
+"line": 310
+},
+{
+"section": "policy",
+"key": "leave_top_up",
+"value": null,
+"status": "POLICY",
+"note": "None = the assumption below, by whether agreements survive",
+"context": "",
+"line": 311
+},
+{
+"section": "policy",
+"key": "employer_leave_cost_share",
+"value": 0.0,
+"status": "POLICY",
+"note": "filled each year from the scheme: employers' leave cost on wages",
+"context": "",
+"line": 312
+},
+{
+"section": "policy",
+"key": "public_sick_pay_cut",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 313
+},
+{
+"section": "policy",
+"key": "sick_absence_rate",
+"value": 0.055,
+"status": "EST",
+"note": "EST: share of public hours lost to sickness",
+"context": "",
+"line": 314
+},
+{
+"section": "policy",
+"key": "private_sickness_uptake",
+"value": 0.6,
+"status": "EST",
+"note": "EST: share who insure privately once the state stops",
+"context": "",
+"line": 315
+},
+{
+"section": "policy",
+"key": "leave_top_up_agreements",
+"value": 0.8,
+"status": "POLICY",
+"note": "",
+"context": "EST: where agreements still set terms, bargaining lands near today's parental leave rule — 80% of pay under a cap. Where pay is set job by job, the model assumes it lands lower. Both are assumptions about where bargaining ends up, not findings; the lever overrides them.",
+"line": 319
+},
+{
+"section": "policy",
+"key": "leave_top_up_free_market",
+"value": 0.55,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 320
+},
+{
+"section": "policy",
+"key": "employer_leave_period_share",
+"value": 0.5,
+"status": "POLICY",
+"note": "",
+"context": "EST: the share of leave the employer pays directly before insurance takes over. Icelandic sick-pay entitlement rises with seniority (two days a month in the first year, up to several months for long service, lög nr. 19/1979 and the agreements), and most absence is short, so the employer's own period covers roughly half of what is paid out. The rest is insured.",
+"line": 325
+},
+{
+"section": "policy",
+"key": "leave_insurance_loading",
+"value": 1.15,
+"status": "EST",
+"note": "EST: an insurer's margin and costs on the part beyond the employer",
+"context": "",
+"line": 326
+},
+{
+"section": "policy",
+"key": "parental_leave_months",
+"value": 12,
+"status": "POLICY",
+"note": "today's entitlement, both parents together",
+"context": "",
+"line": 327
+},
+{
+"section": "policy",
+"key": "parental_leave_cap_month",
+"value": 800000,
+"status": "POLICY",
+"note": "the fund's ceiling, 2025 (island.is)",
+"context": "",
+"line": 328
+},
+{
+"section": "policy",
+"key": "parental_leave_fund_bn",
+"value": 28.2,
+"status": "EST",
+"note": "Fæðingarorlofssjóður via Hagstofa, 2025 (was EST 23.0)",
+"context": "What the parental leave fund paid out in 2025, part of the national accounts' social benefits. EST from the fund's recent accounts (~21-25 ma.kr.); to be replaced by Fæðingarorlofssjóður's 2025 figure.",
+"line": 331
+},
+{
+"section": "policy",
+"key": "governance_cut",
+"value": 1.0,
+"status": "POLICY",
+"note": "share of the governing-cost package applied (see static_balance)",
+"context": "",
+"line": 332
+},
+{
+"section": "policy",
+"key": "presidency_cut",
+"value": 0.8,
+"status": "POLICY",
+"note": "a smaller presidential office",
+"context": "",
+"line": 333
+},
+{
+"section": "policy",
+"key": "church_funding_cut",
+"value": 1.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 334
+},
+{
+"section": "policy",
+"key": "public_wage_offset_ubi",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "The state leads on costs: a public job pays, after tax and with the UBI, what it paid before the UBI. Pay is cut by the UBI grossed up at the employee's marginal tax rate. 0 = no cut, 1 = the full offset.",
+"line": 337
+},
+{
+"section": "policy",
+"key": "culture_support_cut",
+"value": 0.0,
+"status": "POLICY",
+"note": "share of state support for the arts withdrawn (reform: 1.0)",
+"context": "",
+"line": 338
+},
+{
+"section": "policy",
+"key": "minimum_wage",
+"value": 0,
+"status": "POLICY",
+"note": "statutory monthly floor, ISK (0 = none; agreements set the floor today)",
+"context": "--- further levers",
+"line": 340
+},
+{
+"section": "policy",
+"key": "full_time_hours_factor",
+"value": 1.0,
+"status": "POLICY",
+"note": "0.8 = a four-day week; pay follows hours",
+"context": "",
+"line": 341
+},
+{
+"section": "policy",
+"key": "ubi_taper_start",
+"value": 0,
+"status": "POLICY",
+"note": "earnings above which the UBI is withdrawn (0 = never: a true UBI)",
+"context": "",
+"line": 342
+},
+{
+"section": "policy",
+"key": "ubi_taper_rate",
+"value": 0.0,
+"status": "POLICY",
+"note": "withdrawal rate above that point (a negative income tax at 1.0)",
+"context": "",
+"line": 343
+},
+{
+"section": "policy",
+"key": "childcare_places_added",
+"value": 0,
+"status": "POLICY",
+"note": "new full-day places funded by the state",
+"context": "",
+"line": 344
+},
+{
+"section": "policy",
+"key": "retraining_bn_per_year",
+"value": 0,
+"status": "POLICY",
+"note": "spending that helps people move between professions",
+"context": "",
+"line": 345
+},
+{
+"section": "policy",
+"key": "public_dwellings_per_year",
+"value": 0,
+"status": "POLICY",
+"note": "",
+"context": "dwellings the state has built each year on top of what the market builds: the supply-side answer to rents",
+"line": 347
+},
+{
+"section": "policy",
+"key": "public_dwelling_cost_m_isk",
+"value": 55,
+"status": "EST",
+"note": "EST: build cost per dwelling, million ISK",
+"context": "",
+"line": 348
+},
+{
+"section": "policy",
+"key": "indexation_net_of_tax",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "agreements compensate prices net of the tax switch (Denmark's nettoprisindeks): the share of the VAT's effect on the CPI left out of wage indexation. 0 = headline CPI, as today.",
+"line": 351
+},
+{
+"section": "policy",
+"key": "benefit_floor_topup",
+"value": 0.0,
+"status": "POLICY",
+"note": "",
+"context": "share of the gap closed between the reform and today's net income for people on a disability or old-age pension (policy.net_income); 0 = the reform as specified, with no floor",
+"line": 354
+},
+{
+"section": "policy",
+"key": "net_wealth_tax_pct",
+"value": 0.0,
+"status": "POLICY",
+"note": "yearly tax on household net wealth above the threshold",
+"context": "",
+"line": 355
+},
+{
+"section": "policy",
+"key": "net_wealth_tax_threshold",
+"value": 100000000.0,
+"status": "POLICY",
+"note": "",
+"context": "",
+"line": 356
+},
+{
+"section": "policy",
+"key": "sovereign_fund_share",
+"value": 0.0,
+"status": "POLICY",
+"note": "share of any surplus invested rather than used to repay debt",
+"context": "",
+"line": 357
+},
+{
+"section": "policy",
+"key": "low_value_jobs_productivity_gain",
+"value": 0.0,
+"status": "POLICY",
+"note": "output per FTE gain from removing low-value jobs (e.g. .05)",
+"context": "",
+"line": 358
+},
+{
+"section": "policy",
+"key": "low_value_job_weights",
+"value": [
+1.6,
+0.7,
+1.2,
+2.0,
+0.8,
+0.3,
+0.4,
+0.5,
+0.8
+],
+"status": "EST",
+"note": "EST: where low-value jobs sit, by group",
+"context": "",
+"line": 359
+},
+{
+"section": "policy",
+"key": "low_value_jobs_ramp_years",
+"value": 3,
+"status": "POLICY",
+"note": "0 = open, 1 = strict resources/occupancy tests (scales non-worker inflow)",
+"context": "",
+"line": 360
+},
+{
+"section": "benefits",
+"key": "tr_old_age_full",
+"value": 365592,
+"status": "DATA",
+"note": "Tryggingastofnun 2026",
+"context": "Today's safety net at 2026 law, from Tryggingastofnun, Skatturinn, Vinnumálastofnun, HMS and the municipalities' published amounts (island.is, skatturinn.is, reykjavik.is; retrieved 2026-09). Until 2026-10-03 unemployment benefit and social assistance were one 250,000 payment, there was no housing benefit or household supplement, child benefit was a flat 25,000, and disability was estimated — together the status quo's poorest were too poor (child poverty 20.8% against a published 12.8%), which flattered any reform set against it.",
+"line": 370
+},
+{
+"section": "benefits",
+"key": "tr_general_exemption",
+"value": 43658,
+"status": "EST",
+"note": "Félags- og húsnæðismálaráðuneyti 2026 / 12",
+"context": "",
+"line": 371
+},
+{
+"section": "benefits",
+"key": "tr_work_exemption",
+"value": 210400,
+"status": "EST",
+"note": "Félags- og húsnæðismálaráðuneyti 2026 / 12 (was the 2025 value)",
+"context": "",
+"line": 372
+},
+{
+"section": "benefits",
+"key": "tr_clawback",
+"value": 0.45,
+"status": "EST",
+"note": "the law as in force in 2026",
+"context": "",
+"line": 373
+},
+{
+"section": "benefits",
+"key": "tr_full_residence_years",
+"value": 40,
+"status": "EST",
+"note": "residence 16-67 for a full pension; pro rata below (law 100/2007, 17. gr.)",
+"context": "",
+"line": 374
+},
+{
+"section": "benefits",
+"key": "tr_capital_return",
+"value": 0.05,
+"status": "EST",
+"note": "",
+"context": "EST: nominal return on savings counted in the income tests (deposit rates ran 5-8% in 2024-25; much is held at lower rates)",
+"line": 377
+},
+{
+"section": "benefits",
+"key": "household_supplement_old_age",
+"value": 92384,
+"status": "DATA",
+"note": "Tryggingastofnun 2026",
+"context": "household supplement for pensioners and disabled people living alone",
+"line": 379
+},
+{
+"section": "benefits",
+"key": "household_supplement_old_age_withdrawal",
+"value": 0.119,
+"status": "EST",
+"note": "the law as in force in 2026",
+"context": "",
+"line": 380
+},
+{
+"section": "benefits",
+"key": "household_supplement_disability",
+"value": 69126,
+"status": "DATA",
+"note": "Tryggingastofnun 2026",
+"context": "",
+"line": 381
+},
+{
+"section": "benefits",
+"key": "household_supplement_disability_withdrawal",
+"value": 0.45,
+"status": "DATA",
+"note": "Tryggingastofnun 2026",
+"context": "",
+"line": 382
+},
+{
+"section": "benefits",
+"key": "disability_pension",
+"value": 416950,
+"status": "DATA",
+"note": "Tryggingastofnun 2026, full",
+"context": "disability, the new system from 1 Sep 2025",
+"line": 384
+},
+{
+"section": "benefits",
+"key": "disability_partial",
+"value": 341899,
+"status": "DATA",
+"note": "Tryggingastofnun 2026, for those who also work",
+"context": "",
+"line": 385
+},
+{
+"section": "benefits",
+"key": "disability_general_disregard",
+"value": 105200,
+"status": "DATA",
+"note": "Tryggingastofnun 2026, on all income",
+"context": "",
+"line": 386
+},
+{
+"section": "benefits",
+"key": "disability_earned_disregard",
+"value": 263000,
+"status": "DATA",
+"note": "Tryggingastofnun 2026, on earnings, partial pension",
+"context": "",
+"line": 387
+},
+{
+"section": "benefits",
+"key": "fund_disability_replacement",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "pension funds' disability pensions, 39.4 ma.kr. a year (2025): a share of the person's full-time pay, half for those still working. CALIBRATED to the total on the 2025 base: .21 with v8's ~24,000 disabled under 67, .15 with v9's 29,465 of whom a fifth work (at .21 the total came out at 55 ma.kr.).",
+"line": 391
+},
+{
+"section": "benefits",
+"key": "disability_register_ratio",
+"value": 1.48,
+"status": "DATA",
+"note": "",
+"context": "TR's 2025 count, 29,465 (20,836 disability pension, 8,629 sickness or rehabilitation payments; Tryggingastofnun), over the survey's inactive disabled and ill (~19,900); the difference work part-time (population.py). Was 1.21 (~24,000), which left disability ~28 ma.kr. short (an external review of v8, 2026-10).",
+"line": 395
+},
+{
+"section": "benefits",
+"key": "disability_working_share",
+"value": 0.325,
+"status": "EST",
+"note": "",
+"context": "of recipients, working part-time: TR's 29,465 less the labour force survey's 19,900 inactive disabled and ill (2025), so both counts hold. An earlier setting of .2 is about a fifth; at .2 the model drew 3,700 more people out of work than the survey has, and the response to unearned income fell below the lottery evidence (2026-10-12; v8's 46% had the opposite fault).",
+"line": 400
+},
+{
+"section": "benefits",
+"key": "unemployment_basic",
+"value": 383870,
+"status": "EST",
+"note": "Félags- og húsnæðismálaráðuneyti 2026",
+"context": "unemployment benefit: individual, for those who lost a job and seek another",
+"line": 402
+},
+{
+"section": "benefits",
+"key": "unemployment_income_related_cap",
+"value": 605159,
+"status": "EST",
+"note": "Félags- og húsnæðismálaráðuneyti 2026",
+"context": "",
+"line": 403
+},
+{
+"section": "benefits",
+"key": "unemployment_replacement",
+"value": 0.7,
+"status": "EST",
+"note": "law 54/2006, of prior pay, the first three months",
+"context": "",
+"line": 404
+},
+{
+"section": "benefits",
+"key": "unemployment_income_related_share",
+"value": 0.35,
+"status": "EST",
+"note": "EST: share of a year's benefit months that fall in the first three",
+"context": "",
+"line": 405
+},
+{
+"section": "benefits",
+"key": "social_assistance_single",
+"value": 259951,
+"status": "EST",
+"note": "Reykjavíkurborg 2026",
+"context": "social assistance: residual and household-tested, for others of working age with no entitlement (Reykjavík)",
+"line": 407
+},
+{
+"section": "benefits",
+"key": "social_assistance_couple",
+"value": 415922,
+"status": "EST",
+"note": "Reykjavíkurborg 2026, for the couple",
+"context": "",
+"line": 408
+},
+{
+"section": "benefits",
+"key": "social_assistance_refusal_cut",
+"value": 0.5,
+"status": "EST",
+"note": "cut for turning work down (Reykjavík's rules, 4. gr.)",
+"context": "",
+"line": 409
+},
+{
+"section": "benefits",
+"key": "wage_indexation",
+"value": 0.8,
+"status": "EST",
+"note": "",
+"context": "EST: how much of real wage growth passes into benefit levels, as 69. gr. requires \"regard to wages\". 1 = benefits keep their place against wages; 0 = prices only. The law's floor is prices, so the model never indexes by less than that.",
+"line": 413
+},
+{
+"section": "benefits",
+"key": "nonwork_support",
+"value": 250000,
+"status": "EST",
+"note": "EST: unemployment / municipal support for prime-age non-workers",
+"context": "",
+"line": 414
+},
+{
+"section": "benefits",
+"key": "support_spread",
+"value": 0.12,
+"status": "EST",
+"note": "EST: spread of that support across municipalities and households",
+"context": "",
+"line": 415
+},
+{
+"section": "benefits",
+"key": "nonwork_support_partner_cutoff",
+"value": 450000,
+"status": "EST",
+"note": "EST: support withheld if partner earns more",
+"context": "",
+"line": 416
+},
+{
+"section": "benefits",
+"key": "nonwork_asset_limit_months",
+"value": 0.0,
+"status": "EST",
+"note": "",
+"context": "Someone out of work by choice gets the municipalities' assistance only once their savings are drawn down (Reykjavík's rules on fjárhagsaðstoð: assets are to be used first), and those who lost a job and seek another are not tested. The test is written but switched off (0): tried at three months' support (2026-09-26), it pushed the response to a payment out of the evidence (MPE 0.26-0.38 against 0.04-0.20). The choice model gives a person with no income the subsistence floor and no drawing on savings, so a tested-out saver's option of not working was worth almost nothing and the calibration made leisure dearer to compensate. It needs savings drawn down in the choice first.",
+"line": 424
+},
+{
+"section": "benefits",
+"key": "child_benefit_couple_year",
+"value": 345000,
+"status": "EST",
+"note": "",
+"context": "child benefit (barnabætur), income-tested on the household's taxable income (the law as in force in 2026)",
+"line": 426
+},
+{
+"section": "benefits",
+"key": "child_benefit_single_year",
+"value": 514500,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 427
+},
+{
+"section": "benefits",
+"key": "child_benefit_under7_year",
+"value": 130000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 428
+},
+{
+"section": "benefits",
+"key": "child_benefit_threshold_couple_year",
+"value": 11688000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 429
+},
+{
+"section": "benefits",
+"key": "child_benefit_threshold_single_year",
+"value": 5844000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 430
+},
+{
+"section": "benefits",
+"key": "child_benefit_withdrawal",
+"value": 0.04,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 431
+},
+{
+"section": "benefits",
+"key": "housing_benefit_base_year",
+"value": [
+609504,
+810641,
+944732,
+1023967,
+1109298,
+1194628
+],
+"status": "EST",
+"note": "",
+"context": "housing benefit (húsnæðisbætur) for renters: base amount by household size less 9% of the household's income above its limit, at most 75% of rent (the law as in force in 2026); 11.2 ma.kr. to ~23,000 households in 2025",
+"line": 434
+},
+{
+"section": "benefits",
+"key": "housing_benefit_limit_year",
+"value": [
+6365773,
+8466478,
+9866948,
+10694499,
+11585707,
+12476915
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 435
+},
+{
+"section": "benefits",
+"key": "housing_benefit_reduction",
+"value": 0.09,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 436
+},
+{
+"section": "benefits",
+"key": "housing_benefit_asset_limit",
+"value": 13900000,
+"status": "EST",
+"note": "Húsnæðis- og mannvirkjastofnun / ráðuneyti 2026",
+"context": "",
+"line": 437
+},
+{
+"section": "benefits",
+"key": "housing_benefit_claim_share",
+"value": 0.33,
+"status": "DATA",
+"note": "",
+"context": "CALIBRATED: the share of the model's renters who claim, to ~23,000 households and 11.2 ma.kr. (HMS 2025); see policy.housing_benefit",
+"line": 440
+},
+{
+"section": "benefits",
+"key": "occupational_pension_replacement",
+"value": 0.4245,
+"status": "DATA",
+"note": "",
+"context": "the resulting 67+ mean is checked in scripts/quality_check.py. Of base monthly earnings, full career; to ~357k per RESIDENT 67+ in 2025 (Skatturinn's income-by-age file: 214.1 ma.kr. for 2024 over ~52,700 residents, not the register's 60,403, less ~6 ma.kr. paid abroad, +8.5% per person to 2025). v8 used ~307k (.365), from the register count, about 14% low.",
+"line": 445
+},
+{
+"section": "benefits",
+"key": "occupational_pension_sd",
+"value": 0.9,
+"status": "EST",
+"note": "",
+"context": "v9: the spread of fund pensions around that mean, fitted to the state's top-up of max(0, pension - payment) at five payment levels in an external register-based estimate (155.7 / 132.5 / 113.1 / 96.6 / ~73 ma.kr. at 200-450 þús.): 0.9 gives 106 at 300 and 76 at 450. v8's .35 gave 71 at 300.",
+"line": 449
+},
+{
+"section": "benefits",
+"key": "capital_income_total_bn",
+"value": 355.3,
+"status": "EST",
+"note": "",
+"context": "v9: capital income as the tax returns have it (Skatturinn 2024 by age and income decile, uprated: 355 ma.kr. in 2025): 182k a month on average for those 67+, the top tenth of them holding 81%. Assigned by wealth rank within age group, lognormal shares (sigma 2.16 gives the 81%); EST that the same concentration holds under 67. Capital income tax 22% (lög 90/2003) above the yearly allowance on interest.",
+"line": 454
+},
+{
+"section": "benefits",
+"key": "capital_income_67_month",
+"value": 182000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 455
+},
+{
+"section": "benefits",
+"key": "capital_income_sigma",
+"value": 2.16,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 456
+},
+{
+"section": "benefits",
+"key": "capital_income_tax",
+"value": 0.22,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 457
+},
+{
+"section": "benefits",
+"key": "capital_income_allowance_year",
+"value": 300000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 458
+},
+{
+"section": "benefits",
+"key": "living_alone_share_single_67",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "v9: living arrangements (Hagstofa: 60% of those 67+ live with a spouse or partner, 1 Jan 2026; the 2021 census: about 22% of them live alone, the rest of the single ones with family or others). Those who live with others pool income with that household for poverty and costs, and get no household supplement, which is paid only to people living alone (law 99/2007, 8. gr.). EST for under 67.",
+"line": 463
+},
+{
+"section": "benefits.young_at_home_share",
+"key": "18",
+"value": 0.9,
+"status": "EST",
+"note": "",
+"context": "v9: young single adults living with their parents, by age (EST from Eurostat's young-people-at-home series for Iceland, where young people leave home at about 25-26). v8 made everyone from 20 a household of their own: 48-65% of those 18-24 counted as poor, and status-quo poverty over persons came out at 11.6% against 9.0%.",
+"line": 467
+},
+{
+"section": "benefits.young_at_home_share",
+"key": "20",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "v9: young single adults living with their parents, by age (EST from Eurostat's young-people-at-home series for Iceland, where young people leave home at about 25-26). v8 made everyone from 20 a household of their own: 48-65% of those 18-24 counted as poor, and status-quo poverty over persons came out at 11.6% against 9.0%.",
+"line": 467
+},
+{
+"section": "benefits.young_at_home_share",
+"key": "25",
+"value": 0.2,
+"status": "EST",
+"note": "",
+"context": "v9: young single adults living with their parents, by age (EST from Eurostat's young-people-at-home series for Iceland, where young people leave home at about 25-26). v8 made everyone from 20 a household of their own: 48-65% of those 18-24 counted as poor, and status-quo poverty over persons came out at 11.6% against 9.0%.",
+"line": 467
+},
+{
+"section": "benefits.young_at_home_share",
+"key": "30",
+"value": 0.0,
+"status": "EST",
+"note": "",
+"context": "v9: young single adults living with their parents, by age (EST from Eurostat's young-people-at-home series for Iceland, where young people leave home at about 25-26). v8 made everyone from 20 a household of their own: 48-65% of those 18-24 counted as poor, and status-quo poverty over persons came out at 11.6% against 9.0%.",
+"line": 467
+},
+{
+"section": "benefits",
+"key": "living_alone_share_single_under67",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 468
+},
+{
+"section": "benefits",
+"key": "child_pension",
+"value": 50634,
+"status": "DATA",
+"note": "",
+"context": "child pension (barnalífeyrir): per child under 18 of an old-age, disability or rehabilitation pensioner, or of a deceased parent; untaxed (Tryggingastofnun, 2026). TR paid about 11 ma.kr.",
+"line": 471
+},
+{
+"section": "benefits",
+"key": "mortgage_interest_rate",
+"value": 0.0568,
+"status": "EST",
+"note": "",
+"context": "vaxtabætur, assessment year 2025 (Skatturinn, vaxtabætur amounts), yearly amounts; paid 1.1-1.6 ma.kr. Mortgage interest 5.68% (Seðlabanki, average on household mortgages). The asset limits are EST from law 90/2003.",
+"line": 474
+},
+{
+"section": "benefits",
+"key": "interest_rebate_debt_share",
+"value": 0.07,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 475
+},
+{
+"section": "benefits",
+"key": "interest_rebate_income_rate",
+"value": 0.085,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 476
+},
+{
+"section": "benefits",
+"key": "interest_rebate_max_interest_single",
+"value": 840000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 477
+},
+{
+"section": "benefits",
+"key": "interest_rebate_max_interest_couple",
+"value": 1260000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 477
+},
+{
+"section": "benefits",
+"key": "interest_rebate_max_single",
+"value": 420000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 478
+},
+{
+"section": "benefits",
+"key": "interest_rebate_max_couple",
+"value": 630000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 478
+},
+{
+"section": "benefits",
+"key": "interest_rebate_asset_limit_single",
+"value": 7500000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 479
+},
+{
+"section": "benefits",
+"key": "interest_rebate_asset_limit_couple",
+"value": 12000000,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 479
+},
+{
+"section": "costs",
+"key": "basic_single",
+"value": 170000,
+"status": "EST",
+"note": "EST: reference budget excl. housing, one adult",
+"context": "",
+"line": 484
+},
+{
+"section": "costs",
+"key": "housing_renter_capital",
+"value": 260000,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 485
+},
+{
+"section": "costs",
+"key": "housing_renter_other",
+"value": 190000,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 486
+},
+{
+"section": "costs",
+"key": "housing_owner_mortgage",
+"value": 170000,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 487
+},
+{
+"section": "costs",
+"key": "housing_owner_outright",
+"value": 70000,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 488
+},
+{
+"section": "costs",
+"key": "living_with_parents",
+"value": 60000,
+"status": "EST",
+"note": "EST: 16-19 year olds",
+"context": "",
+"line": 489
+},
+{
+"section": "costs",
+"key": "parental_support",
+"value": 120000,
+"status": "EST",
+"note": "EST: in-kind support to 16-19 year olds living at home",
+"context": "",
+"line": 490
+},
+{
+"section": "costs",
+"key": "subsistence_share",
+"value": 0.7,
+"status": "EST",
+"note": "s: share of c_min that is truly essential",
+"context": "",
+"line": 491
+},
+{
+"section": "costs",
+"key": "capital_share",
+"value": 0.64,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 492
+},
+{
+"section": "behaviour",
+"key": "target_extensive_elasticity",
+"value": 0.25,
+"status": "EST",
+"note": "calibrates alpha (literature range .1-.5)",
+"context": "",
+"line": 497
+},
+{
+"section": "behaviour",
+"key": "reoptimise_rate",
+"value": 0.35,
+"status": "EST",
+"note": "share of agents re-choosing each year",
+"context": "",
+"line": 498
+},
+{
+"section": "behaviour",
+"key": "reoptimise_rate_first_year",
+"value": 0.5,
+"status": "EST",
+"note": "a large reform prompts more people to reconsider",
+"context": "",
+"line": 499
+},
+{
+"section": "behaviour",
+"key": "part_time_hours",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 500
+},
+{
+"section": "behaviour",
+"key": "gamma_meaning",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 501
+},
+{
+"section": "behaviour",
+"key": "gamma_disamenity",
+"value": 0.8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 502
+},
+{
+"section": "behaviour",
+"key": "leisure_mean",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 503
+},
+{
+"section": "behaviour",
+"key": "leisure_sd",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 503
+},
+{
+"section": "behaviour",
+"key": "meaning_sd",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 504
+},
+{
+"section": "behaviour",
+"key": "work_ethic",
+"value": 0.0,
+"status": "EST",
+"note": "added to utility of any work (tweak)",
+"context": "",
+"line": 505
+},
+{
+"section": "behaviour",
+"key": "independent_hours",
+"value": 0.6,
+"status": "EST",
+"note": "EST: hours put into self-directed work",
+"context": "",
+"line": 506
+},
+{
+"section": "behaviour",
+"key": "gamma_creative",
+"value": 0.9,
+"status": "EST",
+"note": "EST: how much the pull towards self-directed work counts",
+"context": "",
+"line": 507
+},
+{
+"section": "behaviour",
+"key": "independent_leisure_cost",
+"value": 0.5,
+"status": "EST",
+"note": "EST: self-directed hours cost only part of what paid hours cost",
+"context": "",
+"line": 508
+},
+{
+"section": "behaviour",
+"key": "study_full_time_cost",
+"value": 1.4,
+"status": "EST",
+"note": "EST: how much harder a course makes holding a full-time job",
+"context": "Selling the work is a lottery. EST: it sells in about half of years; in the others it brings in almost nothing. Expected earnings are unchanged — what changes is the risk, which is what a floor under income actually removes.",
+"line": 512
+},
+{
+"section": "behaviour",
+"key": "independent_sale_probability",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 513
+},
+{
+"section": "behaviour",
+"key": "independent_floor_share",
+"value": 0.1,
+"status": "EST",
+"note": "EST: what the work still earns in a year it does not sell",
+"context": "",
+"line": 514
+},
+{
+"section": "behaviour",
+"key": "baseline_independent_share",
+"value": 0.015,
+"status": "EST",
+"note": "EST: share of 16-74s doing this today (unpaid or barely paid)",
+"context": "",
+"line": 515
+},
+{
+"section": "behaviour",
+"key": "entrepreneurial_spirit",
+"value": 1.0,
+"status": "EST",
+"note": "multiplies the rate of venture ideas per capita (tweak)",
+"context": "",
+"line": 516
+},
+{
+"section": "behaviour",
+"key": "mobility_scale",
+"value": 1.0,
+"status": "EST",
+"note": "multiplies emigration income response (tweak)",
+"context": "",
+"line": 517
+},
+{
+"section": "characters.Founder",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 522
+},
+{
+"section": "characters.Founder",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 522
+},
+{
+"section": "characters.Founder",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 522
+},
+{
+"section": "characters.Founder",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 522
+},
+{
+"section": "characters.Vocation",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 523
+},
+{
+"section": "characters.Vocation",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 523
+},
+{
+"section": "characters.Vocation",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 523
+},
+{
+"section": "characters.Vocation",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 523
+},
+{
+"section": "characters.Breadwinner",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 524
+},
+{
+"section": "characters.Breadwinner",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 524
+},
+{
+"section": "characters.Breadwinner",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 524
+},
+{
+"section": "characters.Breadwinner",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 524
+},
+{
+"section": "characters.Mobile professional",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 525
+},
+{
+"section": "characters.Mobile professional",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 525
+},
+{
+"section": "characters.Mobile professional",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 525
+},
+{
+"section": "characters.Mobile professional",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 525
+},
+{
+"section": "characters.Guest worker",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 526
+},
+{
+"section": "characters.Guest worker",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 526
+},
+{
+"section": "characters.Guest worker",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 526
+},
+{
+"section": "characters.Guest worker",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 526
+},
+{
+"section": "characters.Carer",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 527
+},
+{
+"section": "characters.Carer",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 527
+},
+{
+"section": "characters.Carer",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 527
+},
+{
+"section": "characters.Carer",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 527
+},
+{
+"section": "characters.Constrained",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 528
+},
+{
+"section": "characters.Constrained",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 528
+},
+{
+"section": "characters.Constrained",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 528
+},
+{
+"section": "characters.Constrained",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 528
+},
+{
+"section": "characters.Student",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 529
+},
+{
+"section": "characters.Student",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 529
+},
+{
+"section": "characters.Student",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 529
+},
+{
+"section": "characters.Student",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 529
+},
+{
+"section": "characters.Retiree",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 530
+},
+{
+"section": "characters.Retiree",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 530
+},
+{
+"section": "characters.Retiree",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 530
+},
+{
+"section": "characters.Retiree",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 530
+},
+{
+"section": "characters.Balanced",
+"key": "enterprise",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 531
+},
+{
+"section": "characters.Balanced",
+"key": "leisure",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 531
+},
+{
+"section": "characters.Balanced",
+"key": "mobility",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 531
+},
+{
+"section": "characters.Balanced",
+"key": "meaning",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 531
+},
+{
+"section": "education",
+"key": "enrolment_base",
+"value": 0.072,
+"status": "DATA",
+"note": "yearly chance a young non-graduate starts, at subsistence income",
+"context": "Set so the stock of students matches Hagstofa SKO00000: 19,528 in tertiary education in 2025.",
+"line": 540
+},
+{
+"section": "education",
+"key": "students_2025",
+"value": 19528,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 541
+},
+{
+"section": "education",
+"key": "affordability_elasticity",
+"value": 1.2,
+"status": "EST",
+"note": "EST: how strongly a livable income raises that chance",
+"context": "",
+"line": 542
+},
+{
+"section": "education",
+"key": "years",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 543
+},
+{
+"section": "education",
+"key": "progress_part_time",
+"value": 0.75,
+"status": "EST",
+"note": "",
+"context": "how much of a year of the course gets done while also holding a job down (EST)",
+"line": 545
+},
+{
+"section": "education",
+"key": "progress_full_time",
+"value": 0.4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 546
+},
+{
+"section": "education",
+"key": "max_years",
+"value": 8,
+"status": "EST",
+"note": "after this long without finishing, people give up",
+"context": "",
+"line": 547
+},
+{
+"section": "education",
+"key": "progress_with_infant",
+"value": 0.7,
+"status": "EST",
+"note": "EST",
+"context": "a baby slows a course (Bach et al. 2025: student mothers drop out more often); this is the share of the normal pace kept in the two years after a birth",
+"line": 550
+},
+{
+"section": "education",
+"key": "wage_premium",
+"value": 1.12,
+"status": "EST",
+"note": "EST: earnings gain on finishing, consistent with the wage distribution",
+"context": "",
+"line": 551
+},
+{
+"section": "education",
+"key": "return_elasticity",
+"value": 0.8,
+"status": "EST",
+"note": "EST",
+"context": "v6: studying answers what a degree is worth. The expected pay of work that asks for a degree against work that does not — pay times the chance of a post, from the shortages and queues — against the base year. Enrolment elasticities to the college premium run 0.3-1.5 in the literature (Card and Lemieux 2001; Kane 1994; Dynarski 2003 for cost); EST at the lower middle. Without it nobody studied for the jobs AI leaves, and by 2045 low-skill work queued at 12-18% unemployment beside 10-27% shortages of doctors, nurses, teachers and managers (found 2026-10-01).",
+"line": 558
+},
+{
+"section": "education",
+"key": "graduate_switch_share",
+"value": 0.6,
+"status": "EST",
+"note": "EST",
+"context": "most who finish take work that asks for what they studied; the rest stay where they were, paid more",
+"line": 560
+},
+{
+"section": "education",
+"key": "cost_per_student_bn",
+"value": 0.0022,
+"status": "EST",
+"note": "EST: ~2.2 m ISK a year per student place",
+"context": "",
+"line": 561
+},
+{
+"section": "education",
+"key": "max_age",
+"value": 34,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 562
+},
+{
+"section": "health",
+"key": "public_spending_bn",
+"value": 405.8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 573
+},
+{
+"section": "health",
+"key": "hospital_share",
+"value": 0.643,
+"status": "EST",
+"note": "261.0 of 405.8",
+"context": "",
+"line": 574
+},
+{
+"section": "health",
+"key": "disability_penalty",
+"value": 0.55,
+"status": "EST",
+"note": "EST: a disability's place in health, in the drawing and the dynamics alike",
+"context": "",
+"line": 575
+},
+{
+"section": "health",
+"key": "hardship_penalty",
+"value": 0.18,
+"status": "EST",
+"note": "EST: what living below subsistence does to health",
+"context": "",
+"line": 576
+},
+{
+"section": "health",
+"key": "unemployment_penalty",
+"value": 0.1,
+"status": "EST",
+"note": "EST: involuntary idleness, over and above the income",
+"context": "",
+"line": 577
+},
+{
+"section": "health",
+"key": "recovery_rate",
+"value": 0.25,
+"status": "EST",
+"note": "EST: how fast health returns once the cause is removed",
+"context": "",
+"line": 578
+},
+{
+"section": "health",
+"key": "age_gradient",
+"value": 0.009,
+"status": "EST",
+"note": "EST: yearly decline with age past 40",
+"context": "",
+"line": 579
+},
+{
+"section": "health",
+"key": "cost_elasticity",
+"value": 1.6,
+"status": "EST",
+"note": "EST: how sharply poor health raises what care costs",
+"context": "",
+"line": 580
+},
+{
+"section": "health",
+"key": "disability_onset",
+"value": 0.004,
+"status": "EST",
+"note": "EST: yearly chance of leaving work through ill health, at mean health",
+"context": "",
+"line": 581
+},
+{
+"section": "property_ownership",
+"key": "residential_markup",
+"value": 0.06,
+"status": "EST",
+"note": "EST: rent above competitive, from concentrated ownership",
+"context": "",
+"line": 594
+},
+{
+"section": "property_ownership",
+"key": "commercial_markup",
+"value": 0.09,
+"status": "EST",
+"note": "EST: the same for commercial space, where concentration is higher",
+"context": "",
+"line": 595
+},
+{
+"section": "property_ownership",
+"key": "residential_top_share",
+"value": 0.14,
+"status": "EST",
+"note": "EST: share of the rental stock the largest group holds today",
+"context": "",
+"line": 596
+},
+{
+"section": "property_ownership",
+"key": "commercial_top_share",
+"value": 0.22,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 597
+},
+{
+"section": "property_ownership",
+"key": "divestment_years",
+"value": 4,
+"status": "EST",
+"note": "how long a forced sale takes to work through",
+"context": "",
+"line": 598
+},
+{
+"section": "property_ownership",
+"key": "commercial_rent_share_of_costs",
+"value": 0.12,
+"status": "EST",
+"note": "EST: rent as a share of a small firm's costs",
+"context": "",
+"line": 599
+},
+{
+"section": "property_ownership",
+"key": "developer_build_incentive",
+"value": 0.18,
+"status": "EST",
+"note": "EST: how much more gets built when builders may keep what they build",
+"context": "New construction exempt from the caps. The cap then bites on buying existing stock but not on adding new, which is the point: it aims the rule at accumulation rather than at construction.",
+"line": 602
+},
+{
+"section": "property_ownership",
+"key": "exempt_stock_dilution",
+"value": 0.55,
+"status": "EST",
+"note": "EST: how far exempt new stock lets concentration rebuild",
+"context": "",
+"line": 603
+},
+{
+"section": "property_ownership",
+"key": "term_discount_rate",
+"value": 0.035,
+"status": "EST",
+"note": "",
+"context": "Ownership for a term rather than for ever, reverting to the public afterwards — freehold turned into long leasehold. The arithmetic of this is not in dispute: at a 3.5% real rate a finite claim is worth 64% of a perpetual one at 30 years, 82% at 50, 92% at 75 and 97% at 100. Property values fall by the remainder, immediately, because the market prices the term the day the rule passes.  What is in dispute is the rest. Leasehold systems show real under-maintenance as terms run down, which extensions for upgrades are meant to answer, and the reversion revenue arrives decades out — beyond any horizon this model runs. Both are represented; neither is well pinned.",
+"line": 612
+},
+{
+"section": "property_ownership",
+"key": "maintenance_decay",
+"value": 0.35,
+"status": "EST",
+"note": "EST: how much upkeep falls as a term runs down, before upgrades",
+"context": "",
+"line": 613
+},
+{
+"section": "property_ownership",
+"key": "upgrade_extension_offset",
+"value": 0.6,
+"status": "EST",
+"note": "EST: how much of that extensions for improvements win back",
+"context": "",
+"line": 614
+},
+{
+"section": "property_ownership",
+"key": "developer_term_years",
+"value": 10,
+"status": "EST",
+"note": "a builder keeps an exempt project this long, then must sell",
+"context": "",
+"line": 615
+},
+{
+"section": "property_ownership",
+"key": "forced_sale_build_incentive",
+"value": 0.1,
+"status": "EST",
+"note": "EST: the extra building that revolving door produces",
+"context": "",
+"line": 616
+},
+{
+"section": "property_ownership",
+"key": "variety_venture_boost",
+"value": 0.1,
+"status": "EST",
+"note": "EST: more small firms started, over and above cheaper rent",
+"context": "Variety. The point of capping commercial ownership is not only lower rents: it is small owners able to afford the high street, so that towns are not only tourist shops and international chains. Many owners mean more kinds of shop, and that is worth something in itself. Evidence: independent firms keep more of what they take in circulating locally (Civic Economics' studies of US towns find roughly two to three times the local recirculation of chains), and consumers value variety as they value lower prices (Broda and Weinstein put the gain from new import varieties at 2.6% of US income over 1972-2001). Here, at the full effect of a cap that fully breaks today's concentration:",
+"line": 624
+},
+{
+"section": "property_ownership",
+"key": "variety_wellbeing",
+"value": 0.03,
+"status": "EST",
+"note": "EST: life-satisfaction points, for everyone, from livelier towns",
+"context": "",
+"line": 625
+},
+{
+"section": "property_ownership",
+"key": "variety_consumption_gain",
+"value": 0.004,
+"status": "EST",
+"note": "EST: what the variety is worth, as a share of real consumption",
+"context": "",
+"line": 626
+},
+{
+"section": "property_ownership",
+"key": "custodian_upkeep_gain",
+"value": 0.15,
+"status": "EST",
+"note": "EST: how much slower the stock wears out when upkeep is a condition",
+"context": "Custodianship: holding property for as long as it is looked after and earns, and losing it to the market when it is neglected. No country runs this for all property; the pieces exist — use-it-or-lose-it rules on land and mining claims, compulsory sale of derelict buildings, the self-assessed \"common ownership\" tax (Posner and Weyl) — and every magnitude below is EST.",
+"line": 631
+},
+{
+"section": "property_ownership",
+"key": "custodian_idle_share",
+"value": 0.02,
+"status": "EST",
+"note": "EST: dwellings left empty or derelict that return to use",
+"context": "",
+"line": 632
+},
+{
+"section": "property_ownership",
+"key": "custodian_idle_years",
+"value": 5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 633
+},
+{
+"section": "property_ownership",
+"key": "custodian_productivity",
+"value": 0.015,
+"status": "EST",
+"note": "EST: output gained as neglected firms and assets change hands",
+"context": "",
+"line": 634
+},
+{
+"section": "property_ownership",
+"key": "custodian_ramp_years",
+"value": 8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 635
+},
+{
+"section": "property_ownership",
+"key": "custodian_value_discount",
+"value": 0.03,
+"status": "EST",
+"note": "EST: what the risk of losing a neglected asset takes off prices",
+"context": "",
+"line": 636
+},
+{
+"section": "property_ownership",
+"key": "custodian_admin_bn",
+"value": 2.0,
+"status": "EST",
+"note": "EST: the assessments and auctions, a year",
+"context": "",
+"line": 637
+},
+{
+"section": "inheritance",
+"key": "advance_ratio",
+"value": 1.625,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 644
+},
+{
+"section": "inheritance",
+"key": "avoidance_gifts",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "EST: taxable estates against the net-of-tax rate, about .1-.2 in all (Kopczuk-Slemrod), split by route: gifts while alive (closed when gifts are taxed alike), moving wealth abroad (closed by an exit tax at the inheritance rate), and the rest — trusts, valuation, spending it first — which enforcement narrows.",
+"line": 648
+},
+{
+"section": "inheritance",
+"key": "avoidance_abroad",
+"value": 0.08,
+"status": "EST",
+"note": "",
+"context": "EST: taxable estates against the net-of-tax rate, about .1-.2 in all (Kopczuk-Slemrod), split by route: gifts while alive (closed when gifts are taxed alike), moving wealth abroad (closed by an exit tax at the inheritance rate), and the rest — trusts, valuation, spending it first — which enforcement narrows.",
+"line": 648
+},
+{
+"section": "inheritance",
+"key": "avoidance_other",
+"value": 0.06,
+"status": "EST",
+"note": "",
+"context": "EST: taxable estates against the net-of-tax rate, about .1-.2 in all (Kopczuk-Slemrod), split by route: gifts while alive (closed when gifts are taxed alike), moving wealth abroad (closed by an exit tax at the inheritance rate), and the rest — trusts, valuation, spending it first — which enforcement narrows.",
+"line": 648
+},
+{
+"section": "inheritance",
+"key": "unrealised_gain_share",
+"value": 0.4,
+"status": "EST",
+"note": "EST: share of emigrants' financial wealth that is untaxed gain",
+"context": "",
+"line": 649
+},
+{
+"section": "inheritance",
+"key": "heirs",
+"value": 2,
+"status": "EST",
+"note": "an estate without a spouse passes to this many adults",
+"context": "",
+"line": 650
+},
+{
+"section": "inheritance",
+"key": "rate_today",
+"value": 0.1,
+"status": "EST",
+"note": "the status quo, whatever the reform sets",
+"context": "",
+"line": 651
+},
+{
+"section": "inheritance",
+"key": "floor_today",
+"value": 6500000.0,
+"status": "EST",
+"note": "the status quo, whatever the reform sets",
+"context": "",
+"line": 651
+},
+{
+"section": "inheritance",
+"key": "valuation_share",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "What the tax is levied on, as a share of what the model counts: estates are valued at assessed values, net of debts and funeral costs, and much passes to a surviving spouse in an undivided estate first. EST, set so the status quo raises about the 14.7 ma.kr. collected in 2024.",
+"line": 655
+},
+{
+"section": "enforcement",
+"key": "evasion_bn",
+"value": 200.0,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 663
+},
+{
+"section": "enforcement",
+"key": "recoverable_share",
+"value": 0.25,
+"status": "EST",
+"note": "EST: what enforcement can reach at all",
+"context": "",
+"line": 664
+},
+{
+"section": "enforcement",
+"key": "yield_per_fte_m",
+"value": 100.0,
+"status": "EST",
+"note": "EST: m kr. a year for the first investigators, falling as more are added",
+"context": "",
+"line": 665
+},
+{
+"section": "enforcement",
+"key": "cost_per_fte_m",
+"value": 14.0,
+"status": "EST",
+"note": "EST: pay and overheads",
+"context": "",
+"line": 666
+},
+{
+"section": "enforcement",
+"key": "ramp_years",
+"value": 2,
+"status": "EST",
+"note": "training",
+"context": "",
+"line": 667
+},
+{
+"section": "enforcement",
+"key": "avoidance_cut_at_300",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 668
+},
+{
+"section": "enforcement",
+"key": "benefit_admin_saved_bn",
+"value": 4.0,
+"status": "EST",
+"note": "",
+"context": "A UBI replaces the benefits, and with them most of the work of assessing and policing them at Tryggingastofnun, Vinnumálastofnun and the municipalities. EST, saved whether or not the staff move.",
+"line": 671
+},
+{
+"section": "gambling",
+"key": "at_risk_share",
+"value": 0.02,
+"status": "EST",
+"note": "EST: adults at risk of problem gambling",
+"context": "",
+"line": 680
+},
+{
+"section": "gambling",
+"key": "foreign_losses_bn",
+"value": 20.0,
+"status": "EST",
+"note": "EST: lost to foreign sites a year, today",
+"context": "",
+"line": 681
+},
+{
+"section": "gambling",
+"key": "ubi_extra_loss",
+"value": 0.08,
+"status": "EST",
+"note": "EST: share of the payment an at-risk gambler loses on top",
+"context": "",
+"line": 682
+},
+{
+"section": "gambling",
+"key": "pledge_leverage",
+"value": 1.5,
+"status": "EST",
+"note": "EST: losses multiply by 1 + this where the payment can back a loan",
+"context": "",
+"line": 683
+},
+{
+"section": "gambling",
+"key": "block_effect",
+"value": 0.6,
+"status": "EST",
+"note": "EST: share of foreign gambling a payment block stops (Norway: partial)",
+"context": "",
+"line": 684
+},
+{
+"section": "gambling",
+"key": "displacement",
+"value": 0.5,
+"status": "EST",
+"note": "EST: share of what is stopped that moves to licensed Icelandic games",
+"context": "",
+"line": 685
+},
+{
+"section": "links",
+"key": "tourism_vat_today",
+"value": 0.11,
+"status": "EST",
+"note": "",
+"context": "Tourists pay VAT on hotels, restaurants and tours, mostly at 11% today. A flat rate raises what a stay costs them, and what they buy falls with it; the treasury gains the higher VAT on what remains.",
+"line": 692
+},
+{
+"section": "links",
+"key": "tourism_vatable_share",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "Tourists pay VAT on hotels, restaurants and tours, mostly at 11% today. A flat rate raises what a stay costs them, and what they buy falls with it; the treasury gains the higher VAT on what remains.",
+"line": 692
+},
+{
+"section": "links",
+"key": "tourism_price_elasticity",
+"value": 0.8,
+"status": "EST",
+"note": "",
+"context": "Tourists pay VAT on hotels, restaurants and tours, mostly at 11% today. A flat rate raises what a stay costs them, and what they buy falls with it; the treasury gains the higher VAT on what remains.",
+"line": 692
+},
+{
+"section": "links",
+"key": "vat_input_price_per_100bn",
+"value": 0.0078,
+"status": "EST",
+"note": "rise in residents' prices per 100 ma.kr. (EST from the supply-use tables; was .02)",
+"context": "Input VAT that businesses can no longer reclaim is a cost to them, and part of it reaches their prices.",
+"line": 694
+},
+{
+"section": "links",
+"key": "farm_jobs_lost_without_customs",
+"value": 0.1,
+"status": "EST",
+"note": "share of farm work",
+"context": "Most customs duties protect food: without them, imports compete with Icelandic farms.",
+"line": 696
+},
+{
+"section": "links",
+"key": "energy_transport_cpi_at_full_cut",
+"value": 0.008,
+"status": "EST",
+"note": "",
+"context": "Energy and transport subsidies keep heating and fares down: about 0.9% of household spending.",
+"line": 698
+},
+{
+"section": "links",
+"key": "innovation_productivity_at_full_cut",
+"value": 0.003,
+"status": "EST",
+"note": "",
+"context": "Innovation support: the R&D credit and grants buy some research and some new firms.",
+"line": 700
+},
+{
+"section": "links",
+"key": "innovation_ideas_at_full_cut",
+"value": 0.05,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 701
+},
+{
+"section": "links",
+"key": "custodian_upkeep_fte",
+"value": 1500,
+"status": "EST",
+"note": "",
+"context": "Upkeep as the condition of holding property is work for the trades.",
+"line": 703
+},
+{
+"section": "links",
+"key": "pension_accrual_value",
+"value": 0.4,
+"status": "EST",
+"note": "",
+"context": "Today part of what a job pays is a pension (15.5% contributions). Folding the funds into the UBI turns that into a tax. People value a future pension at less than its cost.",
+"line": 706
+},
+{
+"section": "links",
+"key": "wealth_tax_elasticity",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "Wealth moves, is hidden and is revalued when it is taxed every year (Jakobsen et al., Denmark; Seim, Sweden). Taxable wealth against the net-of-tax return; an exit tax and enforcement narrow it.",
+"line": 709
+},
+{
+"section": "links",
+"key": "wealth_return",
+"value": 0.03,
+"status": "EST",
+"note": "",
+"context": "Wealth moves, is hidden and is revalued when it is taxed every year (Jakobsen et al., Denmark; Seim, Sweden). Taxable wealth against the net-of-tax return; an exit tax and enforcement narrow it.",
+"line": 709
+},
+{
+"section": "links",
+"key": "avoidance_scale",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "One multiplier on every avoidance response (inheritance routes, the wealth tax): a sensitivity, 1 = central.",
+"line": 711
+},
+{
+"section": "links",
+"key": "capital_controls_productivity_cost",
+"value": 0.005,
+"status": "EST",
+"note": "",
+"context": "Capital controls damp the risk premium on a large debt, and cost something: Iceland's 2008-2017 controls held back foreign investment and trade in capital. EST: output lost at full strength.",
+"line": 714
+},
+{
+"section": "energy_split",
+"key": "heating_bn",
+"value": 4.5,
+"status": "EST",
+"note": "",
+"context": "Niðurgreiðsla húshitunar: homes without geothermal heat — about 9% of the population, the Westfjords, the East, the islands and parts of the North — heat with electricity or oil and are paid part of the difference. Cutting it is a heating bill for those homes, not a price rise for everyone. EST: a quarter of households outside the capital area.",
+"line": 722
+},
+{
+"section": "energy_split",
+"key": "cold_area_share_outside_capital",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "Niðurgreiðsla húshitunar: homes without geothermal heat — about 9% of the population, the Westfjords, the East, the islands and parts of the North — heat with electricity or oil and are paid part of the difference. Cutting it is a heating bill for those homes, not a price rise for everyone. EST: a quarter of households outside the capital area.",
+"line": 722
+},
+{
+"section": "energy_split",
+"key": "heating_cpi_at_full_cut",
+"value": 0.001,
+"status": "EST",
+"note": "",
+"context": "Niðurgreiðsla húshitunar: homes without geothermal heat — about 9% of the population, the Westfjords, the East, the islands and parts of the North — heat with electricity or oil and are paid part of the difference. Cutting it is a heating bill for those homes, not a price rise for everyone. EST: a quarter of households outside the capital area.",
+"line": 722
+},
+{
+"section": "energy_split",
+"key": "transition_bn",
+"value": 7.2,
+"status": "EST",
+"note": "",
+"context": "EV and transition grants (Orkusjóður, the EV purchase grant). Cutting them slows the switch from petrol: road transport emits about 0.95 Mt CO2e a year (EST, UST inventory), and without the grants EST 0.12 Mt more by the tenth year. Each Mt of road CO2 is about 430 m litres of fuel, EST 35 ma.kr. of imports.",
+"line": 726
+},
+{
+"section": "energy_split",
+"key": "transition_emissions_at_full_cut_mt",
+"value": 0.12,
+"status": "EST",
+"note": "",
+"context": "EV and transition grants (Orkusjóður, the EV purchase grant). Cutting them slows the switch from petrol: road transport emits about 0.95 Mt CO2e a year (EST, UST inventory), and without the grants EST 0.12 Mt more by the tenth year. Each Mt of road CO2 is about 430 m litres of fuel, EST 35 ma.kr. of imports.",
+"line": 726
+},
+{
+"section": "energy_split",
+"key": "transition_years",
+"value": 10,
+"status": "EST",
+"note": "",
+"context": "EV and transition grants (Orkusjóður, the EV purchase grant). Cutting them slows the switch from petrol: road transport emits about 0.95 Mt CO2e a year (EST, UST inventory), and without the grants EST 0.12 Mt more by the tenth year. Each Mt of road CO2 is about 430 m litres of fuel, EST 35 ma.kr. of imports.",
+"line": 726
+},
+{
+"section": "energy_split",
+"key": "fuel_imports_bn_per_mt",
+"value": 35.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 727
+},
+{
+"section": "energy_split",
+"key": "transition_cpi_at_full_cut",
+"value": 0.001,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 727
+},
+{
+"section": "energy_split",
+"key": "transport_bn",
+"value": 6.0,
+"status": "EST",
+"note": "",
+"context": "Strætó's state contract and regional bus and ferry routes: fares rise or routes close.",
+"line": 729
+},
+{
+"section": "energy_split",
+"key": "transport_cpi_at_full_cut",
+"value": 0.004,
+"status": "EST",
+"note": "",
+"context": "Strætó's state contract and regional bus and ferry routes: fares rise or routes close.",
+"line": 729
+},
+{
+"section": "energy_split",
+"key": "transport_emissions_at_full_cut_mt",
+"value": 0.02,
+"status": "EST",
+"note": "",
+"context": "Strætó's state contract and regional bus and ferry routes: fares rise or routes close.",
+"line": 729
+},
+{
+"section": "energy_split",
+"key": "green_heat_cost_per_home_m",
+"value": 3.0,
+"status": "EST",
+"note": "",
+"context": "Local green heat. EST: 3 m kr. a home for a heat pump or a share of a small hydro or wind plant, the grant paying half and the owner installing the rest; a converted home needs 60% less bought heat (a heat pump's COP of about 3), so 60% less support, or a 60% smaller bill if the support is cut.",
+"line": 733
+},
+{
+"section": "energy_split",
+"key": "green_heat_grant_share",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "Local green heat. EST: 3 m kr. a home for a heat pump or a share of a small hydro or wind plant, the grant paying half and the owner installing the rest; a converted home needs 60% less bought heat (a heat pump's COP of about 3), so 60% less support, or a 60% smaller bill if the support is cut.",
+"line": 733
+},
+{
+"section": "energy_split",
+"key": "green_heat_saving",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "Local green heat. EST: 3 m kr. a home for a heat pump or a share of a small hydro or wind plant, the grant paying half and the owner installing the rest; a converted home needs 60% less bought heat (a heat pump's COP of about 3), so 60% less support, or a 60% smaller bill if the support is cut.",
+"line": 733
+},
+{
+"section": "free_services",
+"key": "health_out_of_pocket_bn",
+"value": 65.0,
+"status": "EST",
+"note": "",
+"context": "Out of pocket: about 16% of current health spending of ~426 ma.kr. (OECD, 2022). EST split: medicines ~22, adult dental ~20, glasses, aids and other ~8, and service co-payments ~15 — GP and specialist visits, outpatient care, tests, physiotherapy (the greiðsluþátttökukerfi, capped a year per person). The Danish model removes only the last.",
+"line": 740
+},
+{
+"section": "free_services",
+"key": "health_service_copay_bn",
+"value": 15.73,
+"status": "EST",
+"note": "what the Danish model makes free: fees for services (gov_items_2025.csv)",
+"context": "",
+"line": 741
+},
+{
+"section": "free_services",
+"key": "health_demand_response",
+"value": 0.1,
+"status": "EST",
+"note": "EST: more visits when they are free",
+"context": "",
+"line": 742
+},
+{
+"section": "free_services",
+"key": "specialist_bn",
+"value": 18.0,
+"status": "EST",
+"note": "",
+"context": "Gatekeeping: specialists by referral. Specialist outpatient care bought by Sjúkratryggingar is EST 18 ma.kr.; systems with gatekeeping use specialists less (Sripa et al. 2019, BJGP, review), EST 15% here, and half of that saving goes on the extra GP time it takes. Iceland is short of GPs, so it phases in.",
+"line": 746
+},
+{
+"section": "free_services",
+"key": "gatekeeping_specialist_cut",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "Gatekeeping: specialists by referral. Specialist outpatient care bought by Sjúkratryggingar is EST 18 ma.kr.; systems with gatekeeping use specialists less (Sripa et al. 2019, BJGP, review), EST 15% here, and half of that saving goes on the extra GP time it takes. Iceland is short of GPs, so it phases in.",
+"line": 746
+},
+{
+"section": "free_services",
+"key": "gatekeeping_gp_cost_share",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "Gatekeeping: specialists by referral. Specialist outpatient care bought by Sjúkratryggingar is EST 18 ma.kr.; systems with gatekeeping use specialists less (Sripa et al. 2019, BJGP, review), EST 15% here, and half of that saving goes on the extra GP time it takes. Iceland is short of GPs, so it phases in.",
+"line": 746
+},
+{
+"section": "free_services",
+"key": "gatekeeping_years",
+"value": 4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 747
+},
+{
+"section": "free_services",
+"key": "internet_household_bn",
+"value": 13.0,
+"status": "EST",
+"note": "",
+"context": "The connection: EST ~7,000 kr. a month for ~155,000 households, 13 ma.kr. EST 60% of the bill is the line and international data, which becomes free; the rest is equipment and service, still sold.",
+"line": 750
+},
+{
+"section": "free_services",
+"key": "internet_free_share_of_bill",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 751
+},
+{
+"section": "free_services",
+"key": "internet_state_cost_bn",
+"value": 5.0,
+"status": "EST",
+"note": "",
+"context": "What the state then pays: Farice's international capacity (EST 3 ma.kr., its yearly revenue) and running the publicly laid access lines (EST 2). The difference from what households saved is the margin private line owners earned on it, which the reform means to end.",
+"line": 755
+},
+{
+"section": "agriculture",
+"key": "fte0",
+"value": 3500,
+"status": "EST",
+"note": "EST: farm work",
+"context": "",
+"line": 762
+},
+{
+"section": "agriculture",
+"key": "jobs_lost_at_full_cut",
+"value": 0.25,
+"status": "EST",
+"note": "EST: share of farm work that does not survive without support",
+"context": "",
+"line": 763
+},
+{
+"section": "agriculture",
+"key": "cpi_effect_at_full_cut",
+"value": 0.003,
+"status": "EST",
+"note": "EST: food is about 14% of the CPI, domestic farm products a third of it",
+"context": "",
+"line": 764
+},
+{
+"section": "agriculture",
+"key": "startup_bn",
+"value": 1.5,
+"status": "EST",
+"note": "",
+"context": "v3: part of what farm support cost goes to agricultural start-ups through RANNÍS instead (support for innovation, not for established production). EST 1.5 ma.kr. a year at 15 m kr. a start-up, 100 a year; half survive, each with 1.5 FTE once running (after 3 years). Matvælasjóður had 477 m kr. to grant in 2025 (farm and marine products); with research at LbhÍ and Matís and the development money inside the farm agreements, agricultural R&D is EST about 1 ma.kr. a year. The reform keeps that and adds to it, since the rest of farm support goes.",
+"line": 771
+},
+{
+"section": "agriculture",
+"key": "startup_grant_m",
+"value": 15.0,
+"status": "EST",
+"note": "",
+"context": "v3: part of what farm support cost goes to agricultural start-ups through RANNÍS instead (support for innovation, not for established production). EST 1.5 ma.kr. a year at 15 m kr. a start-up, 100 a year; half survive, each with 1.5 FTE once running (after 3 years). Matvælasjóður had 477 m kr. to grant in 2025 (farm and marine products); with research at LbhÍ and Matís and the development money inside the farm agreements, agricultural R&D is EST about 1 ma.kr. a year. The reform keeps that and adds to it, since the rest of farm support goes.",
+"line": 771
+},
+{
+"section": "agriculture",
+"key": "startup_survival",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "v3: part of what farm support cost goes to agricultural start-ups through RANNÍS instead (support for innovation, not for established production). EST 1.5 ma.kr. a year at 15 m kr. a start-up, 100 a year; half survive, each with 1.5 FTE once running (after 3 years). Matvælasjóður had 477 m kr. to grant in 2025 (farm and marine products); with research at LbhÍ and Matís and the development money inside the farm agreements, agricultural R&D is EST about 1 ma.kr. a year. The reform keeps that and adds to it, since the rest of farm support goes.",
+"line": 771
+},
+{
+"section": "agriculture",
+"key": "startup_fte",
+"value": 1.5,
+"status": "EST",
+"note": "",
+"context": "v3: part of what farm support cost goes to agricultural start-ups through RANNÍS instead (support for innovation, not for established production). EST 1.5 ma.kr. a year at 15 m kr. a start-up, 100 a year; half survive, each with 1.5 FTE once running (after 3 years). Matvælasjóður had 477 m kr. to grant in 2025 (farm and marine products); with research at LbhÍ and Matís and the development money inside the farm agreements, agricultural R&D is EST about 1 ma.kr. a year. The reform keeps that and adds to it, since the rest of farm support goes.",
+"line": 771
+},
+{
+"section": "agriculture",
+"key": "startup_years",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 772
+},
+{
+"section": "trade.shares",
+"key": "tourism",
+"value": 0.36,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 783
+},
+{
+"section": "trade.shares",
+"key": "marine",
+"value": 0.21,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 783
+},
+{
+"section": "trade.shares",
+"key": "aluminium",
+"value": 0.17,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 783
+},
+{
+"section": "trade.shares",
+"key": "other",
+"value": 0.26,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 783
+},
+{
+"section": "trade.price",
+"key": "tourism",
+"value": 1.0,
+"status": "EST",
+"note": "world prices, 1.0 = 2025",
+"context": "",
+"line": 784
+},
+{
+"section": "trade.price",
+"key": "marine",
+"value": 1.0,
+"status": "EST",
+"note": "world prices, 1.0 = 2025",
+"context": "",
+"line": 784
+},
+{
+"section": "trade.price",
+"key": "aluminium",
+"value": 1.0,
+"status": "EST",
+"note": "world prices, 1.0 = 2025",
+"context": "",
+"line": 784
+},
+{
+"section": "trade.price",
+"key": "other",
+"value": 1.0,
+"status": "EST",
+"note": "world prices, 1.0 = 2025",
+"context": "",
+"line": 784
+},
+{
+"section": "trade",
+"key": "import_price",
+"value": 1.0,
+"status": "EST",
+"note": "what Iceland buys, 1.0 = 2025",
+"context": "",
+"line": 785
+},
+{
+"section": "trade",
+"key": "tourism_fte",
+"value": 26000,
+"status": "EST",
+"note": "EST: people working in tourism at the 2025 level",
+"context": "",
+"line": 786
+},
+{
+"section": "trade",
+"key": "tourism_revenue_bn",
+"value": 600.0,
+"status": "EST",
+"note": "EST: tourism's export earnings, 2024-25 (Hagstofa, ~600 ma.kr.)",
+"context": "",
+"line": 787
+},
+{
+"section": "trade",
+"key": "tourism_labour_elasticity",
+"value": 0.574,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: how far tourism employment follows the money it earns",
+"context": "",
+"line": 788
+},
+{
+"section": "trade",
+"key": "tot_income_passthrough",
+"value": 0.55,
+"status": "EST",
+"note": "EST: share of a terms-of-trade gain that reaches real incomes",
+"context": "",
+"line": 789
+},
+{
+"section": "schooling",
+"key": "spending_bn",
+"value": 258.0,
+"status": "EST",
+"note": "EST: the 347.5 less the tertiary part modelled elsewhere",
+"context": "",
+"line": 796
+},
+{
+"section": "schooling",
+"key": "children_2025",
+"value": 84881,
+"status": "DATA",
+"note": "MAN00101, under 18",
+"context": "",
+"line": 797
+},
+{
+"section": "emissions",
+"key": "total_mt",
+"value": 4.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 806
+},
+{
+"section": "emissions",
+"key": "smelter_mt",
+"value": 1.8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 807
+},
+{
+"section": "emissions",
+"key": "per_capita_baseline",
+"value": true,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 808
+},
+{
+"section": "emissions",
+"key": "carbon_price_isk_per_t",
+"value": 12000,
+"status": "EST",
+"note": "EST: ETS-linked, for valuing the change",
+"context": "",
+"line": 809
+},
+{
+"section": "crime",
+"key": "responsive_spending_bn",
+"value": 57.3,
+"status": "EST",
+"note": "police, courts and prisons; fire protection excluded",
+"context": "",
+"line": 823
+},
+{
+"section": "crime",
+"key": "hardship_weight",
+"value": 0.55,
+"status": "EST",
+"note": "EST: living below subsistence, the strongest driver",
+"context": "",
+"line": 824
+},
+{
+"section": "crime",
+"key": "youth_idle_weight",
+"value": 0.7,
+"status": "EST",
+"note": "EST: involuntary idleness under 30, where offending concentrates",
+"context": "",
+"line": 825
+},
+{
+"section": "crime",
+"key": "childhood_weight",
+"value": 0.045,
+"status": "EST",
+"note": "EST: per childhood year spent poor (Akee et al.)",
+"context": "",
+"line": 826
+},
+{
+"section": "crime",
+"key": "substance_weight",
+"value": 0.12,
+"status": "EST",
+"note": "EST: the Alaska finding — a large payment raises substance incidents",
+"context": "",
+"line": 827
+},
+{
+"section": "crime",
+"key": "substance_threshold",
+"value": 300000,
+"status": "EST",
+"note": "EST: monthly payment above which that term starts to bite",
+"context": "",
+"line": 828
+},
+{
+"section": "crime",
+"key": "cost_elasticity",
+"value": 0.8,
+"status": "EST",
+"note": "EST: how far spending follows offending",
+"context": "",
+"line": 829
+},
+{
+"section": "crime",
+"key": "prisoners0",
+"value": 180,
+"status": "EST",
+"note": "",
+"context": "Prison. About 180 inmates on an average day (EST, Fangelsismálastofnun), at 56,750 kr. a day in 2024. Today benefits stop after four months of continuous imprisonment (lög um almannatryggingar), which is about 60% of prison time (EST). Withholding the borgaralaun makes prison dearer for the prisoner, but the evidence is that the severity of punishment deters little; its certainty deters (Nagin 2013; Chalfin and McCrary 2017). EST: 1% less offending if a prison year also costs a full year's payment of 300 þús. a month.",
+"line": 836
+},
+{
+"section": "crime",
+"key": "prison_cost_per_day",
+"value": 56750,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 837
+},
+{
+"section": "crime",
+"key": "forfeit_deterrence",
+"value": 0.01,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 838
+},
+{
+"section": "childhood",
+"key": "earnings_persistence",
+"value": 0.25,
+"status": "EST",
+"note": "Nordic intergenerational earnings elasticity, ~.2-.3",
+"context": "",
+"line": 847
+},
+{
+"section": "childhood",
+"key": "wage_penalty_per_year",
+"value": 0.011,
+"status": "EST",
+"note": "EST: earnings cost of each childhood year spent poor",
+"context": "",
+"line": 848
+},
+{
+"section": "childhood",
+"key": "study_penalty_per_year",
+"value": 0.03,
+"status": "EST",
+"note": "EST: and the cost to the chance of going on to study",
+"context": "",
+"line": 849
+},
+{
+"section": "childhood",
+"key": "max_years",
+"value": 18,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 850
+},
+{
+"section": "wellbeing",
+"key": "anchor",
+"value": 7.5,
+"status": "DATA",
+"note": "World Happiness Report / Eurostat: Iceland ~7.5 on the Cantril ladder",
+"context": "",
+"line": 857
+},
+{
+"section": "wellbeing",
+"key": "income",
+"value": 0.6,
+"status": "EST",
+"note": "per log point of equivalised income against the median",
+"context": "",
+"line": 858
+},
+{
+"section": "wellbeing",
+"key": "unemployment",
+"value": 1.2,
+"status": "EST",
+"note": "involuntary idleness, over and above the income it costs",
+"context": "",
+"line": 859
+},
+{
+"section": "wellbeing",
+"key": "ill_health",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 860
+},
+{
+"section": "wellbeing",
+"key": "partner",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 861
+},
+{
+"section": "wellbeing",
+"key": "work_quality",
+"value": 0.5,
+"status": "EST",
+"note": "meaning less disamenity, scaled by hours",
+"context": "",
+"line": 862
+},
+{
+"section": "wellbeing",
+"key": "security",
+"value": 0.35,
+"status": "EST",
+"note": "a contract with years left on it",
+"context": "",
+"line": 863
+},
+{
+"section": "wellbeing",
+"key": "housing_burden",
+"value": 0.6,
+"status": "EST",
+"note": "paying more than 40% of income for somewhere to live",
+"context": "",
+"line": 864
+},
+{
+"section": "wellbeing",
+"key": "hardship",
+"value": 1.0,
+"status": "EST",
+"note": "below subsistence",
+"context": "",
+"line": 865
+},
+{
+"section": "wellbeing",
+"key": "time_squeeze",
+"value": 0.3,
+"status": "EST",
+"note": "full-time work with a child under school age",
+"context": "",
+"line": 866
+},
+{
+"section": "childcare",
+"key": "places_full_time",
+"value": 19000,
+"status": "EST",
+"note": "",
+"context": "EST: full-day places for 1-5 year olds today (leikskólar); Reykjavík already has a waiting list",
+"line": 872
+},
+{
+"section": "childcare",
+"key": "cost_per_place_bn",
+"value": 0.0026,
+"status": "EST",
+"note": "EST: ~2.6 m ISK per place per year",
+"context": "",
+"line": 873
+},
+{
+"section": "childcare",
+"key": "childminder_places",
+"value": 1400,
+"status": "EST",
+"note": "",
+"context": "EST: dagforeldrar places, which carry much of the under-2 gap before a leikskóli place opens up",
+"line": 875
+},
+{
+"section": "automation",
+"key": "ai_progress_rate",
+"value": 0.0,
+"status": "EST",
+"note": "",
+"context": "how fast machines get cheaper and more capable: 0 = no AI progress, .10 steady, .25 an AI jobs shock",
+"line": 882
+},
+{
+"section": "automation",
+"key": "wage_sensitivity",
+"value": 1.2,
+"status": "EST",
+"note": "EST: how strongly expensive labour pulls automation forward",
+"context": "",
+"line": 883
+},
+{
+"section": "automation",
+"key": "adoption_midpoint",
+"value": 1.6,
+"status": "EST",
+"note": "EST: cost ratio at which half the potential is taken up",
+"context": "",
+"line": 884
+},
+{
+"section": "automation",
+"key": "adoption_curvature",
+"value": 3.0,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 885
+},
+{
+"section": "automation",
+"key": "adoption_speed",
+"value": 0.25,
+"status": "EST",
+"note": "EST: share of the gap closed each year (capital takes time)",
+"context": "",
+"line": 886
+},
+{
+"section": "automation",
+"key": "operating_cost_share",
+"value": 0.4,
+"status": "EST",
+"note": "EST: running, energy and maintenance costs of the machines",
+"context": "",
+"line": 887
+},
+{
+"section": "automation",
+"key": "output_gain",
+"value": 0.25,
+"status": "EST",
+"note": "EST: output per remaining worker at full automation of exposed tasks",
+"context": "",
+"line": 888
+},
+{
+"section": "automation",
+"key": "levy_rate",
+"value": 0.0,
+"status": "EST",
+"note": "tax on machine income, on top of corporate tax",
+"context": "clawback levers",
+"line": 890
+},
+{
+"section": "automation",
+"key": "state_capital_share",
+"value": 0.0,
+"status": "EST",
+"note": "public ownership stake in automation capital",
+"context": "",
+"line": 891
+},
+{
+"section": "automation",
+"key": "dividend_payout",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 892
+},
+{
+"section": "automation",
+"key": "stake_required_return",
+"value": 0.07,
+"status": "EST",
+"note": "EST: return equity investors ask of automation capital (its price)",
+"context": "",
+"line": 893
+},
+{
+"section": "automation",
+"key": "stake_financing_rate",
+"value": 0.03,
+"status": "EST",
+"note": "EST: the state's long-run real cost of borrowing to buy a stake",
+"context": "",
+"line": 894
+},
+{
+"section": "automation.exposure",
+"key": "Clerks",
+"value": 0.85,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 896
+},
+{
+"section": "automation.exposure",
+"key": "Other machine operators",
+"value": 0.7,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 896
+},
+{
+"section": "automation.exposure",
+"key": "Fish processing workers",
+"value": 0.7,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 896
+},
+{
+"section": "automation.exposure",
+"key": "Bus and truck drivers",
+"value": 0.65,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 897
+},
+{
+"section": "automation.exposure",
+"key": "Retail and other service",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 897
+},
+{
+"section": "automation.exposure",
+"key": "Refuse collectors",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 897
+},
+{
+"section": "automation.exposure",
+"key": "Other elementary",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 898
+},
+{
+"section": "automation.exposure",
+"key": "Business professionals",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 898
+},
+{
+"section": "automation.exposure",
+"key": "Other associate professionals",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 898
+},
+{
+"section": "automation.exposure",
+"key": "Lawyers",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 899
+},
+{
+"section": "automation.exposure",
+"key": "Cleaners",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 899
+},
+{
+"section": "automation.exposure",
+"key": "Engineers and IT",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 899
+},
+{
+"section": "automation.exposure",
+"key": "Other professionals",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 899
+},
+{
+"section": "automation.exposure",
+"key": "Waiters and bar staff",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 900
+},
+{
+"section": "automation.exposure",
+"key": "Fishers and farm workers",
+"value": 0.4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 900
+},
+{
+"section": "automation.exposure",
+"key": "Cooks",
+"value": 0.35,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 900
+},
+{
+"section": "automation.exposure",
+"key": "Managers",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 900
+},
+{
+"section": "automation.exposure",
+"key": "Other craft and trades",
+"value": 0.35,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 901
+},
+{
+"section": "automation.exposure",
+"key": "Artists and writers",
+"value": 0.35,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 901
+},
+{
+"section": "automation.exposure",
+"key": "Pilots, officers and controllers",
+"value": 0.35,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 901
+},
+{
+"section": "automation.exposure",
+"key": "Academics",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 902
+},
+{
+"section": "automation.exposure",
+"key": "Doctors",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 902
+},
+{
+"section": "automation.exposure",
+"key": "Secondary teachers",
+"value": 0.2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 902
+},
+{
+"section": "automation.exposure",
+"key": "Nurses and midwives",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 902
+},
+{
+"section": "automation.exposure",
+"key": "Primary and pre-school teachers",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 903
+},
+{
+"section": "automation.exposure",
+"key": "Care assistants",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 903
+},
+{
+"section": "automation.exposure",
+"key": "Child-care workers",
+"value": 0.05,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 903
+},
+{
+"section": "automation.complementarity",
+"key": "Managers",
+"value": 0.7,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 908
+},
+{
+"section": "automation.complementarity",
+"key": "Doctors",
+"value": 0.75,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 908
+},
+{
+"section": "automation.complementarity",
+"key": "Lawyers",
+"value": 0.65,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 908
+},
+{
+"section": "automation.complementarity",
+"key": "Academics",
+"value": 0.7,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 908
+},
+{
+"section": "automation.complementarity",
+"key": "Engineers and IT",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 908
+},
+{
+"section": "automation.complementarity",
+"key": "Business professionals",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 909
+},
+{
+"section": "automation.complementarity",
+"key": "Other professionals",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 909
+},
+{
+"section": "automation.complementarity",
+"key": "Secondary teachers",
+"value": 0.55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 909
+},
+{
+"section": "automation.complementarity",
+"key": "Primary and pre-school teachers",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 910
+},
+{
+"section": "automation.complementarity",
+"key": "Nurses and midwives",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 910
+},
+{
+"section": "automation.complementarity",
+"key": "Pilots, officers and controllers",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 910
+},
+{
+"section": "automation.complementarity",
+"key": "Artists and writers",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 911
+},
+{
+"section": "automation.complementarity",
+"key": "Other associate professionals",
+"value": 0.45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 911
+},
+{
+"section": "automation.complementarity",
+"key": "Clerks",
+"value": 0.2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 911
+},
+{
+"section": "automation.complementarity",
+"key": "Child-care workers",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 911
+},
+{
+"section": "automation.complementarity",
+"key": "Care assistants",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 912
+},
+{
+"section": "automation.complementarity",
+"key": "Cooks",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 912
+},
+{
+"section": "automation.complementarity",
+"key": "Waiters and bar staff",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 912
+},
+{
+"section": "automation.complementarity",
+"key": "Retail and other service",
+"value": 0.2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 912
+},
+{
+"section": "automation.complementarity",
+"key": "Fish processing workers",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 913
+},
+{
+"section": "automation.complementarity",
+"key": "Fishers and farm workers",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 913
+},
+{
+"section": "automation.complementarity",
+"key": "Other craft and trades",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 913
+},
+{
+"section": "automation.complementarity",
+"key": "Bus and truck drivers",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 914
+},
+{
+"section": "automation.complementarity",
+"key": "Other machine operators",
+"value": 0.15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 914
+},
+{
+"section": "automation.complementarity",
+"key": "Cleaners",
+"value": 0.05,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 914
+},
+{
+"section": "automation.complementarity",
+"key": "Refuse collectors",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 914
+},
+{
+"section": "automation.complementarity",
+"key": "Other elementary",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 915
+},
+{
+"section": "automation",
+"key": "augmentation_gain",
+"value": 0.25,
+"status": "EST",
+"note": "output per hour at full augmentation of complementary work",
+"context": "CALIBRATED (scripts/ai_calibrate.py, 2026-09-19): at 5%/yr AI, +0.51 pp/yr productivity by 2035, unemployment +0.6 pp, output +4.7% in the status quo; at 15%/yr, +1.4 pp/yr and unemployment +5 pp.",
+"line": 919
+},
+{
+"section": "automation",
+"key": "augmentation_midpoint",
+"value": 0.6,
+"status": "EST",
+"note": "capability gain (over 1) at which half the augmentation is taken up",
+"context": "",
+"line": 920
+},
+{
+"section": "automation",
+"key": "augmentation_curvature",
+"value": 2.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 921
+},
+{
+"section": "automation",
+"key": "reinstatement_share",
+"value": 0.95,
+"status": "CALIBRATED",
+"note": "CALIBRATED: share of displaced work that comes back as new tasks",
+"context": "Acemoglu and Restrepo (2019): in 1947-87 new tasks roughly offset displacement; since, less. Set high here because the consensus expects little change in unemployment at the pace most forecast.",
+"line": 924
+},
+{
+"section": "automation",
+"key": "reinstatement_speed",
+"value": 0.45,
+"status": "CALIBRATED",
+"note": "CALIBRATED: share of the gap closed each year",
+"context": "",
+"line": 925
+},
+{
+"section": "automation",
+"key": "wage_passthrough",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "share of AI's productivity gain that negotiated rounds pass into pay, as for trend productivity",
+"line": 927
+},
+{
+"section": "culture",
+"key": "state_support_share",
+"value": 0.45,
+"status": "EST",
+"note": "EST: share of demand for artists funded by the state today",
+"context": "",
+"line": 932
+},
+{
+"section": "culture",
+"key": "ticket_income_elasticity",
+"value": 0.8,
+"status": "EST",
+"note": "EST: how ticket-funded demand follows household consumption",
+"context": "",
+"line": 933
+},
+{
+"section": "labour",
+"key": "demand_elasticity",
+"value": 0.471,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: long-run own-wage labour demand elasticity (range .3-1.5)",
+"context": "",
+"line": 938
+},
+{
+"section": "labour",
+"key": "consumption_loading",
+"value": [
+0.1,
+0.2,
+0.3,
+0.3,
+0.8,
+0.2,
+0.4,
+0.3,
+0.7
+],
+"status": "EST",
+"note": "EST kappa, by occupation group",
+"context": "",
+"line": 939
+},
+{
+"section": "labour",
+"key": "export_loading",
+"value": [
+0.1,
+0.2,
+0.2,
+0.1,
+0.4,
+0.9,
+0.5,
+0.7,
+0.4
+],
+"status": "EST",
+"note": "EST x, by occupation group",
+"context": "",
+"line": 940
+},
+{
+"section": "labour",
+"key": "export_cost_elasticity",
+"value": 0.6,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 941
+},
+{
+"section": "labour",
+"key": "occupational_mobility",
+"value": 0.0,
+"status": "EST",
+"note": "",
+"context": "the older, pay-only rule for moving profession; superseded by step_occupation_change (occupation_mobility), which carries pay, empty posts, education and the retraining lever. Left at 0 so moves are not counted twice.",
+"line": 944
+},
+{
+"section": "labour",
+"key": "contract_lengths_private",
+"value": {
+"1": 0.45,
+"2": 0.3,
+"3": 0.15,
+"5": 0.1
+},
+"status": "EST",
+"note": "",
+"context": "Employment contracts: pay is agreed when the contract is signed and holds until it ends, so wages move as contracts come up for renewal. Dismissal takes a notice period and costs severance.",
+"line": 947
+},
+{
+"section": "labour",
+"key": "contract_lengths_public",
+"value": {
+"1": 0.25,
+"2": 0.3,
+"3": 0.25,
+"5": 0.2
+},
+"status": "EST",
+"note": "",
+"context": "",
+"line": 948
+},
+{
+"section": "labour",
+"key": "productivity_passthrough",
+"value": 1.0,
+"status": "EST",
+"note": "share of productivity growth a negotiated round passes into pay",
+"context": "",
+"line": 949
+},
+{
+"section": "labour",
+"key": "wage_curve_elasticity",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "The wage curve: pay is lower where unemployment is higher, elasticity about -0.1 (Blanchflower and Oswald 1994; Nijkamp and Poot 2005, meta-analysis), including under Nordic centralised bargaining. Applied to the floor an agreement sets for a profession, from its excess supply against a frictional rate. Without it a profession automation had emptied kept receiving the economy's productivity raises for decades at 15-20% unemployment (found 2026-10-01).",
+"line": 955
+},
+{
+"section": "labour",
+"key": "frictional_unemployment",
+"value": 0.035,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 956
+},
+{
+"section": "labour",
+"key": "tot_passthrough",
+"value": 0.039,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast",
+"context": "Icelandic agreements have given more than productivity: real wages rose 2.2% a year 2005-2025 against 1.1% of productivity. Two sources, both tuned in the backcast: a share of terms-of-trade gains since the contract was signed (the tourism boom and the strong króna of 2016-17), and a real premium a year.",
+"line": 960
+},
+{
+"section": "labour",
+"key": "agreement_real_premium",
+"value": 0.00551,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast",
+"context": "",
+"line": 961
+},
+{
+"section": "labour",
+"key": "inflation_compensation",
+"value": 1.0,
+"status": "DATA",
+"note": "",
+"context": "Settlements compensate the prices since the last round in full, and productivity on top. That is what the record shows: real wages (LAU04800) never fell over any ten-year window since 1989, so Icelandic bargaining has more than kept pace with inflation. Below 1.0 the erosion compounds — at .90 and 3.5% inflation it cost 1.6 points of real wage growth a year.",
+"line": 966
+},
+{
+"section": "labour",
+"key": "agreement_cycle_years",
+"value": 3,
+"status": "EST",
+"note": "under collective agreements renewals are synchronised, not staggered",
+"context": "",
+"line": 967
+},
+{
+"section": "labour",
+"key": "renewal_bargaining",
+"value": 0.983,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; how far a renewed contract moves to the market rate (agreements: less)",
+"context": "",
+"line": 968
+},
+{
+"section": "labour",
+"key": "offer_length_sensitivity",
+"value": 6.0,
+"status": "EST",
+"note": "extra years offered per unit of excess demand for labour",
+"context": "Employers offer longer contracts where people are hard to keep, and people value the security enough to trade some pay for it. Contract length is therefore an outcome, not a fixed rule.",
+"line": 971
+},
+{
+"section": "labour",
+"key": "max_contract_years",
+"value": 6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 972
+},
+{
+"section": "labour",
+"key": "stability_value",
+"value": 0.35,
+"status": "EST",
+"note": "EST: utility of a secure contract, per year of its length (max 5)",
+"context": "",
+"line": 973
+},
+{
+"section": "labour",
+"key": "notice_months",
+"value": 3,
+"status": "EST",
+"note": "dismissal notice, paid",
+"context": "",
+"line": 974
+},
+{
+"section": "labour",
+"key": "hours_cut_share",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "EST: of the full-time workers a shortfall reaches, the share whose hours are cut to part time instead of losing the job. Without it the model had no involuntary part-time at all, so the metric read zero.",
+"line": 977
+},
+{
+"section": "labour",
+"key": "supply_absorption",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "Iceland takes a labour-market shortfall as lost purchasing power, not lost jobs: unemployment stayed near 4% through 2008 while real wages moved sharply. Share of any shortfall absorbed by prices. How much of the labour people offer the economy ends up absorbed by it. At 1 the workforce is absorbed at unchanged relative wages, so pay tracks productivity — the long-run closure, and what Iceland's record shows: large immigration was absorbed without unemployment rising. Below 1, the unabsorbed remainder pushes wages down every year, which is what made the baseline slide.",
+"line": 984
+},
+{
+"section": "labour",
+"key": "real_wage_absorption",
+"value": 0.0,
+"status": "EST",
+"note": "",
+"context": "Prices absorbing a labour shortfall directly: available as a lever, but off by default. With demand absorbing the labour offered to it there is no persistent shortfall to absorb, and leaving it on together with the negotiated floor makes the two chase each other into a wage-price spiral.",
+"line": 988
+},
+{
+"section": "labour",
+"key": "max_yearly_erosion",
+"value": 0.06,
+"status": "EST",
+"note": "EST: most purchasing power a single year can take away",
+"context": "",
+"line": 989
+},
+{
+"section": "labour",
+"key": "dismissal_speed",
+"value": 0.8,
+"status": "EST",
+"note": "share of surplus staff let go per year, given notice periods",
+"context": "",
+"line": 990
+},
+{
+"section": "labour.social_need_weights",
+"key": "hardship",
+"value": 0.4,
+"status": "EST",
+"note": "",
+"context": "The state raises pay where it cannot fill its own posts, instead of leaving the service short. EST: a profession with a tenth of its public posts unfilled gains about 3.5% a year on the going rate, half of what it gained falls away once the posts fill, and the state will go up to 40% above the market before it stops. Iceland's nurses (2015, 2020) and teachers (2024) were settled this way, outside the general round, at premiums of that order. A shortage the pay rise does not close is carried two ways: the people in post work harder, and some of the work is not done. EST: half and half. Iceland's own record in health and schooling is of both at once — waiting lists and closed wards alongside overtime and larger classes. Public staffing that follows need rather than a flat cut: what weighs on the state's social work, and how much of each profession's public work is of that kind. EST, sized on Hagstofa's spending by function (THJ05142): social protection administration, public order and safety, and the part of health that is mental health. Essential care and teaching are driven by the population they serve and are not in this table at all, so nothing here can cut a nurse or a teacher.",
+"line": 1004
+},
+{
+"section": "labour.social_need_weights",
+"key": "child_poverty",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "The state raises pay where it cannot fill its own posts, instead of leaving the service short. EST: a profession with a tenth of its public posts unfilled gains about 3.5% a year on the going rate, half of what it gained falls away once the posts fill, and the state will go up to 40% above the market before it stops. Iceland's nurses (2015, 2020) and teachers (2024) were settled this way, outside the general round, at premiums of that order. A shortage the pay rise does not close is carried two ways: the people in post work harder, and some of the work is not done. EST: half and half. Iceland's own record in health and schooling is of both at once — waiting lists and closed wards alongside overtime and larger classes. Public staffing that follows need rather than a flat cut: what weighs on the state's social work, and how much of each profession's public work is of that kind. EST, sized on Hagstofa's spending by function (THJ05142): social protection administration, public order and safety, and the part of health that is mental health. Essential care and teaching are driven by the population they serve and are not in this table at all, so nothing here can cut a nurse or a teacher.",
+"line": 1004
+},
+{
+"section": "labour.social_need_weights",
+"key": "crime",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "The state raises pay where it cannot fill its own posts, instead of leaving the service short. EST: a profession with a tenth of its public posts unfilled gains about 3.5% a year on the going rate, half of what it gained falls away once the posts fill, and the state will go up to 40% above the market before it stops. Iceland's nurses (2015, 2020) and teachers (2024) were settled this way, outside the general round, at premiums of that order. A shortage the pay rise does not close is carried two ways: the people in post work harder, and some of the work is not done. EST: half and half. Iceland's own record in health and schooling is of both at once — waiting lists and closed wards alongside overtime and larger classes. Public staffing that follows need rather than a flat cut: what weighs on the state's social work, and how much of each profession's public work is of that kind. EST, sized on Hagstofa's spending by function (THJ05142): social protection administration, public order and safety, and the part of health that is mental health. Essential care and teaching are driven by the population they serve and are not in this table at all, so nothing here can cut a nurse or a teacher.",
+"line": 1004
+},
+{
+"section": "labour.social_need_share",
+"key": "Clerks",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1005
+},
+{
+"section": "labour.social_need_share",
+"key": "Other associate professionals",
+"value": 0.35,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1005
+},
+{
+"section": "labour.social_need_share",
+"key": "Other professionals",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1005
+},
+{
+"section": "labour.social_need_share",
+"key": "Lawyers",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1006
+},
+{
+"section": "labour.social_need_share",
+"key": "Managers",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1006
+},
+{
+"section": "labour",
+"key": "shortage_absorbed",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1007
+},
+{
+"section": "labour",
+"key": "workload_disamenity",
+"value": 0.4,
+"status": "EST",
+"note": "",
+"context": "EST: a profession with a tenth of its posts unfilled is as unpleasant to work in as one step of the disamenity scale. Nurse burnout studies put intention-to-leave sharply higher at high patient loads (Aiken et al. 2002); this is the mechanism that makes a shortage widen itself.",
+"line": 1011
+},
+{
+"section": "labour",
+"key": "occupation_mobility",
+"value": 0.04,
+"status": "EST",
+"note": "",
+"context": "Iceland's collective agreements run in rounds a few years apart (the 2024 settlement was for four years), so pay cannot answer a shortage in the year it appears. Where pay is set job by job it can. People change profession, so the model can ask what happens when people can move to the work they are best suited to. EST: about 4% of workers change profession in a year, the young and those out of work more readily; moves follow how a profession's pay has moved against the base year and how many of its posts are unfilled, within the education it asks for. `match_quality_gain` is what moving to work that fits is worth in what a person produces — the direction is better evidenced than the size, so it is a lever and 0 switches it off.",
+"line": 1020
+},
+{
+"section": "labour",
+"key": "occupation_move_young",
+"value": 2.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1021
+},
+{
+"section": "labour",
+"key": "occupation_move_idle",
+"value": 1.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1022
+},
+{
+"section": "labour",
+"key": "occupation_move_max_age",
+"value": 55,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1023
+},
+{
+"section": "labour",
+"key": "occupation_pay_pull",
+"value": 3.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1024
+},
+{
+"section": "labour",
+"key": "occupation_shortage_pull",
+"value": 1.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1025
+},
+{
+"section": "labour",
+"key": "match_quality_gain",
+"value": 0.02,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1026
+},
+{
+"section": "labour",
+"key": "occupation_mobility_security",
+"value": 0.5,
+"status": "EST",
+"note": "EST",
+"context": "More moves under a secure income, at a 300 þús. payment: the share added to today's rate. The direction follows the unemployment-insurance evidence that a cushion buys a better match (Nekoei and Weber 2017, AER: longer benefits, higher re-employment wages); the size is an estimate.",
+"line": 1030
+},
+{
+"section": "labour",
+"key": "agreement_round_years",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1031
+},
+{
+"section": "labour",
+"key": "public_shortage_pay_speed",
+"value": 0.12,
+"status": "DATA",
+"note": "",
+"context": "TUNED 2016-25: at .35 the premium lifted public pay 18% above the market by 2025 and the public payroll ran 60 ma.kr. above the national accounts; at .12 it reaches about 6%, which the record's payroll and the public sector's modestly faster pay rises (Hagstofa's wage index by sector) bear out.",
+"line": 1035
+},
+{
+"section": "labour",
+"key": "public_shortage_pay_decay",
+"value": 0.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1036
+},
+{
+"section": "labour",
+"key": "public_shortage_pay_cap",
+"value": 1.4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1037
+},
+{
+"section": "labour",
+"key": "clearing_iterations",
+"value": 80,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1038
+},
+{
+"section": "labour",
+"key": "clearing_step",
+"value": 0.15,
+"status": "EST",
+"note": "how far the wage solver moves each iteration (small markets overshoot)",
+"context": "",
+"line": 1039
+},
+{
+"section": "labour",
+"key": "safety_wage_bound",
+"value": 0.15,
+"status": "EST",
+"note": "EST: how far a new offer may sit from the wage the job already pays",
+"context": "",
+"line": 1040
+},
+{
+"section": "labour",
+"key": "max_entry_share",
+"value": 0.12,
+"status": "EST",
+"note": "people entering a profession in one year, as a share of its size",
+"context": "",
+"line": 1041
+},
+{
+"section": "ventures",
+"key": "initial_founder_stock_years",
+"value": 3.4,
+"status": "EST",
+"note": "EST: steady-state founder stock = yearly founders x this",
+"context": "",
+"line": 1046
+},
+{
+"section": "ventures",
+"key": "baseline_founders_per_year",
+"value": 2700,
+"status": "EST",
+"note": "EST: ~70% of FYR09002 enterprise births by individuals",
+"context": "",
+"line": 1047
+},
+{
+"section": "ventures",
+"key": "idea_rate",
+"value": 0.03,
+"status": "EST",
+"note": "EST: chance a re-thinking adult has a venture idea (x enterprise x spirit)",
+"context": "",
+"line": 1048
+},
+{
+"section": "ventures",
+"key": "survival_year1",
+"value": 0.79,
+"status": "DATA",
+"note": "FYR09002: t+1 .79, t+3 .54",
+"context": "",
+"line": 1049
+},
+{
+"section": "ventures",
+"key": "survival_later",
+"value": 0.82,
+"status": "DATA",
+"note": "FYR09002: t+1 .79, t+3 .54",
+"context": "",
+"line": 1049
+},
+{
+"section": "ventures",
+"key": "jobs_at_birth",
+"value": 1.2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1050
+},
+{
+"section": "ventures",
+"key": "job_growth_survivors",
+"value": 0.1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1050
+},
+{
+"section": "ventures",
+"key": "profit_pareto_alpha",
+"value": 1.15,
+"status": "EST",
+"note": "EST: annual ISK, minimum of Pareto",
+"context": "",
+"line": 1051
+},
+{
+"section": "ventures",
+"key": "profit_scale",
+"value": 2500000,
+"status": "EST",
+"note": "EST: annual ISK, minimum of Pareto",
+"context": "",
+"line": 1051
+},
+{
+"section": "ventures",
+"key": "size_per_quality",
+"value": 50.0,
+"status": "EST",
+"note": "EST: jobs a firm grows towards, per unit of quality (average quality ~1.2)",
+"context": "",
+"line": 1052
+},
+{
+"section": "ventures",
+"key": "profit_persistence",
+"value": 0.7,
+"status": "EST",
+"note": "EST: share of last year's profit a firm carries into this year",
+"context": "",
+"line": 1053
+},
+{
+"section": "ventures",
+"key": "education_idea_bonus",
+"value": 0.45,
+"status": "EST",
+"note": "EST: how much a degree raises the chance of an idea worth acting on",
+"context": "",
+"line": 1054
+},
+{
+"section": "ventures",
+"key": "education_quality_bonus",
+"value": 0.3,
+"status": "EST",
+"note": "EST: and how much better the firm that comes of it tends to be",
+"context": "",
+"line": 1055
+},
+{
+"section": "ventures",
+"key": "capital_reference",
+"value": 5000000,
+"status": "EST",
+"note": "EST: capital that counts as a real start",
+"context": "",
+"line": 1056
+},
+{
+"section": "ventures",
+"key": "seed_capital_effect",
+"value": 0.43,
+"status": "EST",
+"note": "",
+"context": "EST: how much own capital eases starting. The whole payout now counts (it was a quarter of it, set aside), so .43 keeps a full fund's effect where the quarter put it: 1 + .43 x 3 (the cap) = 1 + .8 x 1.6.",
+"line": 1059
+},
+{
+"section": "ventures",
+"key": "profit_cap",
+"value": 20000000000.0,
+"status": "EST",
+"note": "no single firm earns more than ~Iceland's largest companies",
+"context": "",
+"line": 1060
+},
+{
+"section": "ventures",
+"key": "corporate_tax",
+"value": 0.2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1061
+},
+{
+"section": "ventures",
+"key": "dividend_payout",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1061
+},
+{
+"section": "ventures",
+"key": "exit_probability",
+"value": 0.01,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1062
+},
+{
+"section": "ventures",
+"key": "exit_multiple",
+"value": 8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1062
+},
+{
+"section": "ventures",
+"key": "external_share_typical",
+"value": 0.2,
+"status": "EST",
+"note": "",
+"context": "v3: the state's stake is state_venture_stake × (1 - outside share of funding), at least stake_floor. EST: outside money is 20% of a typical small firm's funding — most start on savings, the fund and the borgaralaun — and 85% of a firm's by the time it is sold, after several rounds.",
+"line": 1066
+},
+{
+"section": "ventures",
+"key": "external_share_at_exit",
+"value": 0.85,
+"status": "EST",
+"note": "",
+"context": "v3: the state's stake is state_venture_stake × (1 - outside share of funding), at least stake_floor. EST: outside money is 20% of a typical small firm's funding — most start on savings, the fund and the borgaralaun — and 85% of a firm's by the time it is sold, after several rounds.",
+"line": 1066
+},
+{
+"section": "ventures",
+"key": "stake_floor",
+"value": 0.05,
+"status": "EST",
+"note": "",
+"context": "v3: the state's stake is state_venture_stake × (1 - outside share of funding), at least stake_floor. EST: outside money is 20% of a typical small firm's funding — most start on savings, the fund and the borgaralaun — and 85% of a firm's by the time it is sold, after several rounds.",
+"line": 1066
+},
+{
+"section": "ventures",
+"key": "rounds_to_exit",
+"value": 3,
+"status": "EST",
+"note": "EST",
+"context": "the deemed fund's share: one fund against what a small firm starts with (capital_reference, with its outside share), and by the time a firm is sold one deemed fund for each round it raised",
+"line": 1069
+},
+{
+"section": "ventures",
+"key": "capital_at_exit",
+"value": 400000000.0,
+"status": "EST",
+"note": "EST: capital raised by a firm by the time it is sold (kr.)",
+"context": "",
+"line": 1070
+},
+{
+"section": "ventures",
+"key": "entry_selection_elasticity",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1071
+},
+{
+"section": "ventures",
+"key": "founder_draw_share",
+"value": 0.3,
+"status": "EST",
+"note": "founder pays self this share of prior wage from seed/savings",
+"context": "",
+"line": 1072
+},
+{
+"section": "ventures",
+"key": "capital_access_status_quo",
+"value": 0.35,
+"status": "EST",
+"note": "EST: share of would-be founders with own seed capital",
+"context": "",
+"line": 1073
+},
+{
+"section": "ventures",
+"key": "capital_access_platform",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "v3: with no seed money the borgaralaun is the runway: living costs covered while a firm starts, but no capital handed over. EST .6 (it was 1.0 with 3 m kr. a firm).",
+"line": 1076
+},
+{
+"section": "migration",
+"key": "eea_share_of_immigrants",
+"value": 0.72,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 1081
+},
+{
+"section": "migration",
+"key": "emigration_income_elasticity",
+"value": 0.825,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1082
+},
+{
+"section": "migration",
+"key": "recent_arrival_emigration_multiplier",
+"value": 2.5,
+"status": "EST",
+"note": "EST: return migration in the first 3 years",
+"context": "",
+"line": 1083
+},
+{
+"section": "migration",
+"key": "immigration_income_elasticity",
+"value": 1.33,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1084
+},
+{
+"section": "migration",
+"key": "immigration_demand_elasticity",
+"value": 2.94,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1085
+},
+{
+"section": "migration",
+"key": "immigration_tightness_elasticity",
+"value": 1.97,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; how strongly arrivals follow unfilled jobs (tuned in the backcast)",
+"context": "",
+"line": 1086
+},
+{
+"section": "migration",
+"key": "new_job_fill_share",
+"value": 0.978,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast",
+"context": "Share of the jobs the economy adds in a year that are filled by people arriving for them. Iceland's employment growth in 2016-2018 and 2022-2023 came mostly from arrivals; tuned in the backcast.",
+"line": 1089
+},
+{
+"section": "migration",
+"key": "foreign_wage_ratio",
+"value": [
+1.15,
+1.2,
+1.1,
+1.0,
+0.95,
+1.0,
+1.15,
+1.05,
+0.95
+],
+"status": "EST",
+"note": "EST: Nordic net PPP / Iceland, by occupation",
+"context": "",
+"line": 1090
+},
+{
+"section": "migration",
+"key": "arrival_rent_elasticity",
+"value": 1.0,
+"status": "EST",
+"note": "EST: arrivals against rents (housing costs and migration: ~0.5-1)",
+"context": "",
+"line": 1091
+},
+{
+"section": "migration",
+"key": "max_arrival_rate",
+"value": 0.07,
+"status": "EST",
+"note": "EST: soft ceiling on a year's arrivals, share of the population",
+"context": "",
+"line": 1092
+},
+{
+"section": "migration",
+"key": "arrival_partner_share",
+"value": 0.3,
+"status": "EST",
+"note": "EST: share of arriving workers who bring a partner",
+"context": "",
+"line": 1093
+},
+{
+"section": "migration",
+"key": "arrival_partner_employment",
+"value": 0.55,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 1094
+},
+{
+"section": "migration",
+"key": "arrival_occupation_wage_response",
+"value": 3.0,
+"status": "EST",
+"note": "EST: arrivals tilt towards occupations whose real wage rose",
+"context": "children per arrival are no longer a setting: they come from Hagstofa's age profile of immigration",
+"line": 1096
+},
+{
+"section": "migration",
+"key": "immigrant_occupation_mix",
+"value": [
+0.03,
+0.08,
+0.07,
+0.04,
+0.24,
+0.04,
+0.16,
+0.12,
+0.22
+],
+"status": "EST",
+"note": "EST, by occupation group",
+"context": "",
+"line": 1097
+},
+{
+"section": "markets",
+"key": "history_like",
+"value": 0.0,
+"status": "EST",
+"note": "",
+"context": "A second status quo, for comparison: the world as the last decade actually went, rather than as the forecasts have it. Over 2016-25 consumer prices rose 4.3%/yr (VIS01005) against the 2.5% target, the króna drifted weaker, and rents and house prices outran incomes. At 1 the whole decade's pattern is on; at 0 the forecasts stand. It applies to the reform and to the status quo alike, so the comparison is like for like — a calm baseline flatters whichever side is being defended.",
+"line": 1107
+},
+{
+"section": "markets",
+"key": "history_inflation",
+"value": 0.04,
+"status": "EST",
+"note": "VIS01005: 4.3%/yr over 2016-25; .04 is the decade's central rate",
+"context": "",
+"line": 1108
+},
+{
+"section": "markets",
+"key": "history_fx_drift",
+"value": 0.01,
+"status": "EST",
+"note": "EST: the real króna's drift over the decade, a point a year weaker",
+"context": "",
+"line": 1109
+},
+{
+"section": "markets",
+"key": "history_rent_drift",
+"value": 0.015,
+"status": "EST",
+"note": "EST: real rents outran incomes by about this much a year (HMS)",
+"context": "",
+"line": 1110
+},
+{
+"section": "markets",
+"key": "freeze_prices",
+"value": false,
+"status": "EST",
+"note": "diagnostic: switch off price, rent, exchange-rate and interest reactions",
+"context": "",
+"line": 1111
+},
+{
+"section": "markets",
+"key": "freeze_wages",
+"value": false,
+"status": "EST",
+"note": "diagnostic: new contracts at the reference run's rates (income_effect_check)",
+"context": "",
+"line": 1112
+},
+{
+"section": "markets",
+"key": "real_rate0",
+"value": 0.035,
+"status": "EST",
+"note": "policy rate 7.75% (Aug 2026) less ~4% inflation",
+"context": "",
+"line": 1113
+},
+{
+"section": "markets",
+"key": "mortgage_indexed_share0",
+"value": 0.65,
+"status": "EST",
+"note": "nearly two in three household mortgages are CPI-indexed (2025)",
+"context": "",
+"line": 1114
+},
+{
+"section": "markets",
+"key": "mortgage_amortisation",
+"value": 0.025,
+"status": "EST",
+"note": "EST: principal repaid a year, a 40-year loan",
+"context": "",
+"line": 1115
+},
+{
+"section": "markets",
+"key": "indexation_transmission_gain",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "EST: how much more household spending answers the policy rate once no lending is indexed (1 = twice as much). The case for the reform is exactly that indexation mutes this; its size is not settled.",
+"line": 1118
+},
+{
+"section": "markets",
+"key": "taylor_inflation",
+"value": 0.997,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; real-rate response to excess inflation (Taylor principle)",
+"context": "",
+"line": 1119
+},
+{
+"section": "markets",
+"key": "taylor_gap",
+"value": 0.25,
+"status": "EST",
+"note": "response to labour-market pressure (relative to the status-quo path)",
+"context": "",
+"line": 1120
+},
+{
+"section": "markets",
+"key": "debt_maturity_years",
+"value": 6,
+"status": "EST",
+"note": "EST: average time for the debt stock to reprice",
+"context": "",
+"line": 1121
+},
+{
+"section": "markets",
+"key": "debt_indexed_share",
+"value": 0.35,
+"status": "EST",
+"note": "EST: CPI-indexed share of government debt",
+"context": "",
+"line": 1122
+},
+{
+"section": "markets",
+"key": "indexed_real_coupon0",
+"value": 0.025,
+"status": "EST",
+"note": "EST: average real coupon on the indexed government debt (RIKS indexed yields)",
+"context": "",
+"line": 1123
+},
+{
+"section": "markets",
+"key": "indexed_rate_passthrough",
+"value": 0.5,
+"status": "EST",
+"note": "EST: how far the real rate on new indexed debt follows the policy rate",
+"context": "",
+"line": 1124
+},
+{
+"section": "markets",
+"key": "long_rate_passthrough",
+"value": 0.5,
+"status": "EST",
+"note": "EST: how far the real mortgage rate follows the real policy rate",
+"context": "",
+"line": 1125
+},
+{
+"section": "markets",
+"key": "long_rate_years",
+"value": 3.0,
+"status": "EST",
+"note": "EST: years over which mortgage rates catch up (fixed-rate terms of 3-5)",
+"context": "",
+"line": 1126
+},
+{
+"section": "markets",
+"key": "productivity_growth",
+"value": 0.0107,
+"status": "DATA",
+"note": "",
+"context": "Hagstofa THJ11011: labour productivity grew 1.07%/yr 2008-2025. Real wages (LAU04800) grew 2.1%/yr over 2005-2025; the rest came from terms of trade, which the model does not project.",
+"line": 1129
+},
+{
+"section": "markets",
+"key": "trend_inflation",
+"value": 0.025,
+"status": "DATA",
+"note": "",
+"context": "Iceland's CPI rose 4.55%/yr over 2005-2025 and 3.43%/yr over 2015-2025 (VIS01005); the Seðlabanki targets 2.5%. Without a trend the model only shows relative-price drift, and a nominal contract never loses its value between settlements — which is exactly how Icelanders take the hit in practice.",
+"line": 1133
+},
+{
+"section": "markets",
+"key": "policy_looks_through_tax",
+"value": 1.0,
+"status": "DATA",
+"note": "",
+"context": "Share of a tax-driven step in the price level the central bank looks through. Inflation targeters, Seðlabanki included, treat a VAT change as a one-off shift in the level and answer only its second-round effects on wages and expectations, which the net-of-tax index still carries. Applies in both worlds; with VAT unchanged it changes nothing in the status quo.",
+"line": 1138
+},
+{
+"section": "markets",
+"key": "sovereign_fund_return",
+"value": 0.035,
+"status": "EST",
+"note": "EST: real return on a surplus put aside (Norwegian-style fund)",
+"context": "",
+"line": 1139
+},
+{
+"section": "markets",
+"key": "debt_risk_premium",
+"value": 0.05,
+"status": "EST",
+"note": "EST: real-rate premium per unit of debt/GDP above 2025, before capital controls",
+"context": "",
+"line": 1140
+},
+{
+"section": "markets",
+"key": "w_tradable",
+"value": 0.38,
+"status": "DATA",
+"note": "",
+"context": "CPI weights from the 2025 basket (Hagstofa VIS01306): housing 30.3%, food 15.4%, transport 15.2%",
+"line": 1142
+},
+{
+"section": "markets",
+"key": "w_nontradable",
+"value": 0.32,
+"status": "DATA",
+"note": "",
+"context": "CPI weights from the 2025 basket (Hagstofa VIS01306): housing 30.3%, food 15.4%, transport 15.2%",
+"line": 1142
+},
+{
+"section": "markets",
+"key": "w_housing",
+"value": 0.3,
+"status": "DATA",
+"note": "",
+"context": "CPI weights from the 2025 basket (Hagstofa VIS01306): housing 30.3%, food 15.4%, transport 15.2%",
+"line": 1142
+},
+{
+"section": "markets",
+"key": "cpi_food_weight",
+"value": 0.154,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1143
+},
+{
+"section": "markets",
+"key": "labour_cost_passthrough",
+"value": 0.726,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1144
+},
+{
+"section": "markets",
+"key": "demand_pressure_passthrough",
+"value": 0.218,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1145
+},
+{
+"section": "markets",
+"key": "profit_margin_elasticity",
+"value": 1.0,
+"status": "EST",
+"note": "EST: how far margins move when prices outrun wage costs",
+"context": "",
+"line": 1146
+},
+{
+"section": "markets",
+"key": "price_adjustment",
+"value": 0.636,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; share of the gap to target prices closed each year",
+"context": "",
+"line": 1147
+},
+{
+"section": "markets",
+"key": "export_price_elasticity",
+"value": 1.16,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1148
+},
+{
+"section": "markets",
+"key": "import_income_elasticity",
+"value": 1.26,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1149
+},
+{
+"section": "markets",
+"key": "import_price_elasticity",
+"value": 0.842,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1150
+},
+{
+"section": "markets",
+"key": "vat_input_export_burden_bn",
+"value": 135.3,
+"status": "EST",
+"note": "borne by exporters at the full restriction (EST, 97-152)",
+"context": "",
+"line": 1151
+},
+{
+"section": "markets",
+"key": "fx_current_account_response",
+"value": 0.544,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: log change in króna per unit change of CA/GDP",
+"context": "",
+"line": 1152
+},
+{
+"section": "markets",
+"key": "fx_inflation_passthrough",
+"value": 0.601,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1153
+},
+{
+"section": "markets",
+"key": "residential_share",
+"value": 0.7,
+"status": "EST",
+"note": "EST: share of fasteignamat that is housing",
+"context": "",
+"line": 1154
+},
+{
+"section": "markets",
+"key": "dwellings0",
+"value": 165000,
+"status": "EST",
+"note": "EST (HMS)",
+"context": "",
+"line": 1155
+},
+{
+"section": "markets",
+"key": "housing_income_elasticity",
+"value": 0.63,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST",
+"context": "",
+"line": 1156
+},
+{
+"section": "markets",
+"key": "housing_price_elasticity",
+"value": 0.71,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: rent elasticity of housing demand",
+"context": "",
+"line": 1157
+},
+{
+"section": "markets",
+"key": "rent_adjustment",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1158
+},
+{
+"section": "markets",
+"key": "housing_depreciation_and_risk",
+"value": 0.03,
+"status": "EST",
+"note": "EST: part of the user cost of owning",
+"context": "",
+"line": 1159
+},
+{
+"section": "markets",
+"key": "fund_housing_share",
+"value": 0.5,
+"status": "EST",
+"note": "EST: share of start-of-life payouts spent on housing",
+"context": "",
+"line": 1160
+},
+{
+"section": "markets",
+"key": "first_home_deposit",
+"value": 0.15,
+"status": "DATA",
+"note": "Seðlabanki: first-time buyers may borrow up to 85% of the price",
+"context": "buying a first home (model.step_home_purchase)",
+"line": 1162
+},
+{
+"section": "markets",
+"key": "first_home_dsti",
+"value": 0.4,
+"status": "DATA",
+"note": "Seðlabanki (2022): payments up to 40% of disposable income, first-time",
+"context": "",
+"line": 1163
+},
+{
+"section": "markets",
+"key": "first_home_price_share",
+"value": 0.8,
+"status": "EST",
+"note": "EST: a first home against the average dwelling (a single buys smaller)",
+"context": "",
+"line": 1164
+},
+{
+"section": "markets",
+"key": "mortgage_payment_rate",
+"value": 0.0055,
+"status": "EST",
+"note": "EST: monthly payment per króna borrowed (indexed 40-year loans ~.45%,",
+"context": "",
+"line": 1165
+},
+{
+"section": "markets",
+"key": "first_home_rate",
+"value": 0.4,
+"status": "EST",
+"note": "EST: share of households able to buy who do in a year, set so first-time",
+"context": "non-indexed 25-year ~.8%; a mix)",
+"line": 1167
+},
+{
+"section": "markets",
+"key": "pension_fx_outflow_bn",
+"value": 100.0,
+"status": "EST",
+"note": "EST: order of the funds' net foreign purchases, 2023-25 (Seðlabanki)",
+"context": "purchases run near HMS's 3,500-4,000 a year the pension funds' yearly net purchases of foreign assets, a steady outflow the króna answers today; as far as contributions go to the state instead, it stops (macro.update_end_of_year)",
+"line": 1171
+},
+{
+"section": "markets",
+"key": "construction0",
+"value": 0.011,
+"status": "EST",
+"note": "EST: yearly completions/stock in the status quo (depreciation + population growth)",
+"context": "",
+"line": 1172
+},
+{
+"section": "markets",
+"key": "construction_elasticity",
+"value": 1.3,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: response to house prices over building costs",
+"context": "",
+"line": 1173
+},
+{
+"section": "markets",
+"key": "dwelling_depreciation",
+"value": 0.006,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1174
+},
+{
+"section": "fisheries",
+"key": "revenue0",
+"value": 303.6,
+"status": "DATA",
+"note": "SJA08109, 2023, bn ISK",
+"context": "",
+"line": 1179
+},
+{
+"section": "fisheries",
+"key": "intermediate0",
+"value": 79.3,
+"status": "DATA",
+"note": "SJA08109, 2023, bn ISK",
+"context": "",
+"line": 1179
+},
+{
+"section": "fisheries",
+"key": "compensation0",
+"value": 113.5,
+"status": "DATA",
+"note": "SJA08109, 2023, bn ISK",
+"context": "",
+"line": 1179
+},
+{
+"section": "fisheries",
+"key": "capital_cost0",
+"value": 38.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1180
+},
+{
+"section": "fisheries",
+"key": "fte0",
+"value": 8000,
+"status": "EST",
+"note": "EST: fishing + processing FTE",
+"context": "",
+"line": 1181
+},
+{
+"section": "fisheries",
+"key": "occupation_mix",
+"value": [
+0.03,
+0.02,
+0.03,
+0.02,
+0.02,
+0.45,
+0.05,
+0.3,
+0.08
+],
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 1182
+},
+{
+"section": "fisheries",
+"key": "imported_input_share",
+"value": 0.6,
+"status": "EST",
+"note": "EST: fuel, gear, etc.",
+"context": "",
+"line": 1183
+},
+{
+"section": "fisheries",
+"key": "labour_cost_elasticity",
+"value": 0.2,
+"status": "EST",
+"note": "EST: processing jobs vs wage costs in foreign currency",
+"context": "",
+"line": 1184
+},
+{
+"section": "fisheries",
+"key": "export_share",
+"value": 0.95,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1185
+},
+{
+"section": "fisheries",
+"key": "catch_index",
+"value": 1.0,
+"status": "EST",
+"note": "total allowable catch relative to 2025",
+"context": "",
+"line": 1186
+},
+{
+"section": "fisheries",
+"key": "rent_capture",
+"value": 0.8,
+"status": "EST",
+"note": "reform: share of profit above normal return captured by quota leases",
+"context": "",
+"line": 1187
+},
+{
+"section": "fisheries",
+"key": "rent_capture_status_quo",
+"value": 0.24,
+"status": "EST",
+"note": "",
+"context": "what veiðigjald captures today: about 17.3 ma.kr. in 2026 after the 2025 reform, of 72.8 profit above a normal return. Left at zero, the reform was credited with the whole fee as new money.",
+"line": 1190
+},
+{
+"section": "fisheries_fund",
+"key": "assets_bn",
+"value": 0.0,
+"status": "EST",
+"note": "at the start, in the base year's krónur",
+"context": "",
+"line": 1196
+},
+{
+"section": "fisheries_fund",
+"key": "capture",
+"value": 0.0,
+"status": "EST",
+"note": "share of the rent it takes, the state's fee included (never below the fee)",
+"context": "",
+"line": 1197
+},
+{
+"section": "fisheries_fund",
+"key": "payout",
+"value": 0.03,
+"status": "EST",
+"note": "share of its value paid out each year, equally to every adult",
+"context": "",
+"line": 1198
+},
+{
+"section": "fisheries_fund",
+"key": "return",
+"value": 0.04,
+"status": "EST",
+"note": "EST: real yearly return abroad (a 60/40 world portfolio)",
+"context": "",
+"line": 1199
+},
+{
+"section": "fisheries_fund",
+"key": "foreign_inflation",
+"value": 0.02,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 1200
+},
+{
+"section": "windfall",
+"key": "rent_bn",
+"value": 0.0,
+"status": "EST",
+"note": "resource rent a year at full production, before the state's take (2025 kr.)",
+"context": "",
+"line": 1211
+},
+{
+"section": "windfall",
+"key": "start_year",
+"value": 4,
+"status": "EST",
+"note": "EST: first production, years after the base year (a find already made)",
+"context": "",
+"line": 1212
+},
+{
+"section": "windfall",
+"key": "ramp_years",
+"value": 5,
+"status": "EST",
+"note": "EST: years from first production to full",
+"context": "",
+"line": 1213
+},
+{
+"section": "windfall",
+"key": "state_take",
+"value": 0.78,
+"status": "EST",
+"note": "Norway's marginal take on petroleum rent",
+"context": "",
+"line": 1214
+},
+{
+"section": "windfall",
+"key": "rent_share_of_revenue",
+"value": 0.6,
+"status": "EST",
+"note": "EST: rent is about 60% of the value produced at typical prices",
+"context": "",
+"line": 1215
+},
+{
+"section": "windfall",
+"key": "fte_per_100bn",
+"value": 300,
+"status": "EST",
+"note": "EST: direct jobs per 100 ma.kr. of rent (Norway ~25,000 direct on ~8,000 ma.kr.)",
+"context": "",
+"line": 1216
+},
+{
+"section": "windfall",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.3,
+0.1,
+0.03,
+0.02,
+0.0,
+0.2,
+0.25,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1217
+},
+{
+"section": "public_equity",
+"key": "enabled",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1225
+},
+{
+"section": "public_equity",
+"key": "rounds_per_year",
+"value": 4000,
+"status": "EST",
+"note": "EST: ~3,000 companies registered a year (RSK) and ~1,000 capital increases",
+"context": "",
+"line": 1226
+},
+{
+"section": "public_equity",
+"key": "round_size",
+"value": 60000000.0,
+"status": "EST",
+"note": "EST: equity raised per round, value-weighted average (kr.)",
+"context": "",
+"line": 1227
+},
+{
+"section": "public_equity",
+"key": "equity_value_bn",
+"value": 6000.0,
+"status": "EST",
+"note": "EST: listed (~2,700, Nasdaq Iceland 2025) and unlisted equity, 2025",
+"context": "",
+"line": 1228
+},
+{
+"section": "public_equity",
+"key": "raising_share",
+"value": 0.12,
+"status": "EST",
+"note": "EST: share of corporate profits earned by firms raising capital in a year",
+"context": "",
+"line": 1229
+},
+{
+"section": "public_equity",
+"key": "payout",
+"value": 0.5,
+"status": "EST",
+"note": "EST: share of after-tax profits paid as dividends (listed firms ~50%)",
+"context": "",
+"line": 1230
+},
+{
+"section": "public_equity",
+"key": "avoidance_elasticity",
+"value": 1.0,
+"status": "EST",
+"note": "EST: rounds fall to (1 - a round's deemed share) ** this",
+"context": "",
+"line": 1231
+},
+{
+"section": "public_equity",
+"key": "productivity_cost",
+"value": 0.04,
+"status": "EST",
+"note": "EST: long-run output lost if the state took all new equity",
+"context": "",
+"line": 1232
+},
+{
+"section": "public_equity",
+"key": "cost_years",
+"value": 10,
+"status": "EST",
+"note": "EST: how long investment takes to adjust",
+"context": "",
+"line": 1233
+},
+{
+"section": "crisis",
+"key": "wage_linked_share",
+"value": 0.6,
+"status": "EST",
+"note": "",
+"context": "Most of 2020-21's support paid wages — hlutabætur, notice-period support — and under the reform wages are lower, since the payment already carries part of everyone's income: that part scales with the reform's pay against the status quo's. Closure and revenue-loss grants do not. EST.",
+"line": 1240
+},
+{
+"section": "crisis",
+"key": "shield_people",
+"value": 30000,
+"status": "EST",
+"note": "EST: ~45,000 over 70 and ~15,000 younger at high risk; half accept",
+"context": "\"Shielding\": no money to firms and no shutdown; those at high risk are offered a top-up to live in designated areas (the empty hotels), and young people out of work are paid well to be on call there. Set year by year as history keys (shield_*); the sizes below are what the long view and the past use. EST.",
+"line": 1244
+},
+{
+"section": "crisis",
+"key": "shield_topup",
+"value": 150000,
+"status": "EST",
+"note": "EST: kr. a month on top of the payment",
+"context": "",
+"line": 1245
+},
+{
+"section": "crisis",
+"key": "shield_carers",
+"value": 6000,
+"status": "EST",
+"note": "EST: one young carer for five shielded",
+"context": "",
+"line": 1246
+},
+{
+"section": "crisis",
+"key": "shield_carer_pay",
+"value": 650000,
+"status": "EST",
+"note": "EST: kr. a month, gross",
+"context": "",
+"line": 1247
+},
+{
+"section": "crisis",
+"key": "shield_room_night",
+"value": 12000,
+"status": "EST",
+"note": "EST: kr. a night for a hotel room at the state's rate",
+"context": "",
+"line": 1248
+},
+{
+"section": "crisis",
+"key": "shield_people_per_room",
+"value": 1.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1249
+},
+{
+"section": "crisis",
+"key": "lockdown_share",
+"value": 0.3,
+"status": "EST",
+"note": "EST: share of 2020-21's output fall that came from domestic restrictions",
+"context": "",
+"line": 1250
+},
+{
+"section": "energy",
+"key": "smelter_twh0",
+"value": 12.9,
+"status": "DATA",
+"note": "Orkustofnun: ~65% of 19.6 TWh",
+"context": "",
+"line": 1253
+},
+{
+"section": "energy",
+"key": "smelter_price_usd_mwh",
+"value": 35.0,
+"status": "EST",
+"note": "EST: average contract price",
+"context": "",
+"line": 1254
+},
+{
+"section": "energy",
+"key": "aluminium_price_link",
+"value": 0.4,
+"status": "EST",
+"note": "EST: how much of the contract price follows the aluminium price",
+"context": "",
+"line": 1255
+},
+{
+"section": "energy",
+"key": "generation_cost_usd_mwh",
+"value": 15.0,
+"status": "EST",
+"note": "EST: running + capital cost of existing hydropower",
+"context": "",
+"line": 1256
+},
+{
+"section": "energy",
+"key": "smelter_net_export_bn_per_twh",
+"value": 17.0,
+"status": "EST",
+"note": "EST: 442 bn Al+Si exports x .5 net of imported alumina, per TWh",
+"context": "",
+"line": 1257
+},
+{
+"section": "energy",
+"key": "smelter_fte0",
+"value": 2000,
+"status": "EST",
+"note": "EST: direct jobs",
+"context": "",
+"line": 1258
+},
+{
+"section": "energy",
+"key": "smelter_occupation_mix",
+"value": [
+0.05,
+0.1,
+0.1,
+0.03,
+0.02,
+0.0,
+0.2,
+0.45,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1259
+},
+{
+"section": "energy",
+"key": "alternative_occupation_mix",
+"value": [
+0.08,
+0.25,
+0.15,
+0.05,
+0.05,
+0.1,
+0.12,
+0.15,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1260
+},
+{
+"section": "energy",
+"key": "state_dividend_share",
+"value": 0.8,
+"status": "DATA",
+"note": "Landsvirkjun is state-owned; share of rent change paid to the treasury",
+"context": "",
+"line": 1261
+},
+{
+"section": "energy",
+"key": "smelter_exit_share",
+"value": 0.0,
+"status": "EST",
+"note": "share of smelter contracts ended (a reform option; 0 by default)",
+"context": "reform levers",
+"line": 1263
+},
+{
+"section": "energy",
+"key": "exit_start_year",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1264
+},
+{
+"section": "energy",
+"key": "exit_years",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1265
+},
+{
+"section": "energy",
+"key": "contract_compensation_bn",
+"value": 150.0,
+"status": "EST",
+"note": "EST: total arbitration/compensation, spread over the exit years",
+"context": "",
+"line": 1266
+},
+{
+"section": "energy",
+"key": "alternative_uses",
+"value": [
+{
+"name": "Data centres",
+"share": 0.3,
+"price_usd_mwh": 55,
+"jobs_per_twh": 40,
+"net_export_bn_per_twh": 6,
+"ramp_years": 3
+},
+{
+"name": "E-fuels and hydrogen",
+"share": 0.25,
+"price_usd_mwh": 35,
+"jobs_per_twh": 60,
+"net_export_bn_per_twh": 9,
+"ramp_years": 6
+},
+{
+"name": "Land-based aquaculture",
+"share": 0.15,
+"price_usd_mwh": 45,
+"jobs_per_twh": 150,
+"net_export_bn_per_twh": 22,
+"ramp_years": 5
+},
+{
+"name": "Greenhouses and food",
+"share": 0.1,
+"price_usd_mwh": 40,
+"jobs_per_twh": 250,
+"net_export_bn_per_twh": 8,
+"ramp_years": 4
+},
+{
+"name": "Electrified transport",
+"share": 0.1,
+"price_usd_mwh": 60,
+"jobs_per_twh": 20,
+"net_export_bn_per_twh": 12,
+"ramp_years": 6
+}
+],
+"status": "EST",
+"note": "EST: share of freed power, price, jobs, net exports, ramp-up",
+"context": "",
+"line": 1267
+},
+{
+"section": "infrastructure",
+"key": "scale",
+"value": 1.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1289
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "label",
+"value": "Keflavík–Reykjavík rail link",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1292
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "start_year",
+"value": 2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1293
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "build_years",
+"value": 7,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1293
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "capex_bn_per_year",
+"value": 21,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1293
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "upkeep_bn_per_year",
+"value": 3.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1293
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "fte",
+"value": 900,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1294
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.12,
+0.12,
+0.05,
+0.05,
+0.0,
+0.38,
+0.18,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1294
+},
+{
+"section": "infrastructure.programmes.keflavik_rail",
+"key": "productivity_gain",
+"value": 0.004,
+"status": "EST",
+"note": "the airport commute, for workers and for tourism",
+"context": "",
+"line": 1295
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "label",
+"value": "Reykjavík light rail",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1298
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "start_year",
+"value": 1,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1299
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "build_years",
+"value": 10,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1299
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "capex_bn_per_year",
+"value": 11,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1299
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "upkeep_bn_per_year",
+"value": 4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1299
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "fte",
+"value": 700,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1300
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.12,
+0.12,
+0.05,
+0.05,
+0.0,
+0.38,
+0.18,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1300
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "productivity_gain",
+"value": 0.006,
+"status": "EST",
+"note": "the largest travel-time saving, because most people live here",
+"context": "",
+"line": 1301
+},
+{
+"section": "infrastructure.programmes.city_light_rail",
+"key": "construction_cost_cut",
+"value": 0.02,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1302
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "label",
+"value": "Tunnels for the countryside",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1305
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "start_year",
+"value": 2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1306
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "build_years",
+"value": 12,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1306
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "capex_bn_per_year",
+"value": 14,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1306
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "upkeep_bn_per_year",
+"value": 2.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1306
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "fte",
+"value": 800,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1307
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "occupation_mix",
+"value": [
+0.04,
+0.1,
+0.1,
+0.04,
+0.04,
+0.02,
+0.4,
+0.21,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1307
+},
+{
+"section": "infrastructure.programmes.country_tunnels",
+"key": "productivity_gain",
+"value": 0.003,
+"status": "EST",
+"note": "towns that can reach each other in winter",
+"context": "",
+"line": 1308
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "label",
+"value": "Railway around the country",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1311
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "start_year",
+"value": 5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1312
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "build_years",
+"value": 15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1312
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "capex_bn_per_year",
+"value": 40,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1312
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "upkeep_bn_per_year",
+"value": 12,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1312
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "fte",
+"value": 2200,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1313
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.12,
+0.12,
+0.05,
+0.05,
+0.0,
+0.38,
+0.18,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1313
+},
+{
+"section": "infrastructure.programmes.ring_railway",
+"key": "productivity_gain",
+"value": 0.005,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1314
+},
+{
+"section": "frontier",
+"key": "scale",
+"value": 1.0,
+"status": "EST",
+"note": "multiplies the ambition of every enabled programme",
+"context": "",
+"line": 1320
+},
+{
+"section": "frontier",
+"key": "success_rate",
+"value": 0.7,
+"status": "EST",
+"note": "EST: share of promised returns actually realised",
+"context": "",
+"line": 1321
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "label",
+"value": "Indoor farming at scale",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1324
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "start_year",
+"value": 2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1325
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "build_years",
+"value": 5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1325
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "capex_bn_per_year",
+"value": 35,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1325
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "upkeep_bn_per_year",
+"value": 8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1325
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "twh",
+"value": 1.2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1326
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "fte",
+"value": 1400,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1326
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.1,
+0.1,
+0.05,
+0.1,
+0.35,
+0.1,
+0.1,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1326
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "exports_bn",
+"value": 25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1327
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "import_substitution_bn",
+"value": 45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1327
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "state_return_bn",
+"value": 12,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1327
+},
+{
+"section": "frontier.programmes.controlled_environment_farming",
+"key": "food_price_cut",
+"value": 0.12,
+"status": "EST",
+"note": "cheaper fresh food in the basket",
+"context": "",
+"line": 1328
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "label",
+"value": "Cultivated protein works",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1331
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "start_year",
+"value": 4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1332
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "build_years",
+"value": 6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1332
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "capex_bn_per_year",
+"value": 45,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1332
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "upkeep_bn_per_year",
+"value": 12,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1332
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "twh",
+"value": 1.8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1333
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "fte",
+"value": 900,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1333
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "occupation_mix",
+"value": [
+0.06,
+0.25,
+0.18,
+0.05,
+0.04,
+0.05,
+0.12,
+0.2,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1333
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "exports_bn",
+"value": 70,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1334
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "import_substitution_bn",
+"value": 25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1334
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "state_return_bn",
+"value": 25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1334
+},
+{
+"section": "frontier.programmes.cultivated_protein",
+"key": "food_price_cut",
+"value": 0.06,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1335
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "label",
+"value": "Autonomous fishing and processing",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1338
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "start_year",
+"value": 2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1339
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "build_years",
+"value": 5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1339
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "capex_bn_per_year",
+"value": 25,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1339
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "upkeep_bn_per_year",
+"value": 6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1339
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "twh",
+"value": 0.4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1340
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "fte",
+"value": 400,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1340
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.25,
+0.25,
+0.05,
+0.02,
+0.08,
+0.15,
+0.1,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1340
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "exports_bn",
+"value": 0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1341
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "import_substitution_bn",
+"value": 0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1341
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "state_return_bn",
+"value": 10,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1341
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "fisheries_labour_cut",
+"value": 0.35,
+"status": "EST",
+"note": "fewer crew and processing hands",
+"context": "",
+"line": 1342
+},
+{
+"section": "frontier.programmes.autonomous_fisheries",
+"key": "fisheries_revenue_gain",
+"value": 0.08,
+"status": "EST",
+"note": "better selection, less waste, steadier quality",
+"context": "",
+"line": 1343
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "label",
+"value": "Factory-built housing",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1346
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "start_year",
+"value": 2,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1347
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "build_years",
+"value": 4,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1347
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "capex_bn_per_year",
+"value": 20,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1347
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "upkeep_bn_per_year",
+"value": 5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1347
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "twh",
+"value": 0.3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1348
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "fte",
+"value": 1200,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1348
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "occupation_mix",
+"value": [
+0.05,
+0.1,
+0.12,
+0.05,
+0.03,
+0.0,
+0.4,
+0.2,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1348
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "exports_bn",
+"value": 5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1349
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "import_substitution_bn",
+"value": 15,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1349
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "state_return_bn",
+"value": 8,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1349
+},
+{
+"section": "frontier.programmes.robotic_construction",
+"key": "construction_cost_cut",
+"value": 0.2,
+"status": "EST",
+"note": "cheaper homes, so more get built",
+"context": "",
+"line": 1350
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "label",
+"value": "Carbon storage services",
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1353
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "start_year",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1354
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "build_years",
+"value": 6,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1354
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "capex_bn_per_year",
+"value": 30,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1354
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "upkeep_bn_per_year",
+"value": 10,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1354
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "twh",
+"value": 1.5,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1355
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "fte",
+"value": 700,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1355
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "occupation_mix",
+"value": [
+0.06,
+0.22,
+0.2,
+0.05,
+0.02,
+0.0,
+0.25,
+0.15,
+0.05
+],
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1355
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "exports_bn",
+"value": 60,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1356
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "import_substitution_bn",
+"value": 0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1356
+},
+{
+"section": "frontier.programmes.carbon_mineralisation",
+"key": "state_return_bn",
+"value": 20,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1356
+},
+{
+"section": "housing_segments",
+"key": "stock_shares",
+"value": [
+0.06,
+0.17,
+0.27,
+0.24,
+0.19,
+0.07
+],
+"status": "EST",
+"note": "",
+"context": "Dwellings by size (housing.SIZES): studio, flat for one or two, flat for a family with a child, flat or small house for two children, house for three or four, large house. EST from the census's dwellings by number of rooms (1, 2, 3, 4, 5-6, 7+); to be checked against Hagstofa's 2021 census table.",
+"line": 1366
+},
+{
+"section": "housing_segments",
+"key": "largest_let",
+"value": 3,
+"status": "EST",
+"note": "EST: few homes larger than a two-child flat are let",
+"context": "",
+"line": 1367
+},
+{
+"section": "housing_segments",
+"key": "value_step",
+"value": 1.25,
+"status": "EST",
+"note": "EST: a size no owner holds is worth this much more than the size below",
+"context": "",
+"line": 1368
+},
+{
+"section": "housing_segments",
+"key": "well_off_share",
+"value": 0.25,
+"status": "EST",
+"note": "EST: the top quarter by income or wealth wants a size more than it needs",
+"context": "",
+"line": 1369
+},
+{
+"section": "housing_segments",
+"key": "adjustment",
+"value": 0.5,
+"status": "EST",
+"note": "EST: share of the gap to a size's clearing price closed in a year",
+"context": "",
+"line": 1370
+},
+{
+"section": "housing_segments",
+"key": "construction_split_elasticity",
+"value": 4.0,
+"status": "EST",
+"note": "EST: new building tilts towards the sizes whose prices have risen",
+"context": "",
+"line": 1371
+},
+{
+"section": "housing_segments",
+"key": "conversion_rate",
+"value": 0.03,
+"status": "EST",
+"note": "EST: share of a size's stock divided a step down a year per unit of the gap",
+"context": "",
+"line": 1372
+},
+{
+"section": "housing_segments",
+"key": "_rent_factor",
+"value": null,
+"status": "EST",
+"note": "each size's rent against the market's, set every year by update_segments",
+"context": "",
+"line": 1373
+},
+{
+"section": "housing_segments",
+"key": "leave_home_elasticity",
+"value": 1.0,
+"status": "EST",
+"note": "EST: young adults leave home faster as a studio gets cheaper against pay",
+"context": "",
+"line": 1374
+},
+{
+"section": "housing_segments",
+"key": "extra_room_penalty",
+"value": 1.2,
+"status": "EST",
+"note": "",
+"context": "Choosing a size (housing.choose_size), among the one needed and the two above: EST, so that at the base year's prices about three in four take the size they need, and a size 25% dearer than the next loses about half its takers to it",
+"line": 1378
+},
+{
+"section": "housing_segments",
+"key": "size_price_elasticity",
+"value": 3.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1379
+},
+{
+"section": "downsizing",
+"key": "hazard_under_55",
+"value": 0.015,
+"status": "EST",
+"note": "",
+"context": "Yearly chance that a household with more room than it needs moves down the ladder, by age. EST from moving rates of older owners in Europe and the US, 1-3% a year and rising with age (Banks et al. 2012; Angelini and Laferrère 2012); most such moves follow a partner's death or ill health (Venti and Wise 2004).",
+"line": 1385
+},
+{
+"section": "downsizing",
+"key": "hazard_67",
+"value": 0.02,
+"status": "EST",
+"note": "",
+"context": "Yearly chance that a household with more room than it needs moves down the ladder, by age. EST from moving rates of older owners in Europe and the US, 1-3% a year and rising with age (Banks et al. 2012; Angelini and Laferrère 2012); most such moves follow a partner's death or ill health (Venti and Wise 2004).",
+"line": 1385
+},
+{
+"section": "downsizing",
+"key": "hazard_75",
+"value": 0.03,
+"status": "EST",
+"note": "",
+"context": "Yearly chance that a household with more room than it needs moves down the ladder, by age. EST from moving rates of older owners in Europe and the US, 1-3% a year and rising with age (Banks et al. 2012; Angelini and Laferrère 2012); most such moves follow a partner's death or ill health (Venti and Wise 2004).",
+"line": 1385
+},
+{
+"section": "downsizing",
+"key": "hazard_85",
+"value": 0.045,
+"status": "EST",
+"note": "",
+"context": "Yearly chance that a household with more room than it needs moves down the ladder, by age. EST from moving rates of older owners in Europe and the US, 1-3% a year and rising with age (Banks et al. 2012; Angelini and Laferrère 2012); most such moves follow a partner's death or ill health (Venti and Wise 2004).",
+"line": 1385
+},
+{
+"section": "downsizing",
+"key": "widowed_multiplier",
+"value": 3.0,
+"status": "EST",
+"note": "EST: in the two years after a partner's death",
+"context": "",
+"line": 1386
+},
+{
+"section": "downsizing",
+"key": "income_gap_response",
+"value": 3.0,
+"status": "EST",
+"note": "",
+"context": "EST: the hazard rises by this multiple of how far income is below the poverty line, as a share of the line (a household 30% below it moves twice as often). The evidence of moving for money is weak; 0-6 is plausible.",
+"line": 1389
+},
+{
+"section": "downsizing",
+"key": "anticipation_response",
+"value": 4.0,
+"status": "EST",
+"note": "",
+"context": "EST: at 55-66 it rises by this multiple of how much further, in this run than at the start, the income of those just retired falls below that of those still working (moving before the money runs short)",
+"line": 1392
+},
+{
+"section": "downsizing",
+"key": "renter_share",
+"value": 0.5,
+"status": "EST",
+"note": "EST: renters with room to spare move down at half the owners' rate",
+"context": "",
+"line": 1393
+},
+{
+"section": "downsizing",
+"key": "price_response",
+"value": 3.0,
+"status": "EST",
+"note": "EST: less often by the smaller home's price against their own, to this power",
+"context": "",
+"line": 1394
+},
+{
+"section": "downsizing",
+"key": "max_steps_down",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1395
+},
+{
+"section": "downsizing",
+"key": "min_release",
+"value": 0.1,
+"status": "EST",
+"note": "EST: a move that frees less than a tenth of the price is not made",
+"context": "",
+"line": 1396
+},
+{
+"section": "downsizing",
+"key": "transaction_cost",
+"value": 0.03,
+"status": "EST",
+"note": "agent's fee with VAT (~2%) and stamp duty (0.8%)",
+"context": "",
+"line": 1397
+},
+{
+"section": "downsizing",
+"key": "min_equity",
+"value": 15000000.0,
+"status": "EST",
+"note": "EST: owners with less equity than this (2025 kr.) do not move for money",
+"context": "",
+"line": 1398
+},
+{
+"section": "downsizing",
+"key": "annuitised_share",
+"value": 0.6,
+"status": "EST",
+"note": "EST: the part of the cash turned into a lifetime income; the rest is spent",
+"context": "",
+"line": 1399
+},
+{
+"section": "downsizing",
+"key": "annuity_real_rate",
+"value": 0.03,
+"status": "EST",
+"note": "EST: the real return an annuity pays",
+"context": "",
+"line": 1400
+},
+{
+"section": "upscaling",
+"key": "hazard",
+"value": 0.12,
+"status": "EST",
+"note": "EST: a crowded family moves within about four to eight years",
+"context": "A crowded household of working age moves up with this yearly chance per size it lacks (two at most), if it can pay: the deposit from its equity and savings, the payments within the central bank's limit",
+"line": 1405
+},
+{
+"section": "upscaling",
+"key": "price_response",
+"value": 2.0,
+"status": "EST",
+"note": "EST: less often by the larger home's price against its own, to this power",
+"context": "",
+"line": 1406
+},
+{
+"section": "upscaling",
+"key": "deposit",
+"value": 0.2,
+"status": "EST",
+"note": "EST: of the new home's price",
+"context": "",
+"line": 1407
+},
+{
+"section": "upscaling",
+"key": "trade_up_rate",
+"value": 0.05,
+"status": "EST",
+"note": "",
+"context": "EST: households with the room they need trade up a size at this rate times how far the larger home's price has fallen below their own's (to the power price_response, less one); none at the base year's prices",
+"line": 1410
+},
+{
+"section": "wealth",
+"key": "net_worth_excl_pensions_pct_gdp",
+"value": 206,
+"status": "DATA",
+"note": "Landssamtök lífeyrissjóða (2022): 206% of GDP",
+"context": "",
+"line": 1415
+},
+{
+"section": "wealth",
+"key": "liquid_share",
+"value": 0.3,
+"status": "EST",
+"note": "EST: financial net wealth share; the rest is housing equity",
+"context": "",
+"line": 1416
+},
+{
+"section": "wealth",
+"key": "wealth_sd",
+"value": 1.2,
+"status": "EST",
+"note": "EST: lognormal dispersion",
+"context": "",
+"line": 1417
+},
+{
+"section": "wealth",
+"key": "pareto_alpha",
+"value": 1.6,
+"status": "EST",
+"note": "EST: tail of the top 1% (wealth taxes and top shares: ~1.4-1.8)",
+"context": "",
+"line": 1418
+},
+{
+"section": "wealth",
+"key": "mpc_bottom",
+"value": 0.98,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: marginal propensity to consume out of income, by income rank",
+"context": "",
+"line": 1419
+},
+{
+"section": "wealth",
+"key": "mpc_top",
+"value": 0.862,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: marginal propensity to consume out of income, by income rank",
+"context": "",
+"line": 1419
+},
+{
+"section": "wealth",
+"key": "mpc_liquid_wealth",
+"value": 0.0249,
+"status": "TUNED",
+"note": "TUNED 2016-25 backcast; was EST: yearly consumption out of liquid wealth",
+"context": "",
+"line": 1420
+},
+{
+"section": "wealth",
+"key": "mpc_housing_wealth",
+"value": 0.015,
+"status": "EST",
+"note": "EST: yearly consumption out of housing equity",
+"context": "",
+"line": 1421
+},
+{
+"section": "wealth",
+"key": "liquid_return",
+"value": 0.02,
+"status": "EST",
+"note": "EST: real return",
+"context": "",
+"line": 1422
+},
+{
+"section": "wealth",
+"key": "annuity_rate",
+"value": 0.04,
+"status": "EST",
+"note": "wealth drawdown available to finance not working",
+"context": "",
+"line": 1423
+},
+{
+"section": "wealth",
+"key": "borrowing_limit_months",
+"value": 3,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1424
+},
+{
+"section": "wealth",
+"key": "target_consumption_ratio",
+"value": 0.968,
+"status": "DATA",
+"note": "",
+"context": "household consumption is calibrated to the observed saving rate: consumption 2,439.6 bn against gross disposable income 2,520.6 bn in 2025 (Hagstofa THJ02103, THJ06021) = 3.2% saved",
+"line": 1427
+},
+{
+"section": "wealth",
+"key": "mpc_capital_income",
+"value": 0.25,
+"status": "EST",
+"note": "",
+"context": "v9: EST share of capital income (after its tax) spent in the year; most of it is the wealthiest's and is reinvested. The consumption ratio above is calibrated on the rest of income, as in v8.",
+"line": 1430
+},
+{
+"section": "wealth",
+"key": "consumption_rate_sensitivity",
+"value": 2.0,
+"status": "EST",
+"note": "",
+"context": "",
+"line": 1431
+},
+{
+"section": "wealth",
+"key": "security_mpc_gain",
+"value": 0.1,
+"status": "EST",
+"note": "EST: % less consumption per percentage point of extra real rate",
+"context": "EST: how much more of their income people spend once it is guaranteed rather than merely large. A move from nothing guaranteed to everything guaranteed raises the marginal propensity to consume by this much. Precautionary saving is well evidenced — Carroll (1997) buffer-stock theory, Carroll and Samwick (1998) put precautionary wealth near a tenth to a fifth of household wealth — but the size of the response to a permanent floor is not settled, so this is a lever and it can be set to 0.",
+"line": 1437
+},
+{
+"section": "demography",
+"key": "couple_catch_up",
+"value": 0.3,
+"status": "EST",
+"note": "EST: share of each age band's shortfall in couples closed in a year (step_partnerships)",
+"context": "",
+"line": 1442
+},
+{
+"section": "demography",
+"key": "births_per_year",
+"value": 4300,
+"status": "EST",
+"note": "EST ~2025",
+"context": "",
+"line": 1443
+},
+{
+"section": "demography",
+"key": "fertility_income_elasticity",
+"value": 0.5,
+"status": "EST",
+"note": "EST (range .1-1): births change per unit (usable child income change / household income)",
+"context": "",
+"line": 1444
+},
+{
+"section": "demography",
+"key": "deaths_per_year",
+"value": 2600,
+"status": "EST",
+"note": "EST",
+"context": "",
+"line": 1445
+},
+{
+"section": "demography",
+"key": "mortality_improvement",
+"value": 0.012,
+"status": "EST",
+"note": "EST: yearly fall in death rates at every age (Hagstofa's projections",
+"context": "",
+"line": 1446
+},
+{
+"section": "demography",
+"key": "birth_age_mean",
+"value": 31.0,
+"status": "DATA",
+"note": "Hagstofa: mean age of mothers at all births, ~31",
+"context": "assume life expectancy rising about a year a decade) When in life children come. Iceland's mean age at a birth is about 31 and rising. The hypothesis tested: with a secure income, studying and raising a small child can happen together, so births come earlier, before a career rather than in the middle of building one.",
+"line": 1451
+},
+{
+"section": "demography",
+"key": "birth_timing_shift",
+"value": 1.0,
+"status": "EST",
+"note": "EST (lever, 0-3): years earlier at a 300 þús. payment, reached over",
+"context": "",
+"line": 1452
+},
+{
+"section": "demography",
+"key": "birth_timing_years",
+"value": 5,
+"status": "EST",
+"note": "... this many years; the move itself adds births while it happens",
+"context": "",
+"line": 1453
+},
+{
+"section": "demography",
+"key": "birth_career_penalty",
+"value": 0.04,
+"status": "EST",
+"note": "EST: permanent wage-rate loss from a birth in the early career",
+"context": "A birth costs a mother some of her pay for good — the wage-rate part of the child penalty, not the hours, which the childcare and choice model already carry. Miller (2011, US, fertility-shock IV) finds each year of delay worth about 3% in wages; Kleven et al. (2019) put Denmark's long-run earnings penalty near 20%, mostly hours. Timing it against labour-market entry rather than age (Herr 2011) shows a birth *before* a career costs less than one early in it; Bach et al. (2025, Danish siblings) find student mothers who finish catch up or overtake by 40 from university colleges, not quite from universities. Picchio et al. (2021, Italy) find the cost smallest when a first child comes 7-9 years after leaving school, and Doren (2019) that timing barely matters for the less educated. So: a modest penalty, a partial saving for a birth before a career, and the model measures both against today's timing, not against zero.",
+"line": 1463
+},
+{
+"section": "demography",
+"key": "birth_before_career_share",
+"value": 0.5,
+"status": "EST",
+"note": "EST: share of that loss a birth while studying or before 25 carries",
+"context": "",
+"line": 1464
+}
+]

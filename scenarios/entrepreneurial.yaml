@@ -1,0 +1,8 @@
+# Restricted arrivals plus a society with twice the venture ideas per capita and bolder founders.
+policy:
+  immigration_cap_multiple: 1.0
+  residence_rules_strictness: 1.0
+behaviour:
+  entrepreneurial_spirit: 2.0
+characters:
+  Founder: {enterprise: 1.5}

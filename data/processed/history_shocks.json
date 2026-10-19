@@ -1,0 +1,92 @@
+{
+ "2016": {
+  "demand_level": 1.0407981314650905,
+  "productivity_level": 1.066769189467008,
+  "arrival_scale": 1.089852845988114,
+  "rate_shock": -0.003694636820101377,
+  "emigration_scale": 0.9890041263702727,
+  "fx_shock": 0.016867386913554702,
+  "fiscal_residual_bn": 0.0
+ },
+ "2017": {
+  "demand_level": 1.0936633957245976,
+  "productivity_level": 1.071167465042656,
+  "arrival_scale": 0.8722194724972815,
+  "rate_shock": -0.012456366237825728,
+  "emigration_scale": 0.880340938657436,
+  "fx_shock": -0.026789140637918794,
+  "fiscal_residual_bn": 84.35218496349147
+ },
+ "2018": {
+  "demand_level": 1.1892624512205532,
+  "productivity_level": 1.066397748333543,
+  "arrival_scale": 0.7121329371659787,
+  "rate_shock": -0.038351703093761846,
+  "emigration_scale": 0.8130292722495744,
+  "fx_shock": -0.07297906267562573,
+  "fiscal_residual_bn": 73.585107621545
+ },
+ "2019": {
+  "demand_level": 1.1809597495652588,
+  "productivity_level": 1.0311346910044947,
+  "arrival_scale": 1.059680974082715,
+  "rate_shock": -0.017284706317783418,
+  "emigration_scale": 0.7897721765556383,
+  "fx_shock": -0.10096374456879126,
+  "fiscal_residual_bn": 7.737019800964253
+ },
+ "2020": {
+  "demand_level": 1.165591312481504,
+  "productivity_level": 0.9766730496121115,
+  "arrival_scale": 1.070016302190022,
+  "rate_shock": -0.031933457539967826,
+  "emigration_scale": 0.8273037603382727,
+  "fx_shock": -0.18130523280043456,
+  "fiscal_residual_bn": -84.04101885787489
+ },
+ "2021": {
+  "demand_level": 1.1462114182387377,
+  "productivity_level": 1.0035842247199416,
+  "arrival_scale": 1.171344316512968,
+  "rate_shock": -0.08787988888492876,
+  "emigration_scale": 0.739161391486254,
+  "fx_shock": -0.18753515043951766,
+  "fiscal_residual_bn": -97.41364355407327
+ },
+ "2022": {
+  "demand_level": 1.2069217313846645,
+  "productivity_level": 1.0381160312478954,
+  "arrival_scale": 0.9112452005100019,
+  "rate_shock": -0.1551103914256698,
+  "emigration_scale": 0.8608269579774223,
+  "fx_shock": -0.0753166404962369,
+  "fiscal_residual_bn": -88.39123747558288
+ },
+ "2023": {
+  "demand_level": 1.2720351225695048,
+  "productivity_level": 1.0327678411673735,
+  "arrival_scale": 0.9688715136954412,
+  "rate_shock": -0.11602583870387961,
+  "emigration_scale": 0.7441837271127811,
+  "fx_shock": 0.042616835918117844,
+  "fiscal_residual_bn": -57.44761699132636
+ },
+ "2024": {
+  "demand_level": 1.336060129193072,
+  "productivity_level": 0.9801377958320673,
+  "arrival_scale": 0.9767112591354787,
+  "rate_shock": -0.04755448102728038,
+  "emigration_scale": 0.7229123774426771,
+  "fx_shock": 0.017262474251809188,
+  "fiscal_residual_bn": -74.79571111668312
+ },
+ "2025": {
+  "demand_level": 1.2432120733786116,
+  "productivity_level": 0.9584411769514278,
+  "arrival_scale": 1.2218514106509428,
+  "rate_shock": 0.02068080819448062,
+  "emigration_scale": 0.7159535724393014,
+  "fx_shock": 0.029693940757093522,
+  "fiscal_residual_bn": -2.153059455793065
+ }
+}
