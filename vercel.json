@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "",
-  "buildCommand": "rm -rf dist && mkdir dist && cp artifacts/explorer_v3/*.js dist/ && cp artifacts/guided/index.html dist/index.html && cp artifacts/explorer_v3/index.html dist/explorer.html && printf '<script defer src=\"/_vercel/insights/script.js\"></script>\\n' | tee -a dist/index.html >> dist/explorer.html",
+  "buildCommand": "sh scripts/vercel_build.sh",
   "outputDirectory": "dist",
   "cleanUrls": true
 }
