@@ -174,6 +174,8 @@ def actual():
     """What happened, in the model's terms: indices on the base year, rates as shares, money in ma.kr."""
     h = load()
     o = h["outcomes"]
+    bi = json.loads((ROOT / "data/reference/business_investment.json").read_text())
+    inv = {"investment": bi["investment"]["Current prices"], "gdp": bi["gdp"]}
     b = str(BASE_YEAR)
     ys = [str(y) for y in YEARS]
     cpi = lambda y: o["cpi"][y] / o["cpi"][b]
@@ -193,7 +195,29 @@ def actual():
         # the bank's key rate less that year's inflation (Seðlabanki, annual averages)
         "real_rate": {y: (h["policy"]["key_rate_pct"][y] - 100 * (o["cpi"][y] / o["cpi"][str(int(y) - 1)] - 1)) / 100
                       for y in ys},
+        # 2.0: business investment as a share of GDP, current prices (THJ03106 against THJ01102)
+        "business_investment_gdp": {y: inv["investment"][y] / inv["gdp"][y] for y in ys},
+        # 2.0: the capital area's share of the population at the end of the year (MAN03250, 1 January next), the
+        # moves between it and the rest (MAN01002), and its home prices against the rest's (VIS01106, December)
+        **regions_actual(ys),
     }
+
+
+def regions_actual(ys):
+    rg = json.loads((ROOT / "data/reference/regions_2025.json").read_text())
+    pop, mig, hpi = rg["population"], rg["migration"], rg["house_price_index"]
+    nxt = lambda y: str(int(y) + 1)
+    cap = "From capital area"
+    moves = {y: sum(v for k, v in mig[y][cap].items() if k not in ("To capital area", "To foreign countries"))
+             + sum(v.get("To capital area", 0) for k, v in mig[y].items() if k not in (cap, "From abroad"))
+             for y in ys if y in mig}
+    gap = lambda y: ((hpi[f"{y}M12"]["Capital area, multi-flat houses"] + hpi[f"{y}M12"]["Capital area, single-flat houses"])
+                     / 2 / hpi[f"{y}M12"]["Outside capital area, total"])
+    b = str(BASE_YEAR)
+    return {"capital_area_share": {y: pop["Capital region"][nxt(y)] / pop["Total"][nxt(y)] for y in ys
+                                   if nxt(y) in pop["Capital region"]},
+            "moves_between_areas": moves,
+            "capital_area_price_gap": {y: gap(y) / gap(b) for y in ys if f"{y}M12" in hpi}}
 
 
 def simulated(rows, base):
@@ -221,6 +245,12 @@ def simulated(rows, base):
         put("debt_pct_gdp", r["debt_pct_gdp"])
         put("exports_real", r["exports_bn"] / base.p["base"]["X0"])
         put("real_rate", r["real_rate"])
+        if "acc_business_investment_bn" in r:
+            put("business_investment_gdp", r["acc_business_investment_bn"] / (gdp0 * r["output_index"]))
+        if "capital_area_share" in r:
+            put("capital_area_share", r["capital_area_share"])
+            put("moves_between_areas", r["moves_to_capital"] + r["moves_from_capital"])
+            put("capital_area_price_gap", r["capital_area_price_factor"])
     # the model's first-year wage is the reference; put the record on the same footing
     return out
 

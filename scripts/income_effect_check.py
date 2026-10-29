@@ -125,6 +125,8 @@ def one_seed(base, blob, frozen, seed):
             # and the reform's other behavioural channels, which move pay for reasons other than the payment
             "demography": {"birth_timing_shift": 0.0},
             "labour": {"occupation_mobility_security": 0.0},
+            # 2.0: and peers as the status quo has them: a lottery winner's neighbours did not win (model.norm_term)
+            "behaviour": {"freeze_peers": True},
             "markets": {"freeze_prices": True, "freeze_wages": True}})
         soc.reference = sq.own_history      # whose wages it is paid
         for _ in range(YEARS):

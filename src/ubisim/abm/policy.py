@@ -27,6 +27,10 @@ def housing_benefit(A, idx, taxable, partner_income, ben, bx):
         return np.zeros(len(idx))
     partner = A["partner"][idx]
     payee = A["renter"][idx] & ((partner < 0) | (A["sex"][idx] == 1)) & (A["age"][idx] >= 18)
+    # 1.1: not to an adult living in someone else's home — the benefit needs a lease of three months or more in
+    # one's own name, registered with HMS (law 75/2016, 9. gr.); a young adult living with their parents had it
+    if "host" in A:
+        payee &= A["host"][idx] < 0
     kids = A["kids_home"][idx] if "kids_home" in A else np.zeros(len(idx))
     size = np.clip(1 + (partner >= 0) + kids, 1, 6).astype(int) - 1
     base = np.array(ben["housing_benefit_base_year"], float)[size] * bx / 12
@@ -233,7 +237,13 @@ def _net_income(A, idx, gross_wage, working, p, partner_income=None, price=1.0, 
         # rules, 4. gr.). In the model everyone it reaches has stopped working by choice. Paid in full, it was a
         # 260,000 basic income for leaving work: the young left work at 1.5 points a year and the bill doubled in six
         # years, where the record has some 2,700 recipients (PAYE 2023) and no such drift (found 2026-10-04).
-        sa = np.where(prime & ~seeking & ~studying & means, sa_amount * (1 - ben["social_assistance_refusal_cut"]), 0)
+        # 1.1: most who could claim it do not — stigma, the hassle, not knowing (Ko and Moffitt 2022; Eurofound 2015: 40-60%
+        # and more of those entitled to minimum income do not claim). Paid to all the model finds entitled, it reached
+        # 7,300 people against the record's 2,700; a fixed share claims, the same people every year. The borgaralaun
+        # needs no claim.
+        claims = (np.asarray(idx) * 0.7548776662466927) % 1.0 < ben.get("social_assistance_claim_share", 1.0)
+        sa = np.where(prime & ~seeking & ~studying & means & claims,
+                      sa_amount * (1 - ben["social_assistance_refusal_cut"]), 0)
         support = ub + sa
         occ = np.where(retired, occ_pen, 0) + fund_dis
         hs = hs_oa + hs_dis
@@ -297,6 +307,66 @@ def _net_income(A, idx, gross_wage, working, p, partner_income=None, price=1.0, 
             "ubi": ubi, "ubi_saved": saved, "occ_pension": occ, "topup": topup}
 
 
+def labour_keep(gross, p, price, today=False):
+    """What a worker keeps of the last króna an employer spends on their pay, at gross monthly pay above the personal
+    credit: after income tax, the contributions, and the employer's payroll tax and contributions. A contribution to
+    a pension fund counts at what people think a future pension is worth (links.pension_accrual_value), as in the
+    choice of work; social security under the reform is a tax. `today` gives the status quo's rules."""
+    pol = p["policy"]
+    v = p["links"]["pension_accrual_value"]
+    sq_pens = pol["pension_contrib_employee"] + pol["pension_contrib_employer"]
+    if today or pol["regime"] == "status_quo":
+        brackets, scale = pol["income_tax_brackets"], 1.0
+        ee, er, pens = pol["pension_contrib_employee"], pol["pension_contrib_employer"], sq_pens
+    else:
+        brackets = pol.get("platform_income_tax_brackets") or pol["income_tax_brackets"]
+        scale = pol["platform_income_tax_scale"]
+        ee, er = employee_rate(p), employer_rate(p)
+        pens = (1 - pol.get("pension_fold", 1.0)) * sq_pens
+    tp = threshold_price(pol, price)
+    taxable = gross * (1 - ee)
+    t = np.zeros_like(taxable, dtype=float)
+    for lo, r in brackets:
+        t = np.where(taxable >= lo * tp, r * scale, t)
+    return (1 - ee - t * (1 - ee) + v * pens) / (1 + pol["payroll_tax"] + er)
+
+
+def top_income_response(A, idx, gross, p, price, eligible, exempt):
+    """1.1: how pay above the second tax threshold answers the reform's rates, against today's.
+
+    Two responses (top_incomes in params). Taxable income falls with the net-of-tax share by an elasticity — less
+    worked, fewer bonuses, more hidden or deferred. And those who own their firm, the self-employed and founders,
+    take more of their pay as dividends when dividends come to keep more against pay than they do today; the rule
+    on a deemed salary (reiknað endurgjald) holds the pay below the threshold in place. Public employees are left
+    out: their pay is set by the state. Under the status quo nothing changes.
+
+    Returns (pay still reported, what the person keeps on top untaxed or as dividends, the tax on the shifted part,
+    the pay no longer reported)."""
+    pol, ti = p["policy"], p["top_incomes"]
+    zero = np.zeros(len(idx))
+    if pol["regime"] != "platform" or not len(idx):
+        return gross, zero, zero, zero
+    tp = threshold_price(pol, price)
+    b = pol["income_tax_brackets"]
+    ee0 = pol["pension_contrib_employee"]
+    mid, top = b[1][0] * tp / (1 - ee0), b[-1][0] * tp / (1 - ee0)
+    above = np.where(exempt, 0.0, np.maximum(gross - mid, 0.0))
+    if not above.any():
+        return gross, zero, zero, zero
+    k_now, k_sq = labour_keep(gross, p, price), labour_keep(gross, p, price, today=True)
+    eps = np.where(gross > top, ti["eti_top"], ti["eti_middle"]) * ti["scale"]
+    lost = above * (1 - (k_now / k_sq) ** eps)
+    cap = p["benefits"]["capital_income_tax"]
+    div_now = (1 - pol["corporate_tax_rate"]) * (1 - cap)
+    div_sq = (1 - ti["corporate_tax_today"]) * (1 - cap)
+    moved = np.clip(ti["scale"] * ti["shift_response"] * ((div_now - k_now) - (div_sq - k_sq)), 0, ti["shift_max"])
+    shifted = (above - lost) * np.where(eligible, moved, 0.0)
+    # the pay saved, employer's taxes and all, is the firm's profit, taxed and paid out as a dividend
+    profit = shifted * (1 + pol["payroll_tax"] + employer_rate(p))
+    extra = lost * (1 - ti["real_share"]) + profit * div_now
+    return gross - lost - shifted, extra, profit * (1 - div_now), lost
+
+
 def employer_rate(p):
     """What employers pay on wages besides payroll tax: pension contributions today, social security under the
     platform, and a blend as far as the pension system is folded in."""
@@ -334,9 +404,9 @@ def vat_rate(p):
         else pol["vat_platform"] * pol.get("vat_platform_capture", 1.0)
 
 
-def housing_cost(A, idx, p, rent_index=1.0, mortgage_factor=None, owner_tax=0.0):
+def housing_cost(A, idx, p, rent_index=1.0, mortgage_factor=None, owner_tax=0.0, base_rents=False):
     """Monthly housing cost of the household of each agent in idx, in 2025 krónur: rent, or the mortgage and
-    upkeep, plus any change in property tax when it is asked for."""
+    upkeep, plus any change in property tax when it is asked for. base_rents: at the base year's rents by size."""
     c = p["costs"]
     kids = A["n_kids"][idx]
     housing = np.where(A["renter"][idx], np.where(A["capital"][idx], c["housing_renter_capital"], c["housing_renter_other"]),
@@ -344,16 +414,20 @@ def housing_cost(A, idx, p, rent_index=1.0, mortgage_factor=None, owner_tax=0.0)
     # renters pay market rents; mortgage holders feel part of it (indexed loans, refinancing)
     mortgage_factor = 1 + .3 * (rent_index - 1) if mortgage_factor is None else mortgage_factor
     # v10: a renter pays the rent of the size it lives in on the housing ladder (housing.update_segments)
-    rf = p.get("housing_segments", {}).get("_rent_factor")
+    rf = None if base_rents else p.get("housing_segments", {}).get("_rent_factor")
     if rf is not None and "hclass" in A:
         cls = A["hclass"][idx]
         rent_index = rent_index * np.where(cls >= 0, np.asarray(rf)[np.maximum(cls, 0)], 1.0)
+    # 2.0: and the rent of its area (regions.update_market)
+    af = None if base_rents else p.get("housing_segments", {}).get("_area_factor")
+    if af is not None:
+        rent_index = rent_index * np.asarray(af)[A["capital"][idx].astype(int)]
     housing = housing * (1 + .15 * kids) * np.where(A["renter"][idx], rent_index,
                                                     np.where(A["mortgage"][idx], mortgage_factor, 1.0))
     return housing + np.where(A["renter"][idx], 0.0, owner_tax)
 
 
-def household_costs(A, idx, p, rent_index=1.0, mortgage_factor=None, owner_tax=0.0, pooled=True):
+def household_costs(A, idx, p, rent_index=1.0, mortgage_factor=None, owner_tax=0.0, pooled=True, base_rents=False):
     """Monthly essential costs c_min and equivalence scale for the household of each agent in idx."""
     c = p["costs"]
     age, partner = A["age"][idx], A["partner"][idx]
@@ -364,7 +438,7 @@ def household_costs(A, idx, p, rent_index=1.0, mortgage_factor=None, owner_tax=0
     teens = A["n_teens"][idx] if "n_teens" in A else 0
     equiv = 1 + .5 * has_p + .3 * (kids - teens) + .5 * teens
     basic = c["basic_single"] * equiv
-    housing = housing_cost(A, idx, p, rent_index, mortgage_factor, owner_tax)
+    housing = housing_cost(A, idx, p, rent_index, mortgage_factor, owner_tax, base_rents)
     at_home = (age < 20) & ~has_p
     cmin = np.where(at_home, c["living_with_parents"], basic + housing)
     equiv = np.where(at_home, 1.0, equiv)

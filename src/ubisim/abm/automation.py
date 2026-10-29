@@ -20,6 +20,16 @@ v3 adds the two other channels the literature finds (Acemoglu and Restrepo 2019,
 Together they are calibrated so that the consensus pace (5% a year) gives about +0.5 points a year of
 productivity growth with little change in unemployment — where OECD (2024), Acemoglu (2024), Goldman Sachs (2023)
 and Penn Wharton (2025) centre — and a fast pace (15%) displaces faster than new tasks come back.
+
+1.1 splits the technology in two. Office AI (language models and agents) does cognitive tasks: clerical work,
+analysis, drafting, code (exposure after Eloundou et al. 2024 and Gmyrek, Berg and Bescond, ILO 2023). Robotics
+does physical ones: processing lines, driving, cleaning, kitchens, warehouses (`exposure_physical`). Each has its own
+pace — the scenario's, not Iceland's: the country buys the technology the world makes — and its own cost, robots
+needing far more capital for each post they fill. Iceland can pay part of what adopting either costs
+(`ai_subsidy`, `robot_subsidy`), which brings take-up forward. Office AI takes entry-level work first
+(`junior_load_ai`): junior tasks are the codifiable ones, and since 2022 employment of 22-25-year-olds in the most
+exposed occupations has fallen against older workers' (Brynjolfsson, Chandar and Chen 2025; Lichtinger and Hosseini
+2025). careers.py carries what that does to first jobs and the experience they give.
 """
 import numpy as np
 
@@ -29,9 +39,17 @@ from ubisim.abm import params as P
 class Automation:
     def __init__(self, p):
         self.p = p
-        self.exposure = np.array([p["automation"]["exposure"].get(n, .35) for n in P.OCCUPATIONS])
-        self.complement = np.array([p["automation"].get("complementarity", {}).get(n, .3) for n in P.OCCUPATIONS])
+        a = p["automation"]
+        self.exposure_ai = np.array([a["exposure"].get(n, .35) for n in P.OCCUPATIONS])
+        self.exposure_robot = np.array([a.get("exposure_physical", {}).get(n, 0.0) for n in P.OCCUPATIONS])
+        self.exposure = np.minimum(self.exposure_ai + self.exposure_robot, .95)
+        self.complement = np.array([a.get("complementarity", {}).get(n, .3) for n in P.OCCUPATIONS])
+        self.automated_ai = np.zeros(len(P.OCCUPATIONS))
+        self.automated_robot = np.zeros(len(P.OCCUPATIONS))
         self.automated = np.zeros(len(P.OCCUPATIONS))
+        self.robot_capability = 1.0
+        self.new_capex = (0.0, 0.0)          # FTE newly displaced this year, by office AI and by robots
+        self.subsidy_cost = 0.0
         self.augmented = np.zeros(len(P.OCCUPATIONS))   # share of a profession's work made more productive
         self.reinstated = np.zeros(len(P.OCCUPATIONS))  # new tasks, as a share of the profession's base work
         self.weights = None
@@ -40,19 +58,40 @@ class Automation:
         self.displaced_fte = 0.0
 
     def active(self):
-        return self.p["automation"]["ai_progress_rate"] > 0
+        a = self.p["automation"]
+        return a["ai_progress_rate"] > 0 or a.get("robot_progress_rate", 0.0) > 0
+
+    def subsidies(self):
+        """Share of what adopting office AI and robots costs that the state pays (under the reform only)."""
+        a, pol = self.p["automation"], self.p["policy"]
+        if pol["regime"] != "platform":
+            return 0.0, 0.0
+        return min(a.get("ai_subsidy", 0.0), .9), min(a.get("robot_subsidy", 0.0), .9)
+
+    def _take_up(self, exposure, wage, capability, midpoint, subsidy):
+        a = self.p["automation"]
+        # relative cost of doing the work with people rather than machines; a subsidy makes the machine cheaper
+        score = exposure * np.maximum(wage, .1) ** a["wage_sensitivity"] * capability / (1 - subsidy)
+        c = a["adoption_curvature"]
+        return exposure * score ** c / (midpoint ** c + score ** c)
 
     def update(self, year, real_wage_index, base_fte, price):
         """Take-up per profession, given how capable machines are and what the work costs."""
         a = self.p["automation"]
         self.capability = (1 + a["ai_progress_rate"]) ** year
-        # relative cost of doing the work with people rather than machines
-        score = self.exposure * np.maximum(real_wage_index, .1) ** a["wage_sensitivity"] * self.capability
-        take_up = score ** a["adoption_curvature"] / (a["adoption_midpoint"] ** a["adoption_curvature"]
-                                                      + score ** a["adoption_curvature"])
-        target = self.exposure * take_up
+        self.robot_capability = (1 + a.get("robot_progress_rate", 0.0)) ** year
+        s_ai, s_robot = self.subsidies()
+        t_ai = self._take_up(self.exposure_ai, real_wage_index, self.capability, a["adoption_midpoint"], s_ai)
+        t_robot = self._take_up(self.exposure_robot, real_wage_index, self.robot_capability,
+                                a.get("robot_adoption_midpoint", a["adoption_midpoint"]), s_robot)
         # capital takes time to install: move part of the way each year, and never backwards
-        self.automated = np.maximum(self.automated, self.automated + a["adoption_speed"] * (target - self.automated))
+        before = self.automated_ai.copy(), self.automated_robot.copy()
+        self.automated_ai = np.maximum(self.automated_ai, self.automated_ai + a["adoption_speed"] * (t_ai - self.automated_ai))
+        self.automated_robot = np.maximum(self.automated_robot, self.automated_robot
+                                          + a.get("robot_adoption_speed", a["adoption_speed"]) * (t_robot - self.automated_robot))
+        self.automated = np.minimum(self.automated_ai + self.automated_robot, .95)
+        self.new_capex = (float(((self.automated_ai - before[0]) * base_fte).sum()),
+                          float(((self.automated_robot - before[1]) * base_fte).sum()))
         self.displaced_fte = float((self.automated * base_fte).sum())
         # augmentation: take-up by capability alone
         c = a.get("augmentation_curvature", 2.0)
@@ -74,11 +113,29 @@ class Automation:
         2026-10-01, the long view's unemployment climbing to 9-13% with no shock)."""
         return np.maximum(1 - self.automated + self.reinstated, 0.0)
 
+    def entry_cut(self):
+        """Share of each profession's entry-level work the machines have taken: office AI takes it first."""
+        a = self.p["automation"]
+        return np.minimum(a.get("junior_load_ai", 1.0) * self.automated_ai
+                          + a.get("junior_load_robot", 1.0) * self.automated_robot, .95)
+
+    def junior_hiring(self):
+        """How many juniors a profession takes on against what its work left to people would suggest: below 1
+        where machines took entry-level tasks faster than the rest."""
+        overall = np.maximum(1 - self.automated + self.reinstated, .05)
+        return np.clip((1 - self.entry_cut() + self.reinstated) / overall, 0.0, 1.0)
+
     def income(self, wage_bill_per_fte, price):
-        """Machine income: the wage bill no longer paid, less what running the machines costs (bn ISK/yr)."""
+        """Machine income: the wage bill no longer paid, less what running the machines costs (bn ISK/yr). And
+        what the state pays towards adopting them this year, from the machines' cost: years of the wages they
+        replace (capex_years_*)."""
         a = self.p["automation"]
         saved = self.displaced_fte * wage_bill_per_fte * 12 / 1e9
         self.machine_income = max(0.0, saved * (1 - a["operating_cost_share"]))
+        s_ai, s_robot = self.subsidies()
+        year_pay = wage_bill_per_fte * 12 / 1e9
+        self.subsidy_cost = year_pay * (s_ai * max(self.new_capex[0], 0.0) * a.get("capex_years_ai", .5)
+                                        + s_robot * max(self.new_capex[1], 0.0) * a.get("capex_years_robot", 2.0))
         return self.machine_income
 
     def fiscal(self):
@@ -99,11 +156,13 @@ class Automation:
         financing = stake * value * a.get("stake_financing_rate", .03)
         dividends = after_tax * stake * a["dividend_payout"] - financing
         return {"automation_tax": taxed, "automation_levy": levied, "automation_dividends": dividends,
-                "automation_stake_cost": financing, "machine_income": self.machine_income}
+                "automation_stake_cost": financing, "machine_income": self.machine_income,
+                "automation_subsidy": self.subsidy_cost}
 
     def productivity_factor(self):
         """Output per hour rises as machines take over part of the work, and as they make people faster."""
         a = self.p["automation"]
+        # the same gain per task taken over, by either technology, as before the split
         share = float((self.automated * self.exposure).sum() / max(self.exposure.sum(), 1e-9))
         aug = float((self.augmented * self.weights).sum()) if self.weights is not None else 0.0
         return (1 + a["output_gain"] * share) * (1 + a.get("augmentation_gain", 0.0) * aug)
@@ -112,6 +171,10 @@ class Automation:
         return {"automation_capability": self.capability,
                 "automated_share": float(self.automated.mean()),
                 "automation_displaced_fte": self.displaced_fte,
+                "automation_ai_share": float((self.automated_ai * self.weights).sum()) if self.weights is not None else 0.0,
+                "automation_robot_share": float((self.automated_robot * self.weights).sum()) if self.weights is not None else 0.0,
+                "robot_capability": self.robot_capability,
+                "automation_subsidy_bn": self.subsidy_cost,
                 "automation_augmented_share": float((self.augmented * self.weights).sum()) if self.weights is not None else 0.0,
                 "automation_new_task_fte": float((self.reinstated * self.weights).sum()) if self.weights is not None else 0.0,
                 "automation_productivity": self.productivity_factor(),

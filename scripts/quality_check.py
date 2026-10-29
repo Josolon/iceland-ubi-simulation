@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import numpy as np  # noqa: E402
 
 from ubisim.abm import macro as macromod
-from ubisim.abm import model, params  # noqa: E402
+from ubisim.abm import careers, familycare, model, params  # noqa: E402
 from ubisim.abm.population import FULL, PART, VENTURE  # noqa: E402
 from ubisim.models import static_balance as sb  # noqa: E402
 
@@ -34,9 +34,12 @@ PLATFORM = {"regime": "platform", "wage_setting": "free_market"}
 RESULTS = []
 
 # keys a worker sends back: everything the checks below read, plus every profession wage
-KEEP = ["year", "acc_benefit_old_age", "acc_benefit_disability", "acc_child_pension", "acc_capital_income_tax",
+KEEP = ["year", "capital_area_share", "moves_to_capital", "moves_from_capital", "capital_area_price_factor", "capital_area_pay_ratio", "gain_leaving_capital", "bank_capital_ratio", "fund_share_of_household_loans", "bank_spread", "bond_premium", "acc_fin_bank_losses", "hours_within_job", "capital_factor", "capital_q", "acc_capital_per_labour", "acc_business_investment_bn", "acc_output", "acc_informal_tax_change", "acc_hidden_earnings", "acc_hidden_earnings_sq", "wealth_gini", "pension_position", "pension_position_accrued", "pension_rights_factor", "pension_rights_bn",
+        "pension_special_saved_bn", "pension_state_support_bn", "acc_benefit_old_age", "acc_benefit_disability", "acc_child_pension", "acc_capital_income_tax",
         "acc_capital_income", "acc_founder_dividends", "acc_benefit_interest_rebate", "poverty_rate_adults",
         "acc_benefit_unemployment", "acc_benefit_social_assistance", "acc_benefit_housing_benefit",
+        "acc_recipients_social_assistance", "family_care_replaced_posts", "family_carers", "family_care_hours_week",
+        "junior_hire_rate", "experience_gap_25_34", "experience_output_factor", "neet_rate", "not_employed_20_29",
         "acc_benefit_fund_disability", "acc_benefits", "acc_child_payments", "public_equity_share", "public_equity_dividends", "public_equity_coverage", "public_equity_drag",
         "acc_corporate_tax_economy", "acc_public_equity_dividends", "deemed_fund_m", "acc_income_tax", "acc_labour_income_real", "acc_windfall_take", "output_index", "interest_bn", "population", "home_ownership_under_35", "first_home_purchases", "employment_rate_16_74", "fte", "fte_per_adult_16_74", "part_time_share",
         "independent_workers", "unemployment_rate", "price_level", "cpi", "exchange_rate", "house_price_index",
@@ -68,6 +71,7 @@ KEEP = ["year", "acc_benefit_old_age", "acc_benefit_disability", "acc_child_pens
 # real one fails this at once — the class of error that froze schooling, shrank the debt ratio and hid the
 # property tax. The tolerance allows for the one real effect inflation has here: pay fixed in krónur between
 # contract renewals.
+NEUTRAL_SEEDS = ("1", "2")   # the neutrality pairs are read as the mean over these seeds and the main one
 NEUTRAL = [("real_income_median", "real median income", .04), ("employment_rate_16_74", "employment", .02),
            ("balance_operational_bn", "public balance after inflation's erosion of debt", .10),
            ("debt_pct_gdp", "debt ratio", .05),
@@ -77,6 +81,11 @@ NEUTRAL = [("real_income_median", "real median income", .04), ("employment_rate_
            ("dwelling_stock_index", "housing stock", .02), ("under_3_months_savings", "savings buffers", .10),
            ("immigrants", "immigration", .08), ("poverty_rate_anchored", "poverty, fixed line", .10),
            ("crime_index", "offending", .05)]
+
+
+# the mutual divisions' net real returns, 1997-2025 (Landssamtök lífeyrissjóða, from the Central Bank's data)
+RECORD_RETURNS = [v / 100 for _, v in sorted(json.loads((ROOT / "data/reference/pension_funds_2025.json").read_text())
+                                            ["net_real_return_pct"].items())]
 
 
 def check(name, ok, detail, warn_only=False):
@@ -109,6 +118,39 @@ def _run(job):
     return name, slim
 
 
+def _history(job):
+    """The status quo's own accounts, year by year: what a reform is set against in the paired comparison."""
+    name, blob, years = job
+    soc = model.scenario(pickle.loads(blob), {})
+    soc.rng = np.random.default_rng(int(name.split("@")[1]) if "@" in name else 4242)
+    for _ in range(years):
+        soc.step()
+    return name, soc.own_history
+
+
+def _wealth_path(blob, years):
+    """The status quo's net worth by family, year by year: the median and the richest tenth's share."""
+    soc = model.scenario(pickle.loads(blob), {})
+    soc.rng = np.random.default_rng(4242)
+    out = []
+    for t in range(years + 1):
+        if t:
+            soc.step()
+        f = np.sort(family_net_worth(soc))
+        out.append((float(np.median(f)), float(f[int(.9 * len(f)):].sum() / f.sum())))
+    return out
+
+
+def run_paired(blob, jobs, years, workers):
+    """Each reform with the status quo of the same seed as its reference."""
+    seeds = sorted({n.split("@")[1] if "@" in n else "" for n, _ in jobs})
+    with ProcessPoolExecutor(min(workers, len(seeds))) as pool:
+        refs = dict(pool.map(_history, [(f"sq@{s}" if s else "sq", blob, years) for s in seeds]))
+    args = [(n, blob, o, years, refs[f"sq@{n.split('@')[1]}" if "@" in n else "sq"]) for n, o in jobs]
+    with ProcessPoolExecutor(min(workers, len(args))) as pool:
+        return dict(pool.map(_run, args))
+
+
 def run_all(blob, jobs, years, reference, workers):
     args = [(n, blob, o, years, reference) for n, o in jobs]
     with ProcessPoolExecutor(min(workers, len(args))) as pool:
@@ -117,6 +159,19 @@ def run_all(blob, jobs, years, reference, workers):
 
 def platform(**policy_extra):
     return {"policy": {**PLATFORM, **policy_extra}}
+
+
+def family_net_worth(soc):
+    """Net worth by family as the tax returns count it: a couple together, every other person of 16+ alone."""
+    A = soc.A
+    alive = A["alive"] & (A["age"] >= 16)
+    nw = A["wealth"] + soc.housing_equity()
+    idx = np.flatnonzero(alive)
+    part = A["partner"][idx]
+    has = part >= 0
+    has &= np.where(has, alive[np.maximum(part, 0)], False)
+    head = ~has | (idx < part)
+    return (nw[idx] + np.where(has, nw[np.maximum(part, 0)], 0.0))[head]
 
 
 # ----------------------------------------------------------------- 1. calibration
@@ -134,14 +189,53 @@ def calibration_checks(soc):
     check("part-time share (VIN01104: 24.3%)", close(part, .243, .15), f"{part:.1%}")
     pop = int(A["alive"].sum())
     check("population (MAN43000: 394,108)", close(pop, 394108, .02), f"{pop:,}")
-    nw = (A["wealth"] + np.maximum(A["home_value"] - A["mortgage_debt"], 0))[A["alive"] & (A["age"] >= 18)]
-    top10 = float(np.sort(nw)[-max(len(nw) // 10, 1):].sum() / max(nw.sum(), 1))
-    top1 = float(np.sort(nw)[-max(len(nw) // 100, 1):].sum() / max(nw.sum(), 1))
-    # A wide band until the distribution is calibrated to Hagstofa's tax-return wealth by decile: the model's top is
-    # too thin (business and financial wealth are a flat share of each household's), which is why a wealth tax
-    # finds too small a base. Reported so the gap stays visible.
-    check("richest tenth hold a plausible share of net wealth (EST 35-60%)", .30 <= top10 <= .60,
-          f"{top10:.1%} (richest 1%: {top1:.1%}, where tax data suggest nearer 20%)")
+    # 1.1: net worth by family as the 2025 tax returns count it (Hagstofa THJ09005, THJ09007): a couple together,
+    # everyone else of 16+ alone. v10 checked the richest tenth of individuals within 35-60%, and had 35%.
+    rec = json.loads((ROOT / "data/reference/wealth_tax_returns_2025.json").read_text())
+    fam = family_net_worth(soc)
+    s_fam = np.sort(fam)
+    n = len(s_fam)
+    dec = [float(s_fam[n * k // 10:n * (k + 1) // 10].sum() / s_fam.sum()) for k in range(10)]
+    by = rec["by_decile"]
+    rdec = [by[str(k + 1)]["net_worth"] / by["0"]["net_worth"] for k in range(10)]
+    pc = rec["net_worth_percentiles_kr"]
+    top1 = float(s_fam[int(.99 * n):].sum() / s_fam.sum())
+    check(f"families (THJ09005: {by['0']['families']:,})", close(n, by["0"]["families"], .08), f"{n:,}")
+    check(f"richest tenth of families: share of net worth (tax returns: {rdec[9]:.1%})", abs(dec[9] - rdec[9]) <= .04,
+          f"{dec[9]:.1%} (richest 1%: {top1:.1%})")
+    check(f"next tenth (tax returns: {rdec[8]:.1%})", abs(dec[8] - rdec[8]) <= .03, f"{dec[8]:.1%}")
+    check(f"seventh and eighth tenths (tax returns: {rdec[6]:.1%}, {rdec[7]:.1%})",
+          abs(dec[6] - rdec[6]) <= .03 and abs(dec[7] - rdec[7]) <= .03, f"{dec[6]:.1%}, {dec[7]:.1%}")
+    med = float(np.median(fam))
+    check(f"median family's net worth (THJ09007: {pc['P50'] / 1e6:.1f} m.kr.)", close(med, pc["P50"], .35),
+          f"{med / 1e6:.1f} m.kr.")
+    ratio, rratio = np.percentile(fam, 99) / np.percentile(fam, 90), pc["P99"] / pc["P90"]
+    check(f"the 99th percentile against the 90th (THJ09007: {rratio:.2f})", close(ratio, rratio, .12), f"{ratio:.2f}")
+    # 1.1: income at the top as the tax returns have it (TEK01006, 2025, total income of those 16+ with any): pay,
+    # pensions and capital income; benefits are left out, which reach neither percentile
+    inc = json.loads((ROOT / "data/reference/income_tax_returns_2025.json").read_text())["2025"]
+    alive16 = A["alive"] & (A["age"] >= 16)
+    total = (A["base_wage"] * soc.hours_of(A["status"]) * 12 * np.isin(A["status"], [PART, FULL, VENTURE])
+             + A["occ_pension"] * 12 + A["capital_income"] * 12)[alive16] / 1e3
+    total = total[total > 0]
+    p90, p99 = np.percentile(total, [90, 99])
+    check(f"income, 90th percentile (TEK01006: {inc['P90'] / 1e3:.1f} m.kr. a year)", close(p90, inc["P90"], .12),
+          f"{p90 / 1e3:.1f} m.kr.")
+    check(f"income, 99th percentile (TEK01006: {inc['P99'] / 1e3:.1f} m.kr. a year)", close(p99, inc["P99"], .15),
+          f"{p99 / 1e3:.1f} m.kr.")
+    # 1.1: the career ladder leaves the base year as it found it: no one ahead of or behind their peers, pay and
+    # output as calibrated, every profession taking on juniors in full
+    every = np.arange(len(A["age"]))
+    gap0 = float(np.abs(A["exp_gap"]).max()) if "exp_gap" in A else 0.0
+    wf = careers.wage_factor(soc, every)
+    check("career ladder: the base year untouched", gap0 == 0.0 and np.allclose(wf, 1.0)
+          and float(soc.automation.junior_hiring().min()) >= 1 - 1e-9 and careers.output_factor(soc) == 1.0,
+          f"largest experience gap {gap0:.2f} years, pay factor {np.min(wf):.3f}-{np.max(wf):.3f}")
+    # 1.1: carers as the 2019 survey has them (EHIS: 26.4% of 15-64 care for a relative weekly), by construction
+    # close; this catches a broken assignment
+    a1664 = A["alive"] & (A["age"] >= 16) & (A["age"] <= 64)
+    cs = float(familycare.ties(soc)[a1664].mean())
+    check("family carers, 16-64 (EHIS 2019: 26.4% weekly)", close(cs, .264, .10), f"{cs:.1%}")
     wage_bill = float((A["base_wage"] * soc.hours_of(A["status"]) * ch).sum() * 12 / 1e9)
     check("wage bill (TEK02001: 2,174 bn)", close(wage_bill, 2174.5, .10), f"{wage_bill:,.0f} bn")
     # GFS 1111, income tax of individuals (state 283.9 + útsvar 410.2); the model taxes pensions and benefits too, so
@@ -276,10 +370,27 @@ def behaviour_checks(blob, years, workers):
         ("mid_freehealth", platform(**mid, free_health_care=1.0)),
         ("mid_gifts_open", platform(**mid, inheritance_tax_rate=.5, gift_tax_rate=0.0)),
         ("ubi450_flat_prices", params.deep_merge(platform(**ubi), {"markets": {"trend_inflation": 0.0}})),
+        ("ubi450_no_norm", params.deep_merge(platform(**ubi), {"behaviour": {"norm_scale": 0.0}})),
+        ("sq_no_norm", {"behaviour": {"norm_scale": 0.0}}),
+        # 2.0: the funds through the record's returns from 2007 on, the crash in the second year
+        ("sq_2008", {"pensions": {"return_path": RECORD_RETURNS[10:]}}),
+        # 2.0: returns that rise with wealth as Norway's records have them (a sensitivity; 0 by the backcast)
+        ("sq_steep_returns", {"wealth": {"return_gradient_scale": 1.0}}),
+        # 2.0: the informal economy against a tenth higher income tax
+        ("mid_hightax", platform(**mid, platform_income_tax_scale=1.1)),
     ]
+    # the neutrality pairs on two more seeds: venture profits are heavy-tailed, and on one seed corporate tax
+    # differed by 9% between two runs with and without inflation where five seeds showed no difference on average
+    jobs += [(f"{n}@{s}", o) for n, o in jobs if n in ("sq_flat_prices", "ubi450_flat_prices") for s in NEUTRAL_SEEDS]
+    jobs += [(f"sq@{s}", {}) for s in NEUTRAL_SEEDS]
     r = run_all(blob, jobs, years, None, workers)
     r["sq"] = sq
     last = {k: v[-1] for k, v in r.items()}
+    # 2.0: what is set against the status quo's path — the bond market, the cost of capital — exists only in a run
+    # with a reference, as every published result has; run alone a reform is its own reference and both are nil
+    paired = run_paired(blob, [("mid", platform(**mid)), ("mid_nofold", platform(**mid, pension_fold=0.0)),
+                               ("mid_corptax", platform(**mid, corporate_tax_rate=.30))], years, workers)
+    plast = {k: v[-1] for k, v in paired.items()}
     # People must be able to buy homes in the status quo: before 2026-09-26 nobody could, and under-35 ownership
     # fell to nothing over thirty years. Over ten it should hold roughly where it starts, with first-time purchases
     # in the thousands a year (HMS counts some 3,000-4,000 first-time buyers).
@@ -296,10 +407,15 @@ def behaviour_checks(blob, years, workers):
     check("taking indexation out of loans leaves the run finite",
           all(v == v for v in (last["mid_unindexed"]["real_income_median"], last["mid_unindexed"]["balance_bn"])),
           "median income and balance finite")
-    print("   inflation neutrality, final year: with 2.5% trend / with none", flush=True)
+    print("   inflation neutrality, final year, mean of three seeds: with 2.5% trend / with none", flush=True)
+    def seed_mean(name, key):
+        """The final year averaged over the main seed and NEUTRAL_SEEDS (DESIGN.md §5: a difference smaller than
+        the spread between seeds is not a finding). The tolerances are those set for one seed."""
+        return float(np.mean([last[name][key]] + [last[f"{name}@{s}"][key] for s in NEUTRAL_SEEDS]))
+
     for with_, without in (("sq", "sq_flat_prices"), ("ubi450", "ubi450_flat_prices")):
         for key, label, tol in NEUTRAL:
-            a, b = last[with_][key], last[without][key]
+            a, b = seed_mean(with_, key), seed_mean(without, key)
             if key == "balance_operational_bn":   # as a share of the base-year budget, not of a small number
                 gap = abs(a - b) / 1500
             elif key == "debt_pct_gdp":     # in percentage points of GDP
@@ -310,6 +426,87 @@ def behaviour_checks(blob, years, workers):
                 gap = abs(a - b) / max(abs(b), 1e-9)
             check(f"{with_}: inflation leaves {label} alone", gap <= tol, f"{a:,.4g} vs {b:,.4g}")
 
+    # 2.0: the norm to work multiplies a reform's labour response by about 1 / (1 - 0.2), as Norway's claiming
+    # does (Markussen and Røed 2015: 1.28 in the long run), and leaves the status quo's base year alone
+    eff = lambda a, b: last[a]["fte_per_adult_16_74"] - last[b]["fte_per_adult_16_74"]
+    mult = eff("ubi450", "sq") / min(eff("ubi450_no_norm", "sq_no_norm"), -1e-9)
+    check("the norm to work multiplies a reform's labour response by a social multiplier (1.1-1.4)",
+          1.1 <= mult <= 1.4, f"{mult:.2f} after {years} years")
+    check("the norm to work leaves the status quo's first year alone",
+          abs(r["sq"][0]["fte_per_adult_16_74"] - r["sq_no_norm"][0]["fte_per_adult_16_74"]) < 1e-9,
+          f"{r['sq'][0]['fte_per_adult_16_74']:.4f} vs {r['sq_no_norm'][0]['fte_per_adult_16_74']:.4f}")
+    # 2.0: the pension funds' balance sheet (pensions.py)
+    pos = [row["pension_position"] for row in sq]
+    check("pension funds: the status quo's position starts near the record's (-1.0% accrued, end 2025)",
+          abs(sq[0]["pension_position_accrued"] + .0102) < .01, f"{sq[0]['pension_position_accrued']:+.2%} after a year")
+    check("pension funds: at the mean return the status quo keeps within the law's 5% band, no rights cut",
+          max(abs(g) for g in pos) < .05 and sq[-1]["pension_rights_factor"] == 1.0,
+          f"position {min(pos):+.2%} to {max(pos):+.2%}")
+    s8 = r["sq_2008"]
+    check("pension funds: the record's 2008 brings a cut in rights (the funds cut 10-20%), and the law's band holds",
+          .05 < 1 - s8[-1]["pension_rights_factor"] < .30 and abs(s8[-1]["pension_position"]) <= .10,
+          f"rights x{s8[-1]['pension_rights_factor']:.3f}, position {s8[-1]['pension_position']:+.2%} by year {years}")
+    check("pension funds: the reform's fold ends the rights it folds in, and the special payments with them",
+          last["ubi450"]["pension_rights_bn"] < .01 * last["sq"]["pension_rights_bn"]
+          and abs(last["ubi450"]["pension_special_saved_bn"] - 69.8) < 1,
+          f"rights {last['ubi450']['pension_rights_bn']:,.0f} vs {last['sq']['pension_rights_bn']:,.0f} ma.kr., "
+          f"{last['ubi450']['pension_special_saved_bn']:.1f} ma.kr. a year saved")
+    check("pension funds: without the fold the funds' rights go on as in the status quo",
+          close(last["mid_nofold"]["pension_rights_bn"], last["sq"]["pension_rights_bn"], .05)
+          and last["mid_nofold"]["pension_special_saved_bn"] == 0,
+          f"{last['mid_nofold']['pension_rights_bn']:,.0f} vs {last['sq']['pension_rights_bn']:,.0f} ma.kr.")
+    # 2.0: returns rising with wealth (model.wealth_returns) move wealth to the top without adding to the total
+    check("returns that rise with wealth leave wealth more concentrated than one return for all",
+          last["sq_steep_returns"]["wealth_gini"] > last["sq"]["wealth_gini"],
+          f"Gini {last['sq_steep_returns']['wealth_gini']:.3f} vs {last['sq']['wealth_gini']:.3f}")
+    # 2.0: the informal economy (informal.py)
+    lost = r["sq"][0]["acc_hidden_earnings_sq"] * .43
+    check("informal economy: the status quo's tax lost on hidden earnings is a part of all evasion (3-5% of GDP)",
+          15 <= lost <= .05 * 4941, f"{r['sq'][0]['acc_hidden_earnings_sq']:.0f} ma.kr. hidden, about {lost:.0f} of tax")
+    check("informal economy: the status quo is its own reference (no tax moved on or off the books)",
+          all(row["acc_informal_tax_change"] == 0 for row in r["sq"]), "0 every year")
+    check("informal economy: higher income tax drives earnings off the books",
+          last["mid_hightax"]["acc_informal_tax_change"] < last["mid"]["acc_informal_tax_change"],
+          f"{last['mid_hightax']['acc_informal_tax_change']:+.2f} vs {last['mid']['acc_informal_tax_change']:+.2f} ma.kr.")
+    # 2.0: banks and pension funds (financial.py)
+    first = r["sq"][0]
+    check("financial: the base year's balance sheets (banks' equity 17.6% of loans, the funds 23% of household loans)",
+          abs(first["bank_capital_ratio"] - 866.0 / 4928.5) < .005 and abs(first["fund_share_of_household_loans"] - .232) < .02,
+          f"{100 * first['bank_capital_ratio']:.1f}%, {100 * first['fund_share_of_household_loans']:.1f}%")
+    check("financial: the status quo is its own reference for the bond market",
+          all(row["bond_premium"] == 0.0 for row in r["sq"]), "no premium any year")
+    check("financial: folding the pension funds in raises the state's borrowing cost, and not folding them does not",
+          plast["mid"]["bond_premium"] > plast["mid_nofold"]["bond_premium"] and plast["mid"]["bond_premium"] < .01,
+          f"{1e4 * plast['mid']['bond_premium']:.1f} vs {1e4 * plast['mid_nofold']['bond_premium']:.1f} bp")
+    # 2.0: the capital area and the rest (regions.py)
+    first = r["sq"][0]
+    share = [row["capital_area_share"] for row in r["sq"]]
+    check("regions: the base year's areas (63.9% in the capital area; moves each way within 25% of the record's)",
+          abs(first["capital_area_share"] - .639) < .01 and abs(first["moves_from_capital"] / 3974 - 1) < .25
+          and abs(first["moves_to_capital"] / 3661 - 1) < .25,
+          f"{100 * first['capital_area_share']:.1f}%, {first['moves_from_capital']} out, {first['moves_to_capital']} in")
+    check("regions: the status quo's capital area keeps its share within a point and a half (64.0-63.9% in 2015-25)",
+          max(abs(x - share[0]) for x in share) < .015, f"{100 * min(share):.1f}-{100 * max(share):.1f}%")
+    # the effect on where people live is a few hundredths of a point, within the noise of the moves; the check is on
+    # the pull itself: income that does not depend on work makes the capital area's pay matter less
+    check("regions: a borgaralaun makes leaving the capital area, where housing is dearest, more worth while",
+          r["ubi450"][0]["gain_leaving_capital"] > r["sq"][0]["gain_leaving_capital"],
+          f"{100 * r['ubi450'][0]['gain_leaving_capital']:.2f}% vs {100 * r['sq'][0]['gain_leaving_capital']:.2f}%")
+    # 2.0: hours within a job (hours.py)
+    check("hours: the status quo is its own reference (no week moves)",
+          all(row["hours_within_job"] == 1.0 for row in r["sq"]), "1 every year")
+    check("hours: a borgaralaun shortens the week within the job, by no more than the trial's 3% on both margins",
+          .97 <= last["ubi450"]["hours_within_job"] < 1.0, f"{last['ubi450']['hours_within_job']:.4f}")
+    # 2.0: the business capital stock (capital.py)
+    inv = [row["acc_business_investment_bn"] / (4941.2 * row["acc_output"]) for row in r["sq"]]
+    check("capital: the status quo is its own reference (output per hour untouched)",
+          all(row["capital_factor"] == 1.0 for row in r["sq"]), "factor 1 every year")
+    check("capital: the status quo invests a share of GDP within the record's 2016-25 range (11.4-17.7%)",
+          all(.114 <= x <= .177 for x in inv), f"{100 * min(inv):.1f}-{100 * max(inv):.1f}%")
+    check("capital: a higher corporate tax leaves less capital per hour worked",
+          plast["mid_corptax"]["acc_capital_per_labour"] < plast["mid"]["acc_capital_per_labour"]
+          and plast["mid_corptax"]["capital_factor"] < plast["mid"]["capital_factor"],
+          f"factor {plast['mid_corptax']['capital_factor']:.4f} vs {plast['mid']['capital_factor']:.4f}")
     check("a UBI reduces hours worked", last["ubi450"]["fte_per_adult_16_74"] < last["sq"]["fte_per_adult_16_74"],
           f"{last['ubi450']['fte_per_adult_16_74']:.3f} vs {last['sq']['fte_per_adult_16_74']:.3f}")
     check("a UBI raises household spending", last["ubi450"]["acc_consumption_real"] > last["sq"]["acc_consumption_real"],
@@ -329,9 +526,16 @@ def behaviour_checks(blob, years, workers):
           f"{last['ubi450']['poverty_rate_anchored']:.1%} vs {last['sq']['poverty_rate_anchored']:.1%} "
           f"against the 2025 median (relative line: {last['ubi450']['poverty_rate']:.1%} vs "
           f"{last['sq']['poverty_rate']:.1%}, which moves with the median)")
-    check("more people work for themselves under a UBI",
-          last["ubi450"]["independent_workers"] > last["sq"]["independent_workers"],
-          f"{last['ubi450']['independent_workers']:,} vs {last['sq']['independent_workers']:,}")
+    # What the payment does by taking away the risk of self-directed work, measured with the norm to work held at
+    # zero (2.0): with it, the norm's pull takes those nearest to not working out of every kind of work, this one
+    # too, and the count falls (LIMITS.md §5). Both are checked.
+    check("more people work for themselves under a UBI, the norm to work held at zero",
+          last["ubi450_no_norm"]["independent_workers"] > last["sq_no_norm"]["independent_workers"],
+          f"{last['ubi450_no_norm']['independent_workers']:,} vs {last['sq_no_norm']['independent_workers']:,}")
+    check("the norm to work takes some of them out of it again",
+          last["ubi450"]["independent_workers"] < last["ubi450_no_norm"]["independent_workers"],
+          f"{last['ubi450']['independent_workers']:,} with the norm vs {last['ubi450_no_norm']['independent_workers']:,}"
+          f" without (status quo {last['sq']['independent_workers']:,})")
     check("same inputs give the same answer twice",
           abs(last["ubi450"]["balance_bn"] - last["ubi450_again"]["balance_bn"]) < 1e-6,
           f"{last['ubi450']['balance_bn']:,.3f} vs {last['ubi450_again']['balance_bn']:,.3f}")
@@ -443,10 +647,14 @@ def behaviour_checks(blob, years, workers):
           last["mid_commcap"]["variety_index"] > .3 and last["mid_commcap"]["new_ventures"] >= mid_["new_ventures"],
           f"variety {last['mid_commcap']['variety_index']:.2f}; ventures {last['mid_commcap']['new_ventures']:,.0f} "
           f"vs {mid_['new_ventures']:,.0f}")
+    # over the run, not in its last year alone: in 1.1 the two final years' rates came out 3.354% and 3.355% while
+    # the years before differed by up to 0.4 points, and median income and the balance differed throughout
+    gap_u = float(np.mean([abs(a["unemployment_rate"] - b["unemployment_rate"])
+                           for a, b in zip(r["mid_agreements"], r["mid"])]))
     check("keeping collective agreements under the reform changes the result, and stays finite",
-          last["mid_agreements"]["balance_bn"] == last["mid_agreements"]["balance_bn"]
-          and abs(last["mid_agreements"]["unemployment_rate"] - mid_["unemployment_rate"]) > 1e-4,
-          f"unemployment {last['mid_agreements']['unemployment_rate']:.1%} vs {mid_['unemployment_rate']:.1%}")
+          last["mid_agreements"]["balance_bn"] == last["mid_agreements"]["balance_bn"] and gap_u > 1e-4,
+          f"unemployment differs by {gap_u * 100:.2f} points a year on average; last year "
+          f"{last['mid_agreements']['unemployment_rate']:.1%} vs {mid_['unemployment_rate']:.1%}")
     # The pledge channel touches only people at risk of gambling harm, a few thousand, so on the national hardship
     # rate it sits within run-to-run noise: reported as a warning, not asserted as a direction it cannot resolve.
     check("a payment lenders can lend against deepens hardship (national rate; the effect is confined to the "
@@ -495,6 +703,14 @@ def behaviour_checks(blob, years, workers):
     check("tenure and churn are recorded", last["ubi450"]["mean_tenure_years"] > 0,
           f"{last['ubi450']['mean_tenure_years']:.1f} years mean tenure, "
           f"{last['ubi450']['contracts_expiring_share']:.0%} of contracts up for renewal")
+    # 1.1: those a payment takes out of work give the hours carers out of work give; the survey's gap is about an
+    # hour a week, so the posts replaced are positive and few (familycare.py). Family care is measured against the
+    # status quo's, so these runs are paired with it, as the surface and the pages run a reform; the runs above are
+    # not
+    fc = run_paired(blob, [(n, platform(**ubi)) for n in ("ubi450", "ubi450@1", "ubi450@2")], years, workers)
+    fcp = float(np.mean([fc[n][-1].get("family_care_replaced_posts") or 0.0 for n in fc]))
+    check("a payment: family care takes the place of some care posts, and few", 0 < fcp < 1000,
+          f"{fcp:.0f} care assistants' posts (mean of three sets of draws)")
     paid = float(np.std([row["wage_Waiters and bar staff"] / row["price_level"] for row in r["ubi450"]]))
     fresh = float(np.std([row["newpay_Waiters and bar staff"] for row in r["ubi450"]]))
     check("contracts damp the swing in what waiters are paid", paid <= fresh * 1.05,
@@ -555,6 +771,53 @@ def behaviour_checks(blob, years, workers):
     check("status quo year 1: poverty, persons (SILC: 9.0%)", abs(y1["poverty_rate"] - .090) <= .02,
           f"{y1['poverty_rate']:.1%} (adults {y1.get('poverty_rate_adults', float('nan')):.1%})")
 
+    # 1.1: who claims social assistance (params benefits.social_assistance_claim_share, fitted to it)
+    sa_n = y1.get("acc_recipients_social_assistance")
+    check("status quo year 1: social assistance recipients (PAYE 2023: ~2,700)",
+          sa_n is not None and close(sa_n, 2700, .35), f"{sa_n:,.0f}" if sa_n is not None else "missing")
+    # 1.1: family care and the career ladder do not move the status quo: family care is set against the status
+    # quo's own, and experience against the base year's rates of gaining it
+    fc = max(abs(row.get("family_care_replaced_posts") or 0.0) for row in sq)
+    check("status quo: family care replaces no care posts", fc == 0.0, f"largest {fc:.1f} posts")
+    eg = sq[-1].get("experience_gap_25_34")
+    check("status quo: 25-34 year-olds keep pace with the base year's experience",
+          eg is not None and abs(eg) < .3, f"{eg:+.2f} years after {years}" if eg is not None else "missing")
+    # 1.1: young adults out of work stay where the survey has had them. Before 1.1 school leavers, graduates and
+    # arrivals kept the status they came with, and the status quo's 20-29 year olds went from 8% to 21% out of work
+    # in ten years. Set against all those not employed, in education or not (edat_lfse_18), because the model
+    # follows tertiary courses only, where the survey counts upper-secondary school and training as education too
+    # (47% of 20-29 year olds in 2025, against the model's 20%): its "neither working nor studying" is not the
+    # survey's NEET.
+    ne = json.loads((ROOT / "data/reference/neet_eurostat.json").read_text())["not_employed_pct"]
+    rec = [(ne["20-24"][y] + ne["25-29"][y]) / 200 for y in map(str, range(2016, 2026))]
+    path = [row.get("not_employed_20_29") for row in sq]
+    check(f"status quo: 20-29 not employed, every year within 2016-2025's range (Eurostat edat_lfse_18: "
+          f"{min(rec):.1%}-{max(rec):.1%})",
+          None not in path and min(rec) <= min(path) and max(path) <= max(rec),
+          f"{min(path):.1%}-{max(path):.1%} over {years} years" if None not in path else "missing")
+    # 1.1: wealth over the run against the tax returns of 2015-2025 (THJ09005, THJ09007). The median family's net
+    # worth grew 9-19% a year in real terms over each six years of the record, carried by house prices, and the
+    # richest tenth's share fell from 60.7% to 50.0%, by 0.1-2.3 points a year between the two-yearly readings. The
+    # status quo has no house-price boom, so the median may grow more slowly; neither may run faster than the record,
+    # and the top's share may not rise, nor fall faster than it ever did.
+    wh = json.loads((ROOT / "data/reference/wealth_history.json").read_text())
+    pc, cpi = wh["net_worth_percentiles_kr"], wh["cpi_december_before"]
+    real = {int(y): v["P50"] / cpi[y] for y, v in pc.items()}
+    fastest = max((real[y + 6] / real[y]) ** (1 / 6) - 1 for y in real if y + 6 in real)
+    nw = wh["net_worth_mkr"]
+    ys = sorted(map(int, nw))
+    share = {y: nw[str(y)]["richest_tenth"] / nw[str(y)]["total"] for y in ys}
+    steepest = max((share[a] - share[b]) / (b - a) for a, b in zip(ys, ys[1:]))
+    wp = _wealth_path(blob, years)
+    grow = (wp[-1][0] / wp[0][0]) ** (1 / years) - 1
+    check(f"status quo: the median family's net worth grows no faster than in the record ({fastest:.1%} a year "
+          f"in real terms at most, THJ09007)", grow <= fastest,
+          f"{grow:+.1%} a year ({wp[0][0] / 1e6:.1f} → {wp[-1][0] / 1e6:.1f} m.kr.)")
+    falls = [wp[t][1] - wp[t + 1][1] for t in range(years)]
+    check(f"status quo: the richest tenth's share neither rises nor falls faster than the record's "
+          f"{steepest * 100:.1f} points a year (THJ09005)",
+          wp[-1][1] <= wp[0][1] and max(falls) <= steepest,
+          f"{wp[0][1]:.1%} → {wp[-1][1]:.1%}, largest yearly fall {max(falls) * 100:.1f} points")
     check("status quo year 1: employment rate 16-74 (VIN01104: 77.8%)",
           close(y1["employment_rate_16_74"], .778, .04), f"{y1['employment_rate_16_74']:.1%}")
     for label, key, target in [("emigrants", "emigrants", 15508), ("of them children", "emigrants_children", 1129),
@@ -574,8 +837,9 @@ def behaviour_checks(blob, years, workers):
 # ----------------------------------------------------------------- 4. wiring
 def wiring_checks():
     print("\n4. Parameters: defined, used, and the right shape", flush=True)
-    files = ["model.py", "macro.py", "policy.py", "population.py", "sectors.py", "frontier.py", "automation.py", "housing.py"]
-    src = "\n".join((ROOT / "src/ubisim/abm" / f).read_text() for f in files)
+    # every model module, so a new one is read without being listed here
+    files = sorted(f for f in (ROOT / "src/ubisim/abm").glob("*.py") if f.name not in ("params.py", "uncertainty.py"))
+    src = "\n".join(f.read_text() for f in files)
     d = params.DEFAULTS
     sections = [k for k, v in d.items() if isinstance(v, dict)]
     src += (ROOT / "src/ubisim/abm/uncertainty.py").read_text()   # Monte Carlo paths count as reads

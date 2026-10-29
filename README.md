@@ -27,22 +27,22 @@ start-ups, work that suits people better, less administration) is matched by a c
 levers with stated ranges. [docs/DESIGN.md](docs/DESIGN.md) sets out the hypotheses and the results that would
 refute them.
 
-## What it finds at present (version 1.0)
+## What it finds at present (version 2.0)
 
 These are for the reference reform at 300 þús. kr. a month, run in the model itself, in 2035 against the status
 quo in the same year:
 
 | | Reform | Status quo |
 |---|---|---|
-| Public balance, ma.kr. a year | +467 | −261 |
-| Net public debt, % of GDP | 11 | 75 |
-| Household income after tax and transfers, þús. a month | 836 | 769 |
-| Work per adult, full-time equivalents | 0.63 | 0.68 |
-| Unemployment | 3.4% | 4.4% |
-| Price level, 2025 = 1 | 2.06 | 1.70 |
-| Child poverty | 10.4% | 20.6% |
-| Poverty against a fixed 2025 line | 6.5% | 7.7% |
-| Essential public services short, full-time posts | 4,549 | 2,358 |
+| Public balance, ma.kr. a year | +369 | −241 |
+| Net public debt, % of GDP | 18 | 71 |
+| Household income after tax and transfers, þús. a month | 829 | 784 |
+| Work per adult, full-time equivalents | 0.58 | 0.69 |
+| Unemployment | 3.7% | 4.0% |
+| Price level, 2025 = 1 | 2.11 | 1.72 |
+| Child poverty | 13.5% | 20.2% |
+| Poverty against a fixed 2025 line | 5.5% | 5.7% |
+| Essential public services short, full-time posts | 4,101 | 1,797 |
 
 How to read this:
 
@@ -50,9 +50,11 @@ How to read this:
   refunds to value-chain inputs, folding the pension funds into the scheme, abolishing the personal tax credit and
   a higher property tax. The VAT figure is an estimate with a range of 385–574 ma.kr. a year, and no country has
   applied that rule. If these choices yield less than estimated, the balance moves towards the status quo's.
-* **Work falls and prices rise.** Work per adult is about 7% lower, the price level about 20% higher (the single
-  VAT rate adds to it once, and inflation then runs higher), and public services are shorter of staff.
-* **Groups differ.** Pensioners' median income is about 12% lower unless the top-up lever is used. The poorest
+* **Work falls and prices rise.** Work per adult is about 15% lower, the price level about 23% higher (the single
+  VAT rate adds to it once, and inflation then runs higher), and public services are shorter of staff. In 1.0 work
+  fell about 7%; the young adults' choices and unemployment without a floor in 1.1 added about 4.5 points, the
+  norm to work among peers about 2 and hours within a job about 1.
+* **Groups differ.** Pensioners' median income is about 5% lower unless the top-up lever is used. The poorest
   tenth gains most.
 * **Treat directions and orders of magnitude as the finding,** never the decimals. Around thirty behavioural
   settings are estimates; [docs/VALIDATION.md](docs/VALIDATION.md) lists what is calibrated, what was checked

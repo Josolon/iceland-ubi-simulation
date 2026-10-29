@@ -96,6 +96,14 @@ METRICS = {
     **{f"h_size{j}": f"housing_price_size{j}" for j in range(6)}, "studio_rent": "housing_studio_rent_index",
     "crowded": "housing_crowded_share", "spare_room": "housing_spare_room_share", "downsizers": "downsizers",
     "equity_annuity": "equity_annuity_bn", "claims": "claims_outstanding_bn", "first_homes": "first_home_purchases",
+    # 1.1: tax on pay taken as dividends, pay above the second threshold no longer reported, heirs taking over a home
+    "shifted_tax": "acc_income_shifted_tax", "top_income_lost": "acc_top_income_lost", "heirs_moved_in": "heirs_moved_in",
+    # 1.1: the career ladder (careers.py) and office AI against robots (automation.py)
+    "neet": "neet_rate", "junior_hire": "junior_hire_rate", "young_pay": "young_to_midlife_pay",
+    "wage_p90_p50": "wage_p90_p50", "wage_p50_p10": "wage_p50_p10", "ai_exposed": "ai_exposed_worker_share",
+    "exp_gap": "experience_gap_25_34", "auto_ai": "automation_ai_share", "auto_robot": "automation_robot_share",
+    "tech_subsidy": "acc_automation_subsidy", "junior_subsidy": "acc_junior_subsidy",
+    "family_care_posts": "family_care_replaced_posts",
     "wellbeing": "wellbeing_index", "involuntary_part": "involuntary_part_time",
     # a shortage shows up three ways: pay, work not done, and load on those who stay
     "service_unmet": "essential_service_unmet", "workload": "essential_workload",

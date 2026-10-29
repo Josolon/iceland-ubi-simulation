@@ -24,6 +24,9 @@ PROPERTY_VALUE = {2015: 5755.0}
 DWELLINGS = {2015: 127_502}
 # Hagstofa MAN05101 / MAN05210
 BIRTHS, DEATHS = {2015: 4129}, {2015: 2178}
+# Hagstofa THJ03204 against THJ01102: the business sector's net capital stock over GDP, current prices
+CAPITAL_TO_GDP = {2015: 1.285}
+REGIONS = ROOT / "data/reference/regions_2025.json"
 FUEL_SHARE_OF_IMPORTS = .10        # EST: how much of what Iceland imports is oil and fuel
 
 
@@ -96,8 +99,37 @@ def base_overrides(year=2015):
         "enforcement": {k: D["enforcement"][k] * g for k in ("evasion_bn", "benefit_admin_saved_bn")},
         "free_services": {k: D["free_services"][k] * g for k in ("health_out_of_pocket_bn", "internet_household_bn")},
         "property_ownership": {"custodian_admin_bn": D["property_ownership"]["custodian_admin_bn"] * g},
+        "capital": {"stock_to_gdp": CAPITAL_TO_GDP[year]},
+        "regions": regions_base(year),
     }
     return over
+
+
+def _regions_year(year):
+    rg = json.loads(REGIONS.read_text())
+    y = str(year)
+    m, cap = rg["migration"][y], "From capital area"
+    out = sum(v for k, v in m[cap].items() if k not in ("To capital area", "To foreign countries"))
+    into = sum(v.get("To capital area", 0) for k, v in m.items() if k not in (cap, "From abroad"))
+    ab = m["From abroad"]
+    abroad_cap = ab.get("To capital area", 0)
+    abroad_all = sum(v for k, v in ab.items() if k != "To foreign countries")
+    return rg, out, into, abroad_cap / abroad_all
+
+
+def regions_base(year):
+    """The areas in the base year (MAN03250 and MAN07108, 1 January; MAN01002 that year). Pay by area is published
+    from 2025 only, and its ratio is kept."""
+    rg, out, into, arrivals = _regions_year(year)
+    pop = rg["population"]
+    capital, total = pop["Capital region"][str(year)], pop["Total"][str(year)]
+    persons, units = (rg["families"][k] for k in ("persons", "units"))
+    per = lambda a: persons[a][str(year)] / units[a][str(year)]
+    rest = ((persons["Total"][str(year)] - persons["Capital region"][str(year)])
+            / (units["Total"][str(year)] - units["Capital region"][str(year)]))
+    return {"capital_share": capital / total, "move_rate_from_capital": out / capital,
+            "move_rate_to_capital": into / (total - capital), "arrival_capital_share": arrivals,
+            "household_size_ratio": per("Capital region") / rest}
 
 
 def benefit_scale(h, year, base_year=2015):
@@ -146,6 +178,7 @@ def calendar_overrides(year, base_year=2015):
             benefits[key] = [x * f for x in v]
     benefits["wage_indexation"] = 0.0
     return {
+        "regions": {"arrival_capital_share": _regions_year(year)[3]},    # where that year's arrivals settled
         "benefits": benefits,
         "policy": {"income_tax_brackets": [[lo / price, r] for lo, r in tax["brackets"]],
                    "personal_credit": tax["personal_credit"] / price,

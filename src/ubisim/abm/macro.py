@@ -9,6 +9,10 @@ Base-year data (Hagstofa THJ01102, THJ05181, THJ05132; HMS; Seðlabanki Íslands
 """
 import numpy as np
 
+from ubisim.abm import capital
+from ubisim.abm import careers
+from ubisim.abm import financial
+
 from ubisim.abm import params as P
 
 GDP0, C0, X0, M0, CA0 = 4941.2, 2439.6, 1997.4, 2102.8, -124.2
@@ -293,8 +297,9 @@ class Macro:
         shock = float((self.p.get("history") or {}).get("productivity_level", 1.0))
         # less new equity under the state's deemed stake in every round, and with it a little less investment
         drag = 1 - getattr(self, "equity_drag", 0.0)
+        # 2.0: capital per worker against the reference's (capital.py)
         return base * trend * infra * custodian * innovation * controls * getattr(self, "automation_factor", 1.0) \
-            * shock * drag
+            * shock * drag * capital.factor(self)
 
     def nontradable_target(self, wage_cost_index, partial):
         m = self.p["markets"]
@@ -365,7 +370,19 @@ class Macro:
         prod = soc.occ_median / soc.occ_median.mean()
         employed = np.minimum(S, D)
         self.automation_factor = soc.automation.productivity_factor()
-        self.output = float((employed * prod).sum() / ((soc.D0_pub + soc.D0_priv) * prod).sum()) * self.productivity()
+        base_fte = soc.D0_pub + soc.D0_priv
+        base = float((base_fte * prod).sum())
+        # 1.1: and the experience of those working, against the base year's (careers.py)
+        self.labour_input = float((employed * prod).sum() / base)
+        self.output_labour = self.labour_input * self.productivity() * careers.output_factor(soc)
+        # 1.1: what machines do in place of the work they took over is output too: the output of the work, less the
+        # part of what running them costs that is bought abroad (automation.machine_value_added). Left out, a robot that
+        # took over a post took its output with it, and automation could raise output only through the people it
+        # left at work.
+        va = self.p["automation"]["machine_value_added"]
+        self.output_machines = float((soc.automation.automated * base_fte * prod).sum() / base) * va \
+            * self.productivity()
+        self.output = self.output_labour + self.output_machines
         # non-tradable prices
         old_cpi = self.cpi
         wci = soc.wage_cost_index(soc.omega)
@@ -469,7 +486,9 @@ class Macro:
         # What a house buyer pays is a mortgage rate, fixed for years at a time and mostly indexed, not the bank's
         # overnight rate: it moved about half as far, and later. On the policy rate the user cost of a home hit
         # its floor when real rates went to -3.7% in 2022, and house prices trebled in the backcast (2026-09-26).
-        target = m["real_rate0"] + m.get("long_rate_passthrough", .5) * (self.r - m["real_rate0"])
+        # 2.0: plus what the banks' capital and the bond market add (financial.py)
+        mortgage_premium, bond_premium = financial.premium(soc)
+        target = m["real_rate0"] + m.get("long_rate_passthrough", .5) * (self.r - m["real_rate0"]) + mortgage_premium
         self.r_long += (target - self.r_long) / m.get("long_rate_years", 3.0)
         # construction responds to price over cost
         trades = P.OCCUPATIONS.index("Other craft and trades")   # building costs follow the trades, not the professions
@@ -502,8 +521,8 @@ class Macro:
         ind = m["debt_indexed_share"]
         # measured from the base year's rates: the stock keeps its base-year coupons while rates stay where they were
         i_now, i0 = self.r + self.inflation, m["real_rate0"] + self.INFLATION0
-        target_n = self.coupon_n0 + (i_now - i0)
-        target_r = self.coupon_r0 + m.get("indexed_rate_passthrough", .5) * (self.r - m["real_rate0"])
+        target_n = self.coupon_n0 + (i_now - i0) + bond_premium
+        target_r = self.coupon_r0 + m.get("indexed_rate_passthrough", .5) * (self.r - m["real_rate0"]) + bond_premium
         self.coupon_n += (target_n - self.coupon_n) / m["debt_maturity_years"]
         self.coupon_r += (target_r - self.coupon_r) / m["debt_maturity_years"]
         self.r_debt = (1 - ind) * self.coupon_n + ind * (self.coupon_r + self.inflation)
@@ -533,6 +552,9 @@ class Macro:
         # cost (the same coupons, with the sign turned). Floored at zero, as it was, a surplus beyond the debt
         # simply vanished and the budget of a run that repaid its debt stopped counting what it had saved.
         self.debt = self.debt / (1 + erosion) - (balance - put_aside)
+        # 2.0: a year of business investment, at this year's profits and rates
+        acc.update(capital.update(soc, self, soc.profit_index()))
+        acc.update(financial.update(soc, self))
         return balance
 
     def snapshot(self):

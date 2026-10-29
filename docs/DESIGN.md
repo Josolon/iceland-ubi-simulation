@@ -43,13 +43,13 @@ cross-validated R², and at the page's named scenarios, as the difference from t
 Every parameter carries one of five statuses, listed with its value and source in [PARAMETERS.md](PARAMETERS.md),
 which is generated from the source code:
 
-| Status | Meaning | Count (1.0) |
+| Status | Meaning | Count (1.1) |
 |---|---|---|
-| DATA | a published figure, used as is | 35 |
+| DATA | a published figure, used as is | 37 |
 | CALIBRATED | solved for so the base year matches a published aggregate | 2 |
 | TUNED | set so the model reproduces a published pattern | 25 |
-| EST | an estimate: from the literature, from another country, or a judgement | 670 |
-| POLICY | a setting of the rules, which the levers move | 105 |
+| EST | an estimate: from the literature, from another country, or a judgement | 736 |
+| POLICY | a setting of the rules, which the levers move | 107 |
 
 Most EST parameters are small (a share, a lag, a threshold). The thirty or so that the results lean on most have
 ranges in `src/ubisim/abm/uncertainty.py`, are swept by `scripts/run_montecarlo.py`, and the ones that matter most
@@ -65,11 +65,13 @@ and what can be tested is whether their premises hold.
 
 | | Hypothesis | Test | Refuted if |
 |---|---|---|---|
-| M1 | The base year matches the record | `quality_check.py`: 170 checks against Hagstofa, Skatturinn, Tryggingastofnun and others | a calibration check fails its stated tolerance |
+| M1 | The base year matches the record | `quality_check.py`: 186 checks against Hagstofa, Skatturinn, Tryggingastofnun and others | a calibration check fails its stated tolerance |
 | M2 | The decade 2016–2025, run from 2015, reproduces the series that were not targeted | `backcast.py`: real wages, the employment rate, exports and debt are not fitted | the untargeted errors grow beyond those in [VALIDATION.md](VALIDATION.md) §2 when the model changes |
 | M3 | People give up work for unearned income as the evidence says they do | `income_effect_check.py`: krónur of pay given up per króna received, on the same people, prices and wages held | the figure falls outside 0.04–0.20 (Cesarini et al. 2017; Golosov et al. 2024; Vivalt et al. 2024) |
 | M4 | The status quo's forecasts for 2026–2030 hold | `predictions.py`: seven series with margins fixed in advance | a series misses its margin in two or more years ([VALIDATION.md](VALIDATION.md) §6) |
 | M5 | The comparison is neutral | `null_test.py` | any difference at all |
+| M6 | Income and wealth at the top are spread as the tax returns have them | `quality_check.py`: the 90th and 99th income percentiles (TEK01006) and wealth by family decile, median and P99/P90 (THJ09005, THJ09007) | a check misses its tolerance; or the next year's returns move away from the model's status quo by more than the tolerances |
+| M7 | The new mechanisms leave today's Iceland as it is | `quality_check.py`: in the status quo the career ladder gives no experience gap and no hiring shortfall, and family care replaces no paid care | any departure in the status quo |
 
 ### 4.2 What the model says about the reform, and what would overturn it
 
@@ -78,16 +80,20 @@ published data, a figure from the literature, or a lever whose setting the reade
 
 | | Result in the model (reference reform, 2035) | Rests mainly on | Overturned if |
 |---|---|---|---|
-| R1 | The budget balances, with a surplus of several hundred ma.kr. a year | the yield of restricting VAT refunds to value-chain inputs (459.5 ma.kr., range 385–574), folding in the pension funds, abolishing the personal credit, the higher property tax | the VAT restriction yields less than about 40% of its estimate, other settings unchanged: on the fitted surface the 2035 balance is +301 ma.kr. at 75% of it, +90 at 50%, +7 at 40% and −321 without it, against −181 in the status quo (the lever *VAT refunds only on value-chain inputs*) |
-| R2 | Child poverty roughly halves | the child payment, half of it paid to the family | largely mechanical: the payment lifts most families above the line; behaviour changes the size, and a low share paid to the family shrinks it (a lever) |
-| R3 | Work per adult falls by about 7% | the income effect (M3) and how pay and hiring respond | the income effect is far from the evidence's range (M3 would then fail), or hiring responds to wages much more or less than estimated (a lever) |
+| R1 | The budget balances, with a surplus of several hundred ma.kr. a year | the yield of restricting VAT refunds to value-chain inputs (459.5 ma.kr., range 385–574), folding in the pension funds, abolishing the personal credit, the higher property tax | the VAT restriction yields less than about half of its estimate, other settings unchanged: on the fitted surface the 2035 balance is +375 ma.kr. in full, +177 at 75% of it, −17 at 50%, −94 at 40% and −387 without it, against −241 in the status quo (the lever *VAT refunds only on value-chain inputs*) |
+| R2 | Child poverty falls by about a third | the child payment, half of it paid to the family | largely mechanical: the payment lifts most families above the line; behaviour changes the size, and a low share paid to the family shrinks it (a lever) |
+| R3 | Work per adult falls by about 15% (7% in 1.0; 1.1's young adults and unemployment without a floor add about 4.5 points, the norm to work 2, hours within a job 1) | the income effect (M3) and how pay and hiring respond | the income effect is far from the evidence's range (M3 would then fail), or hiring responds to wages much more or less than estimated (a lever) |
 | R4 | Prices rise faster than in the status quo | the single VAT rate of 25%, and whether pay agreements compensate it | agreements index to prices net of the tax switch, as Denmark's do (a lever) |
 | R5 | Pensioners' median income falls unless topped up | the payment being below today's pensions | the top-up lever is used |
 | R6 | More people arrive than leave | the payment's pull against the residence rules | residence testing is strict (a lever) |
 
 R1 is the result most exposed to error. Restricting input VAT in this way has not been applied anywhere, so its
 yield is an estimate from Skatturinn's records of reclaimed input VAT (997 ma.kr. in 2025) and Hagstofa's
-supply-use tables, not an observation.
+supply-use tables, not an observation. From 2.0 the restriction also has a cost the yield does not show: capital
+goods are not value-chain inputs, so a firm can no longer reclaim the VAT on a machine or a building, and they cost
+it a quarter more. Under a borgaralaun of 350 þús. that leaves output per hour 3.7% lower by the twelfth year than the
+same reform without the restriction, and still falling; in the long run, with capital's share at a third, about a
+tenth. Within the run the yield outweighs it in the budget by far ([LIMITS.md](LIMITS.md) §7).
 
 ## 5. Uncertainty
 

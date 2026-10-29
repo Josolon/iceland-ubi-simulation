@@ -29,6 +29,8 @@ finance statistics book loans: a financial asset, not spending. What an estate c
 """
 import numpy as np
 
+from ubisim.abm import regions
+
 SIZES = ("studio", "flat for one or two", "flat for a family with a child", "flat or small house for two children",
          "house for three or four children", "large house")
 K = len(SIZES)
@@ -99,12 +101,12 @@ def factors(soc):
 
 
 def price_factor(soc, idx):
-    """Each home's price against the base year's, by its size."""
+    """Each home's price against the base year's, by its size and (2.0) its area."""
     A = soc.A
     if "hclass" not in A:
-        return soc.macro.house_price
+        return soc.macro.house_price * regions.factor(soc, idx)
     c = A["hclass"][idx]
-    return soc.macro.house_price * np.where(c >= 0, factors(soc)[np.maximum(c, 0)], 1.0)
+    return soc.macro.house_price * np.where(c >= 0, factors(soc)[np.maximum(c, 0)], 1.0) * regions.factor(soc, idx)
 
 
 def _publish(soc):
@@ -176,6 +178,7 @@ def reset_year(soc):
     soc.claims_new = 0.0
     soc.claims_repaid = 0.0
     soc.claims_written_off = 0.0
+    soc.heirs_moved_in = 0                       # 1.1: heirs who took over a family home tax-free
 
 
 # ------------------------------------------------------------------ prices and building
@@ -315,6 +318,12 @@ def _place_new(soc):
     own = v > 0
     if own.any():
         cls[own] = np.argmin(np.abs(v[own][:, None] - soc.size_value[None, :]), axis=1)
+    # 1.1: a household placed without a home of its own rents, and pays rent (policy.housing_cost)
+    rent = new[~own]
+    pa = A["partner"][rent]
+    for who in (rent, pa[pa >= 0]):
+        A["renter"][who] = True
+        A["mortgage"][who] = False
     _set_class(soc, new, cls)
 
 
@@ -356,13 +365,16 @@ def step_moves(soc):
     age = np.maximum(A["age"][lead], np.where(partner >= 0, A["age"][pidx], 0))
     v = hh_value(soc, lead)
     owner = v > 0
+    hp = hp * regions.factor(soc, lead) * np.ones(len(lead))    # 2.0: each household's area's prices
+    # 1.1: an heir who took over the family home tax-free lives in it for ten years (model.heir_moves_in)
+    free = A["home_lock"][lead] <= soc.year if "home_lock" in A else np.ones(len(lead), bool)
     # --- moving up: crowded households of working age, when they can pay, less often the dearer the larger home;
     # and households with the room they need trading up a size when the larger home has become cheap against their
     # own — the substitution that keeps the sizes' prices together when one empties (without it, homes freed by
     # deaths found no buyers and the status quo's family houses fell a fifth against flats, 2026-10-14)
-    crowded = (cur >= 0) & (cur < nd) & (age < 67)
+    crowded = (cur >= 0) & (cur < nd) & (age < 67) & free
     rel_next = f[np.minimum(cur + 1, K - 1)] / f[np.maximum(cur, 0)]
-    trade = (cur >= 0) & (cur == nd) & (cur < K - 1) & (age >= 25) & (age < 60) & (rel_next < 1)
+    trade = (cur >= 0) & (cur == nd) & (cur < K - 1) & (age >= 25) & (age < 60) & (rel_next < 1) & free
     up = np.flatnonzero(crowded | trade)
     if len(up):
         target = np.where(crowded[up], choose_size(soc, nd[up], nd[up] + 1, rng), cur[up] + 1)
@@ -374,8 +386,9 @@ def step_moves(soc):
         own = owner[U]
         if own.any():
             Lo, to = lead[U][own], t[own]
-            cost = soc.size_value[to] * hp * f[to]
-            sale = v[U][own] * hp * f[cur[U][own]]
+            hu = hp[U][own]
+            cost = soc.size_value[to] * hu * f[to]
+            sale = v[U][own] * hu * f[cur[U][own]]
             debt = hh_sum(soc, "mortgage_debt", Lo) + hh_sum(soc, "lien", Lo)
             savings = np.maximum(hh_sum(soc, "wealth", Lo), 0)
             equity = sale * (1 - d["transaction_cost"]) - debt
@@ -404,7 +417,7 @@ def step_moves(soc):
             _set_class(soc, lead[U][~own], t[~own].astype(np.int8))
             soc.moves_up += int((~own).sum())
     # --- moving down: more room than needed
-    down = np.flatnonzero((cur > nd) & (age >= 45))
+    down = np.flatnonzero((cur > nd) & (age >= 45) & free)
     if not len(down):
         return
     a = age[down]
@@ -426,7 +439,12 @@ def step_moves(soc):
     t0 = np.maximum(nd[down], cur[down] - d["max_steps_down"])
     h = h * (f[t0] / f[cur[down]]) ** -d["price_response"]
     own = owner[down]
-    sale = v[down] * hp * f[cur[down]]
+    # 1.1: where the home passes tax-free to an heir who lives in it, selling it turns exempt equity into taxable cash
+    p_occ, _ = soc.home_exemption()
+    if p_occ > 0:
+        cost = p_occ * soc.inheritance_rules()[0] * p["inheritance"]["valuation_share"]
+        h = np.where(own, h * max(0.0, 1 - p["inheritance"]["downsize_deterrence"] * cost), h)
+    sale = v[down] * hp[down] * f[cur[down]]
     worth = sale - hh_sum(soc, "mortgage_debt", L) - hh_sum(soc, "lien", L)
     h = np.where(own & (worth < d["min_equity"]), 0.0, h)
     h = np.where(own, h, h * d["renter_share"])
@@ -439,8 +457,9 @@ def step_moves(soc):
     t = choose_size(soc, lo, cur[D] - 1, rng).astype(int)
     if own.any():
         Lo, to, ao = L[own], t[own], a[own]
-        sale = (v[D] * hp * f[cur[D]])[own]
-        buy = np.minimum(soc.size_value[to] * hp * f[to], (1 - d["min_release"]) * sale)
+        hd = hp[D][own]
+        sale = (v[D] * hp[D] * f[cur[D]])[own]
+        buy = np.minimum(soc.size_value[to] * hd * f[to], (1 - d["min_release"]) * sale)
         cash = sale - buy - d["transaction_cost"] * sale
         db = hh_sum(soc, "mortgage_debt", Lo)
         cl = hh_sum(soc, "lien", Lo)
@@ -451,7 +470,7 @@ def step_moves(soc):
         soc.claims_repaid += float(back.sum())
         _clear_claims(soc, Lo)
         A["lien"][Lo] = cl - back                  # what the sale did not cover stays on the new home
-        _set_home(soc, Lo, buy / (hp * f[to]), db, to.astype(np.int8))
+        _set_home(soc, Lo, buy / (hd * f[to]), db, to.astype(np.int8))
         A["equity_annuity"][Lo] += d["annuitised_share"] * cash \
             * annuity_factor(np.maximum(ao, 60), d["annuity_real_rate"]) / 12
         rest = (1 - d["annuitised_share"]) * cash
@@ -571,4 +590,6 @@ def snapshot(soc):
             "claims_outstanding_bn": float(A["lien"][alive].sum() / 1e9),
             "claims_new_bn": float(soc.claims_new / 1e9),
             "claims_repaid_bn": float(soc.claims_repaid / 1e9),
-            "claims_written_off_bn": float(soc.claims_written_off / 1e9)}
+            "claims_written_off_bn": float(soc.claims_written_off / 1e9),
+            "heirs_moved_in": int(getattr(soc, "heirs_moved_in", 0)),
+            "homes_held_by_heirs": int(((A["home_lock"] > soc.year) & alive).sum()) if "home_lock" in A else 0}

@@ -1,0 +1,904 @@
+period,sex_code,sex,age_group,value,unit,status,source_id,method_note,also_in_file
+1984-01-01,1,Males,total,119969,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,1,Males,0-5,13367,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,1,Males,6-15,21200,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,1,Males,16-17,4419,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,1,Males,18-24,16018,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,1,Males,25-66,55875,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,1,Males,67+,9090,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,total,121037,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,0-5,13381,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,6-15,21116,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,16-17,4266,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,18-24,15883,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,25-66,57124,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,1,Males,67+,9267,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,total,121721,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,0-5,12931,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,6-15,21316,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,16-17,4148,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,18-24,15641,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,25-66,58268,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,1,Males,67+,9417,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,total,122656,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,0-5,12598,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,6-15,21619,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,16-17,4023,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,18-24,15480,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,25-66,59340,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,1,Males,67+,9596,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,total,124360,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,0-5,12614,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,6-15,21806,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,16-17,4105,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,18-24,15341,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,25-66,60700,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,1,Males,67+,9794,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,total,126563,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,0-5,12821,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,6-15,21863,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,16-17,4423,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,18-24,15195,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,25-66,62226,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,1,Males,67+,10035,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,total,127432,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,0-5,12875,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,6-15,21645,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,16-17,4585,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,18-24,14926,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,25-66,63193,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,1,Males,67+,10208,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,total,128423,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,0-5,13077,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,6-15,21569,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,16-17,4396,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,18-24,14832,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,25-66,64101,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,1,Males,67+,10448,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,total,130247,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,0-5,13620,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,6-15,21392,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,16-17,4219,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,18-24,14964,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,25-66,65435,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,1,Males,67+,10617,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,total,131600,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,0-5,14090,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,6-15,21298,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,16-17,4271,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,18-24,14857,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,25-66,66198,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,1,Males,67+,10886,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,total,132951,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,0-5,14213,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,6-15,21574,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,16-17,4137,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,18-24,14842,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,25-66,67035,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,1,Males,67+,11150,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,total,133891,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,0-5,14081,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,6-15,21868,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,16-17,4051,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,18-24,14868,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,25-66,67613,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,1,Males,67+,11410,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,total,134310,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,0-5,13934,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,6-15,21748,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,16-17,4348,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,18-24,14732,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,25-66,67903,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,1,Males,67+,11645,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,total,135233,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,0-5,13705,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,6-15,21760,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,16-17,4590,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,18-24,14743,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,25-66,68569,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,1,Males,67+,11866,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,total,136444,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,0-5,13492,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,6-15,21846,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,16-17,4563,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,18-24,14851,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,25-66,69512,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,1,Males,67+,12180,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,total,138086,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,0-5,13347,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,6-15,21923,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,16-17,4511,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,18-24,14982,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,25-66,70862,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,1,Males,67+,12461,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,total,139665,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,0-5,13166,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,6-15,22150,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,16-17,4432,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,18-24,15228,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,25-66,71983,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,1,Males,67+,12706,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,total,141870,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,0-5,13151,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,6-15,22446,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,16-17,4237,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,18-24,15515,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,25-66,73563,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,1,Males,67+,12958,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,total,143450,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,0-5,13040,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,6-15,22836,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,16-17,4026,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,18-24,15545,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,25-66,74820,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,1,Males,67+,13183,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,total,144287,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,0-5,12837,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,6-15,23135,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,16-17,3918,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,18-24,15555,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,25-66,75467,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,1,Males,67+,13375,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,total,145401,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,0-5,12774,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,6-15,23174,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,16-17,4224,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,18-24,15297,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,25-66,76353,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,1,Males,67+,13579,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,total,147170,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,0-5,12771,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,6-15,22986,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,16-17,4637,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,18-24,15046,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,25-66,77937,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,1,Males,67+,13793,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,total,151202,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,0-5,12920,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,6-15,22906,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,16-17,4744,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,18-24,15224,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,25-66,81409,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,1,Males,67+,13999,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,total,156576,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,0-5,13053,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,6-15,22679,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,16-17,4792,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,18-24,15724,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,25-66,86070,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,1,Males,67+,14258,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,total,160896,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,0-5,13397,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,6-15,22644,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,16-17,4883,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,18-24,16423,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,25-66,89159,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,1,Males,67+,14390,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,total,162068,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,0-5,13905,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,6-15,22488,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,16-17,4872,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,18-24,16851,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,25-66,89334,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,1,Males,67+,14618,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2010-01-01,1,Males,total,159936,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,1,Males,0-5,14163,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,1,Males,6-15,22143,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,1,Males,16-17,4885,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,1,Males,18-24,16574,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,1,Males,25-66,87182,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,1,Males,67+,14989,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,total,156057,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,0-5,14203,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,6-15,21815,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,16-17,4771,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,18-24,16431,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,25-66,83568,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,1,Males,67+,15269,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,total,156535,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,0-5,14217,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,6-15,21716,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,16-17,4650,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,18-24,16724,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,25-66,83465,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,1,Males,67+,15763,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,total,157870,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,0-5,14276,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,6-15,21667,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,16-17,4612,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,18-24,16886,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,25-66,83970,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,1,Males,67+,16459,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,total,159763,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,0-5,14096,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,6-15,21908,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,16-17,4584,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,18-24,16936,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,25-66,85207,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,1,Males,67+,17032,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,total,161516,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,0-5,13934,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,6-15,22152,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,16-17,4500,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,18-24,17138,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,25-66,86073,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,1,Males,67+,17719,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,total,163321,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,0-5,13462,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,6-15,22518,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,16-17,4322,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,18-24,16982,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,25-66,87642,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,1,Males,67+,18395,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,total,167517,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,0-5,13122,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,6-15,22924,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,16-17,4360,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,18-24,17186,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,25-66,90893,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,1,Males,67+,19032,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,total,173704,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,0-5,13077,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,6-15,23318,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,16-17,4462,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,18-24,17352,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,25-66,95603,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,1,Males,67+,19892,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,total,177954,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,0-5,13055,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,6-15,23733,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,16-17,4327,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,18-24,17397,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,25-66,98816,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,1,Males,67+,20626,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,total,180239,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,0-5,13207,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,6-15,23893,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,16-17,4329,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,18-24,17178,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,25-66,100222,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,1,Males,67+,21410,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,total,182148,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,0-5,13456,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,6-15,24122,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,16-17,4521,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,18-24,16771,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,25-66,100976,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,1,Males,67+,22302,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,total,185754,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,0-5,13884,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,6-15,24204,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,16-17,4693,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,18-24,16912,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,25-66,102853,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,1,Males,67+,23208,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,total,191738,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,0-5,14180,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,6-15,24426,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,16-17,4851,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,18-24,17611,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,25-66,106648,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,1,Males,67+,24022,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,total,196552,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,0-5,14300,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,6-15,24478,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,16-17,4998,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,18-24,17984,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,25-66,109923,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,1,Males,67+,24869,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,total,199622,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,0-5,14287,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,6-15,24450,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,16-17,5215,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,18-24,18269,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,25-66,111593,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,1,Males,67+,25808,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,total,202181,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,0-5,14207,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,6-15,24226,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,16-17,5436,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,18-24,18533,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,25-66,113121,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,1,Males,67+,26658,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+1984-01-01,2,Females,total,118447,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,2,Females,0-5,12760,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,2,Females,6-15,20114,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,2,Females,16-17,4294,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,2,Females,18-24,15345,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,2,Females,25-66,54336,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,2,Females,67+,11598,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,total,119569,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,0-5,12749,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,6-15,20170,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,16-17,4013,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,18-24,15352,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,25-66,55440,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,2,Females,67+,11845,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,total,120482,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,0-5,12474,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,6-15,20289,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,16-17,3961,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,18-24,15151,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,25-66,56553,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,2,Females,67+,12054,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,total,121501,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,0-5,12140,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,6-15,20596,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,16-17,3906,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,18-24,14970,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,25-66,57645,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,2,Females,67+,12244,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,total,123201,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,0-5,12085,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,6-15,20755,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,16-17,3874,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,18-24,14981,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,25-66,58977,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,2,Females,67+,12529,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,total,125356,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,0-5,12241,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,6-15,20722,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,16-17,4259,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,18-24,14904,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,25-66,60462,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,2,Females,67+,12768,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,total,126353,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,0-5,12338,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,6-15,20669,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,16-17,4377,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,18-24,14449,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,25-66,61501,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,2,Females,67+,13019,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,total,127443,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,0-5,12599,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,6-15,20644,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,16-17,4117,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,18-24,14382,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,25-66,62337,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,2,Females,67+,13364,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,total,129480,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,0-5,12841,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,6-15,20608,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,16-17,4095,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,18-24,14510,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,25-66,63808,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,2,Females,67+,13618,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,total,130786,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,0-5,13208,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,6-15,20537,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,16-17,4111,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,18-24,14353,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,25-66,64759,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,2,Females,67+,13818,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,total,132113,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,0-5,13525,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,6-15,20574,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,16-17,3966,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,18-24,14449,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,25-66,65522,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,2,Females,67+,14077,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,total,133087,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,0-5,13443,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,6-15,20695,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,16-17,3952,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,18-24,14333,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,25-66,66271,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,2,Females,67+,14393,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,total,133648,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,0-5,13209,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,6-15,20625,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,16-17,4179,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,18-24,14315,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,25-66,66724,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,2,Females,67+,14596,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,total,134641,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,0-5,12936,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,6-15,20723,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,16-17,4398,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,18-24,14345,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,25-66,67363,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,2,Females,67+,14876,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,total,135937,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,0-5,12786,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,6-15,20809,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,16-17,4316,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,18-24,14381,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,25-66,68345,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,2,Females,67+,15300,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,total,137626,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,0-5,12751,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,6-15,20928,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,16-17,4199,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,18-24,14550,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,25-66,69613,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,2,Females,67+,15585,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,total,139384,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,0-5,12622,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,6-15,21234,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,16-17,4251,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,18-24,14786,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,25-66,70686,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,2,Females,67+,15805,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,total,141491,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,0-5,12667,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,6-15,21490,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,16-17,4171,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,18-24,15063,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,25-66,72078,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,2,Females,67+,16022,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,total,143125,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,0-5,12587,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,6-15,21676,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,16-17,4021,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,18-24,15231,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,25-66,73260,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,2,Females,67+,16350,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,total,144184,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,0-5,12411,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,6-15,21924,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,16-17,3932,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,18-24,15154,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,25-66,74142,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,2,Females,67+,16621,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,total,145169,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,0-5,12404,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,6-15,22049,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,16-17,3917,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,18-24,14935,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,25-66,75025,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,2,Females,67+,16839,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,total,146407,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,0-5,12414,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,6-15,21886,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,16-17,4241,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,18-24,14605,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,25-66,76195,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,2,Females,67+,17066,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,total,148689,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,0-5,12483,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,6-15,21887,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,16-17,4510,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,18-24,14562,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,25-66,78020,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,2,Females,67+,17227,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,total,151096,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,0-5,12522,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,6-15,21770,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,16-17,4653,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,18-24,14923,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,25-66,79821,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,2,Females,67+,17407,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,total,154563,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,0-5,12832,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,6-15,21816,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,16-17,4616,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,18-24,15657,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,25-66,82008,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,2,Females,67+,17634,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,total,157300,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,0-5,13269,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,6-15,21710,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,16-17,4537,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,18-24,16175,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,25-66,83819,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,2,Females,67+,17790,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2010-01-01,2,Females,total,157694,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,2,Females,0-5,13476,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,2,Females,6-15,21326,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,2,Females,16-17,4689,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,2,Females,18-24,16031,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,2,Females,25-66,84051,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,2,Females,67+,18121,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,total,155784,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,0-5,13444,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,6-15,21017,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,16-17,4607,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,18-24,15503,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,25-66,82761,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,2,Females,67+,18452,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,total,156647,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,0-5,13436,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,6-15,20923,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,16-17,4384,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,18-24,15841,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,25-66,83195,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,2,Females,67+,18868,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,total,157940,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,0-5,13479,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,6-15,20935,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,16-17,4317,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,18-24,15956,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,25-66,83876,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,2,Females,67+,19377,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,total,159955,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,0-5,13537,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,6-15,21139,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,16-17,4297,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,18-24,16089,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,25-66,85069,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,2,Females,67+,19824,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,total,161508,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,0-5,13397,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,6-15,21348,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,16-17,4229,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,18-24,16079,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,25-66,86065,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,2,Females,67+,20390,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,total,162715,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,0-5,13006,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,6-15,21515,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,16-17,4264,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,18-24,15950,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,25-66,86943,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,2,Females,67+,21037,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,total,164990,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,0-5,12713,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,6-15,21873,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,16-17,4356,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,18-24,16030,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,25-66,88430,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,2,Females,67+,21588,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,total,168479,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,0-5,12628,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,6-15,22206,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,16-17,4279,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,18-24,16276,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,25-66,90914,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,2,Females,67+,22176,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,total,171514,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,0-5,12448,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,6-15,22531,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,16-17,4208,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,18-24,16428,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,25-66,92990,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,2,Females,67+,22909,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,total,173803,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,0-5,12402,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,6-15,22754,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,16-17,4267,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,18-24,16229,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,25-66,94585,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,2,Females,67+,23566,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,total,176150,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,0-5,12497,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,6-15,22978,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,16-17,4385,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,18-24,15908,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,25-66,95988,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,2,Females,67+,24394,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,total,179093,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,0-5,12773,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,6-15,23087,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,16-17,4432,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,18-24,16092,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,25-66,97492,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,2,Females,67+,25217,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,total,183350,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,0-5,12953,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,6-15,23236,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,16-17,4495,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,18-24,16536,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,25-66,100129,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,2,Females,67+,26001,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,total,187015,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,0-5,13057,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,6-15,23281,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,16-17,4657,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,18-24,16783,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,25-66,102266,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,2,Females,67+,26971,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,total,189623,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,0-5,13141,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,6-15,23089,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,16-17,4813,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,18-24,16859,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,25-66,103887,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,2,Females,67+,27834,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,total,191927,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,0-5,12994,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,6-15,22951,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,16-17,5051,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,18-24,16986,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,25-66,105179,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,2,Females,67+,28766,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+1984-01-01,Total,Total,total,238416,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,Total,Total,0-5,26127,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,Total,Total,6-15,41314,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,Total,Total,16-17,8713,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,Total,Total,18-24,31363,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,Total,Total,25-66,110211,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1984-01-01,Total,Total,67+,20688,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,total,240606,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,0-5,26130,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,6-15,41286,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,16-17,8279,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,18-24,31235,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,25-66,112564,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1985-01-01,Total,Total,67+,21112,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,total,242203,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,0-5,25405,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,6-15,41605,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,16-17,8109,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,18-24,30792,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,25-66,114821,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1986-01-01,Total,Total,67+,21471,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,total,244157,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,0-5,24738,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,6-15,42215,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,16-17,7929,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,18-24,30450,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,25-66,116985,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1987-01-01,Total,Total,67+,21840,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,total,247561,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,0-5,24699,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,6-15,42561,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,16-17,7979,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,18-24,30322,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,25-66,119677,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1988-01-01,Total,Total,67+,22323,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,total,251919,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,0-5,25062,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,6-15,42585,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,16-17,8682,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,18-24,30099,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,25-66,122688,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1989-01-01,Total,Total,67+,22803,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,total,253785,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,0-5,25213,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,6-15,42314,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,16-17,8962,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,18-24,29375,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,25-66,124694,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1990-01-01,Total,Total,67+,23227,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,total,255866,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,0-5,25676,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,6-15,42213,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,16-17,8513,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,18-24,29214,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,25-66,126438,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1991-01-01,Total,Total,67+,23812,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,total,259727,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,0-5,26461,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,6-15,42000,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,16-17,8314,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,18-24,29474,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,25-66,129243,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1992-01-01,Total,Total,67+,24235,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,total,262386,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,0-5,27298,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,6-15,41835,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,16-17,8382,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,18-24,29210,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,25-66,130957,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1993-01-01,Total,Total,67+,24704,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,total,265064,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,0-5,27738,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,6-15,42148,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,16-17,8103,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,18-24,29291,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,25-66,132557,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1994-01-01,Total,Total,67+,25227,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,total,266978,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,0-5,27524,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,6-15,42563,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,16-17,8003,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,18-24,29201,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,25-66,133884,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1995-01-01,Total,Total,67+,25803,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,total,267958,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,0-5,27143,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,6-15,42373,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,16-17,8527,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,18-24,29047,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,25-66,134627,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1996-01-01,Total,Total,67+,26241,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,total,269874,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,0-5,26641,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,6-15,42483,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,16-17,8988,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,18-24,29088,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,25-66,135932,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1997-01-01,Total,Total,67+,26742,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,total,272381,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,0-5,26278,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,6-15,42655,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,16-17,8879,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,18-24,29232,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,25-66,137857,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1998-01-01,Total,Total,67+,27480,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,total,275712,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,0-5,26098,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,6-15,42851,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,16-17,8710,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,18-24,29532,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,25-66,140475,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+1999-01-01,Total,Total,67+,28046,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,total,279049,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,0-5,25788,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,6-15,43384,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,16-17,8683,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,18-24,30014,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,25-66,142669,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2000-01-01,Total,Total,67+,28511,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,total,283361,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,0-5,25818,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,6-15,43936,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,16-17,8408,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,18-24,30578,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,25-66,145641,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2001-01-01,Total,Total,67+,28980,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,total,286575,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,0-5,25627,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,6-15,44512,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,16-17,8047,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,18-24,30776,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,25-66,148080,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2002-01-01,Total,Total,67+,29533,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,total,288471,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,0-5,25248,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,6-15,45059,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,16-17,7850,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,18-24,30709,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,25-66,149609,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2003-01-01,Total,Total,67+,29996,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,total,290570,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,0-5,25178,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,6-15,45223,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,16-17,8141,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,18-24,30232,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,25-66,151378,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2004-01-01,Total,Total,67+,30418,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,total,293577,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,0-5,25185,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,6-15,44872,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,16-17,8878,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,18-24,29651,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,25-66,154132,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2005-01-01,Total,Total,67+,30859,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,total,299891,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,0-5,25403,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,6-15,44793,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,16-17,9254,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,18-24,29786,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,25-66,159429,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2006-01-01,Total,Total,67+,31226,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,total,307672,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,0-5,25575,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,6-15,44449,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,16-17,9445,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,18-24,30647,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,25-66,165891,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2007-01-01,Total,Total,67+,31665,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,total,315459,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,0-5,26229,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,6-15,44460,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,16-17,9499,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,18-24,32080,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,25-66,171167,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2008-01-01,Total,Total,67+,32024,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,total,319368,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,0-5,27174,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,6-15,44198,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,16-17,9409,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,18-24,33026,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,25-66,173153,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2009-01-01,Total,Total,67+,32408,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),
+2010-01-01,Total,Total,total,317630,persons,observed,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,Total,Total,0-5,27639,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,Total,Total,6-15,43469,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,Total,Total,16-17,9574,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,Total,Total,18-24,32605,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,Total,Total,25-66,171233,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2010-01-01,Total,Total,67+,33110,persons,derived,FIS-022,pre-2011 estimation method (not revised in March 2024),data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,total,311841,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,0-5,27647,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,6-15,42832,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,16-17,9378,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,18-24,31934,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,25-66,166329,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2011-01-01,Total,Total,67+,33721,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,total,313182,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,0-5,27653,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,6-15,42639,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,16-17,9034,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,18-24,32565,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,25-66,166660,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2012-01-01,Total,Total,67+,34631,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,total,315810,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,0-5,27755,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,6-15,42602,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,16-17,8929,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,18-24,32842,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,25-66,167846,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2013-01-01,Total,Total,67+,35836,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,total,319718,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,0-5,27633,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,6-15,43047,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,16-17,8881,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,18-24,33025,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,25-66,170276,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2014-01-01,Total,Total,67+,36856,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,total,323024,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,0-5,27331,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,6-15,43500,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,16-17,8729,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,18-24,33217,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,25-66,172138,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2015-01-01,Total,Total,67+,38109,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,total,326036,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,0-5,26468,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,6-15,44033,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,16-17,8586,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,18-24,32932,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,25-66,174585,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2016-01-01,Total,Total,67+,39432,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,total,332507,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,0-5,25835,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,6-15,44797,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,16-17,8716,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,18-24,33216,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,25-66,179323,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2017-01-01,Total,Total,67+,40620,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,total,342183,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,0-5,25705,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,6-15,45524,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,16-17,8741,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,18-24,33628,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,25-66,186517,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2018-01-01,Total,Total,67+,42068,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,total,349468,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,0-5,25503,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,6-15,46264,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,16-17,8535,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,18-24,33825,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,25-66,191806,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2019-01-01,Total,Total,67+,43535,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,total,354042,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,0-5,25609,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,6-15,46647,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,16-17,8596,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,18-24,33407,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,25-66,194807,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2020-01-01,Total,Total,67+,44976,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,total,358298,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,0-5,25953,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,6-15,47100,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,16-17,8906,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,18-24,32679,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,25-66,196964,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2021-01-01,Total,Total,67+,46696,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,total,364917,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,0-5,26658,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,6-15,47295,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,16-17,9129,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,18-24,33039,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,25-66,200371,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2022-01-01,Total,Total,67+,48425,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,total,375218,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,0-5,27134,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,6-15,47670,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,16-17,9353,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,18-24,34199,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,25-66,206839,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2023-01-01,Total,Total,67+,50023,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,total,383726,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,0-5,27358,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,6-15,47763,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,16-17,9666,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,18-24,34831,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,25-66,212268,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2024-01-01,Total,Total,67+,51840,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,total,389444,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,0-5,27429,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,6-15,47544,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,16-17,10043,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,18-24,35193,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,25-66,215593,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2025-01-01,Total,Total,67+,53642,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,total,394324,persons,observed,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,0-5,27202,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,6-15,47183,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,16-17,10496,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,18-24,35601,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,25-66,218418,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv
+2026-01-01,Total,Total,67+,55424,persons,derived,FIS-022,"revised method (March 2024, 'signs of life'), series revised from 2011",data/processed/population/pop_national_age_groups_2010_2026.csv

@@ -15,7 +15,8 @@ The rent each year, nominal, in million krónur:
   * 2025 repeats 2024 in 2025 prices (an EST placeholder until Hagstofa publishes 2025).
 
 The fee paid, observed (v9; compiled from Fiskistofa, Hagstofa and the state accounts, ríkisreikningur, in
-data/reference/fisheries, which is not redistributed here: the series built from it is data/processed/fisheries_history.json):
+data/reference/fisheries, each value with its source in sources.csv; the series built from it is
+data/processed/fisheries_history.json):
 the fishing fee collected each calendar year 2004-2025 (fishing_fees_calendar_total_2004_2025.csv), and the
 Development Fund levies 1995-2005 (fishery_levies_1993_2015.csv: on quota, general and the national tax list).
 Monitoring and licence fees are cost recovery, not a take on the rent, and are left out. v8 used estimates here,

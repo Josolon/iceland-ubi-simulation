@@ -331,40 +331,15 @@ def build(p, rng=None):
     renter_p = np.select([age < 25, age < 35, age < 45, age < 67], [.55, .45, .25, .12], .08)
     renter_p = np.where(A["immigrant"], np.minimum(renter_p * 2.2, .85), renter_p)
     A["renter"] = rng.random(N) < renter_p
-    A["capital"] = rng.random(N) < p["costs"]["capital_share"]
-    # a couple shares tenure and region
+    # 2.0: the better paid more often in the capital area (regions.assign); a household shares its area
+    from ubisim.abm import regions
+    A["capital"] = regions.assign(A, p, rng)
+    # a couple shares tenure
     has_p = partner >= 0
     A["renter"][has_p] = A["renter"][np.where(has_p, np.minimum(np.arange(N), partner), 0)][has_p]
-    A["capital"][has_p] = A["capital"][np.where(has_p, np.minimum(np.arange(N), partner), 0)][has_p]
     A["mortgage"] = ~A["renter"] & (age < 60)
 
-    # ---- household wealth: liquid savings and housing (EST distribution, totals from 206% of GDP net worth)
-    w = p["wealth"]
-    total = w["net_worth_excl_pensions_pct_gdp"] / 100 * (p.get("base") or {}).get("GDP0", 4941.2) * 1e9
-    adults = age >= 20
-    age_curve = np.clip((age - 20) / 40.0, .05, 1.4)
-    raw = age_curve * (A["base_wage"] / np.median(A["base_wage"])) ** 1.3 * rng.lognormal(-w["wealth_sd"] ** 2 / 2, w["wealth_sd"], N)
-    raw = np.where(adults, raw, 0) * np.where(A["immigrant"], np.minimum(1, (A["years_in_iceland"] + 1) / 15), 1)
-    # The top of a wealth distribution is Pareto, not lognormal: a lognormal put 13-16% of net wealth with the
-    # richest 1%, where tax-return data put 20-25%, and a wealth tax above 100 m.kr. found half the base the
-    # auðlegðarskattur did (2026-09-26). The top percent keeps its order and takes a Pareto tail from the 99th
-    # percentile; the total is still pinned to the national figure below.
-    alpha = w.get("pareto_alpha")
-    if alpha and adults.sum() > 100:
-        q = np.quantile(raw[adults], .99)
-        top = np.flatnonzero(adults & (raw > q))
-        rank = (np.argsort(np.argsort(raw[top])) + .5) / len(top)        # 0 = the least of the top, 1 = the most
-        raw[top] = q * (1 - rank * .99) ** (-1 / alpha)
-    A["wealth"] = raw / raw.sum() * total * w["liquid_share"]
-    owners = adults & ~A["renter"]
-    value = np.where(A["capital"], 1.25, .8) * (A["base_wage"] / np.median(A["base_wage"])) ** .3 * rng.lognormal(-.02, .2, N)
-    ltv = np.where(A["mortgage"], np.clip(.65 - (age - 25) / 70, .1, .8), 0.0)
-    share = np.where(partner >= 0, .5, 1.0)  # couples hold half each
-    home = np.where(owners, value * share, 0.0)
-    equity_raw = home * (1 - ltv)
-    scale = total * (1 - w["liquid_share"]) / max(equity_raw.sum(), 1)
-    A["home_value"] = home * scale
-    A["mortgage_debt"] = A["home_value"] * ltv
+    assign_wealth(A, p, rng)
 
     A["occ_pension"] = np.where(age >= 67, occupational_pension(A, np.arange(N), p, rng), 0.0)
     assign_capital_income(A, p, rng)
@@ -470,6 +445,55 @@ def update_young(A, p, rng, leave_multiplier=1.0):
         out = home[leave]
         A["host"][out] = -1
         A["lives_alone"][out] = rng.random(len(out)) < b["living_alone_share_single_under67"]
+
+
+def assign_wealth(A, p, rng):
+    """Household wealth: savings and other assets (`wealth`), and a home with a mortgage. Totals from 206% of GDP of
+    net worth outside pensions; the spread fitted by family to the tax returns (1.1, see below)."""
+    w = p["wealth"]
+    N = len(A["age"])
+    age, partner = A["age"], A["partner"]
+    total = w["net_worth_excl_pensions_pct_gdp"] / 100 * (p.get("base") or {}).get("GDP0", 4941.2) * 1e9
+    adults = age >= 20
+    age_curve = np.clip((age - 20) / 40.0, .05, 1.4)
+    raw = age_curve * (A["base_wage"] / np.median(A["base_wage"])) ** 1.3 * rng.lognormal(-w["wealth_sd"] ** 2 / 2, w["wealth_sd"], N)
+    raw = np.where(adults, raw, 0) * np.where(A["immigrant"], np.minimum(1, (A["years_in_iceland"] + 1) / 15), 1)
+    # The top of a wealth distribution is Pareto, not lognormal: a lognormal put 13-16% of net wealth with the
+    # richest 1%, where tax-return data put 20-25%, and a wealth tax above 100 m.kr. found half the base the
+    # auðlegðarskattur did (2026-09-26). Those above `pareto_from` keep their order and take a Pareto tail from
+    # there; the total is still pinned to the national figure below. 1.1: from the 90th percentile, not the 99th —
+    # from the 99th the richest tenth of families held 34% of net worth, against 50% in the tax returns.
+    alpha = w.get("pareto_alpha")
+    if alpha and adults.sum() > 100:
+        q = np.quantile(raw[adults], w.get("pareto_from", .99))
+        top = np.flatnonzero(adults & (raw > q))
+        rank = (np.argsort(np.argsort(raw[top])) + .5) / len(top)        # 0 = the least of the top, 1 = the most
+        raw[top] = q * (1 - rank * .99) ** (-1 / alpha)
+        k = w.get("top_share_valuation", 1.0)
+        if k != 1.0:
+            raw[adults & (raw > np.quantile(raw[adults], .99))] *= k
+    A["wealth"] = raw / raw.sum() * total * w["liquid_share"]
+    # 1.1: an adult living in someone else's home (a young adult with their parents, an older guest) owns none of
+    # it; they were given a home of their own as owners, which no household in the housing ladder held
+    hosted = A["host"] >= 0 if "host" in A else np.zeros(N, bool)
+    A["renter"][hosted] = True                  # and rent when they leave (housing._place_new)
+    A["mortgage"][hosted] = False
+    owners = adults & ~A["renter"]
+    value = np.where(A["capital"], 1.25, .8) * (A["base_wage"] / np.median(A["base_wage"])) ** .3 \
+        * rng.lognormal(-w["home_value_sd"] ** 2 / 2, w["home_value_sd"], N)
+    # 1.1: `home_value` is all the real estate a household holds — its home, and for the wealthiest a second home or
+    # flats let out. In the tax returns the richest tenth of families hold 174 m.kr. of real estate each, against
+    # 102 m.kr. in the next tenth; without this the model gave them 107. It rises with savings and other assets
+    # against the median adult's (no draw of its own)
+    rel = A["wealth"] / max(float(np.median(A["wealth"][adults])), 1.0)
+    value = value * np.clip(rel, .2, 50) ** w["home_value_wealth_elasticity"]
+    ltv = np.where(A["mortgage"], np.clip(.65 - (age - 25) / 70, .1, .8), 0.0)
+    share = np.where(partner >= 0, .5, 1.0)  # couples hold half each
+    home = np.where(owners, value * share, 0.0)
+    equity_raw = home * (1 - ltv)
+    scale = total * (1 - w["liquid_share"]) / max(equity_raw.sum(), 1)
+    A["home_value"] = home * scale
+    A["mortgage_debt"] = A["home_value"] * ltv
 
 
 def assign_capital_income(A, p, rng):

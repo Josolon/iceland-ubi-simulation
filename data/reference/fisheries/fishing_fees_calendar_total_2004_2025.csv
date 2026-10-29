@@ -1,0 +1,23 @@
+period,period_type,value,unit,price_basis,measure,status,rule,source_ids,caveat
+2004,calendar_year,695.25,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2005,calendar_year,755.705,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2006,calendar_year,421.12,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2007,calendar_year,425.283,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2008,calendar_year,180.005,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2009,calendar_year,1014.771,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2010,calendar_year,2264.973,isk_million_per_year,nominal,collected_fiskistofa_accounting_year,observed,FIS-003 accounting-year general fee (no special fee before 2012),FIS-003,
+2011,calendar_year,3669.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2012,calendar_year,9791.0,isk_million_per_year,nominal,collected_state_accounts,observed,state accounts per þskj. 144/149 (Hagstofa 2012 omits special fee),FIS-007,
+2013,calendar_year,9704.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2014,calendar_year,8081.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2015,calendar_year,3310.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,low because of switch to monthly collection (4 months moved into 2016)
+2016,calendar_year,8501.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2017,calendar_year,6237.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2018,calendar_year,11417.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,includes Sep-Dec 2018 under law 56/2018
+2019,calendar_year,6850.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2020,calendar_year,4853.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2021,calendar_year,7699.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2022,calendar_year,7958.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2023,calendar_year,10132.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2024,calendar_year,9129.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,
+2025,calendar_year,5839.0,isk_million_per_year,nominal,collected_state_accounts,observed,Hagstofa UMH51102 (state accounts),FIS-001,unusually low; not corroborated

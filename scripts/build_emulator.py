@@ -51,7 +51,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import numpy as np  # noqa: E402
 
 from ubisim.abm import model, params  # noqa: E402
-from build_explorer_data import METRICS, calibrated  # noqa: E402
+from build_explorer_data import METRICS, calibrated, params_fingerprint  # noqa: E402
 
 OUT = ROOT / "artifacts/explorer_v3/emulator.js"
 
@@ -114,6 +114,20 @@ LEVERS = [
     ("ai", "AI progress", "%/yr", 0, 25, "automation.ai_progress_rate", .01,
      "How fast machines get cheaper and abler. Take-up still depends on what labour costs, so dearer labour "
      "automates faster."),
+    ("robotics", "Robotics progress", "%/yr", 0, 25, "automation.robot_progress_rate", .01,
+     "How fast robots get abler and cheaper at physical work: processing lines, driving, cleaning, kitchens, shelves "
+     "and building. The world's pace, not Iceland's. Office AI has its own pace (AI progress). A robot costs far "
+     "more capital per post than software, so take-up needs dearer labour or a subsidy, and is slower."),
+    ("ai_subsidy", "State pays for adopting office AI", "% of the cost", 0, 50, "automation.ai_subsidy", .01,
+     "The state pays this share of what firms spend putting office AI to work — about half a year of the wages of "
+     "the work it takes over. It brings take-up forward; Iceland cannot change the technology itself."),
+    ("robot_subsidy", "State pays for adopting robots", "% of the cost", 0, 50, "automation.robot_subsidy", .01,
+     "The state pays this share of what firms spend on robots — about two years of the wages of the work they take "
+     "over. With robotics advancing, it moves automation towards the hard physical work that a borgaralaun makes "
+     "dearer to staff; without, it buys little."),
+    ("junior_subsidy", "State pays part of juniors' wages", "% of the wage", 0, 50, "policy.junior_wage_subsidy", .01,
+     "In professions where AI takes entry-level work, the state pays this share of the wage of anyone in their first "
+     "three years of work, so that a junior costs a firm less against the machine and the ladder keeps its bottom rung."),
     ("clawback", "Levy on machine income", "%", 0, 50, "automation.levy_rate", .01,
      "Taken from the income attributed to machines, on top of corporate tax."),
     ("robot_stake", "State ownership of automation capital", "%", 0, 100, "automation.state_capital_share", .01,
@@ -358,6 +372,11 @@ LEVERS = [
      "home, up to half its equity, carrying the state's long real rate and repaid when the home is sold or from the "
      "estate. They keep the home and the income; the state lends rather than spends, and books only what an estate "
      "cannot repay. Nothing changes for renters or for anyone without a top-up."),
+    ("inherit_home", "Family home exempt if an heir lives in it", "off / on", 0, 1, "policy.inheritance_home_exempt", 1,
+     "As in Germany: the home the deceased lived in passes free of inheritance tax to an heir who lives in it for "
+     "ten years (up to 200 m², so part of the largest homes is taxed); everything else is taxed at the inheritance "
+     "rate. Some heirs move in anyway; more do the more tax it saves. An heir who moves in cannot sell for ten "
+     "years, and older owners downsize less, since selling turns tax-free equity into taxable cash."),
     ("venture_stake", "State stake in new firms", "% if funded by the borgaralaun alone", 0, 50,
      "policy.state_venture_stake", .01,
      "The reform treats the state as an investor in its citizens — their upbringing, schooling, health and borgaralaun — and "
@@ -400,6 +419,16 @@ LEVERS = [
      "below the poverty line: at 3, the estimate, a household 30% below it moves twice as often. Older owners in the "
      "evidence rarely move for money, mostly after a partner's death or ill health, so 0 is plausible too. It "
      "applies to the status quo as well, so both sides are run with the same behaviour."),
+    ("s_top_income", "How strongly top pay answers tax", "× the estimate", 0, 2.0, "top_incomes.scale", 1,
+     "How much less pay above the second threshold is reported when the reform's rates leave less of it, and how "
+     "much the self-employed and founders take as dividends instead. 1 is the estimate (an elasticity of taxable "
+     "income of .10 in the middle band and .25 at the top); 0 is the static count of earlier versions. Nothing "
+     "changes under the status quo."),
+    ("s_family_care", "How far family care replaces paid care", "hours per hour", 0, 1, "family_care.substitution", 1,
+     "How many of a care assistant's hours an hour of care given in the family takes the place of, when a reform has "
+     "carers giving more of it than today. 0.5 is the estimate: family care replaces help at home, not nursing care. "
+     "In Iceland most family care is light, and carers out of work give about an hour a week more than carers in "
+     "work, so even at 1 few posts are replaced. Nothing changes under the status quo."),
     ("governance", "Cuts to governing costs", "ma.kr./yr", 0, 100, "policy.governance_cut", .01,
      "Parliament, þingfararkaup, ministers' pay, party funding, rural travel support, the foreign service and "
      "a smaller presidential office. Worth about 6.5 ma.kr. a year together, small against the payment's "
@@ -434,6 +463,13 @@ OUTPUTS = [
     # v10: the housing ladder, older owners' moves, claims on homes
     "pensioner_poverty", *[f"h_size{j}" for j in range(6)], "studio_rent", "crowded", "spare_room", "downsizers",
     "equity_annuity", "claims", "first_homes",
+    # 1.1: top incomes, the family home exempt from inheritance tax
+    "shifted_tax", "top_income_lost", "heirs_moved_in",
+    # 1.1: the career ladder and the two technologies
+    "neet", "junior_hire", "young_pay", "wage_p90_p50", "wage_p50_p10", "ai_exposed", "exp_gap", "auto_ai",
+    "auto_robot", "tech_subsidy", "junior_subsidy",
+    # 1.1: care assistants' posts that family care takes the place of
+    "family_care_posts",
     *[f"pp_{o}" for o in params.OCCUPATIONS],
 ]
 
@@ -461,7 +497,8 @@ PLATFORM = {
     # the backcast-tuned values (params.py), not the earlier estimates: until 2026-09-25 the page ran the reform
     # at 1.5 and .75 while its status quo ran at these
     "s_emigration": .825, "s_fertility": .5, "s_labour_demand": .471, "s_tourism": .8, "s_avoidance": 1.0,
-    "s_downsizing": 3.0,
+    "s_downsizing": 3.0, "s_top_income": 1.0, "s_family_care": .5, "inherit_home": 0,
+    "robotics": 0, "ai_subsidy": 0, "robot_subsidy": 0, "junior_subsidy": 0,
 }
 # Where each lever sits today. With the borgaralaun added and everything else here, the page shows the
 # borgaralaun and nothing else; the rest of the reform can then be added one piece at a time. VAT 18 is today's
@@ -474,12 +511,12 @@ TODAY = {
     "public_offset": 0, "customs": 100, "agri_cut": 0, "sub_innovation": 0, "sub_heating": 0, "sub_transition": 0,
     "sub_transport": 0, "sub_other": 0, "fish_rent": 24, "vat_input": 0,
     "personal_credit": 72.5, "inherit_rate": 10, "inherit_floor": 6.5, "smelters": 0, "pension_fold": 0, "pension_keep": 0, "prop_defer": 0,
-    "floor_loan": 0, "venture_stake": 0, "per_diem": 0, "agreements": 0, "teen_moveout": 0, "agri_startups": 0, "green_heat": 0, "gift_tax": 10, "exit_tax": 0, "enforcement": 0,
+    "floor_loan": 0, "inherit_home": 0, "ai_subsidy": 0, "robot_subsidy": 0, "junior_subsidy": 0, "venture_stake": 0, "per_diem": 0, "agreements": 0, "teen_moveout": 0, "agri_startups": 0, "green_heat": 0, "gift_tax": 10, "exit_tax": 0, "enforcement": 0,
     "prison_ubi": 60, "ubi_protected": 100, "gambling_block": 0, "free_health": 0, "free_internet": 0,
     "residence": 0, "capital_controls": 0,
 }
 # On or off: sampled at the two ends only, and fitted with no square.
-BINARY = {"agreements", "pension_keep", "prop_defer", "floor_loan"}
+BINARY = {"agreements", "pension_keep", "prop_defer", "floor_loan", "inherit_home"}
 KEYS = [l[0] for l in LEVERS]
 # Budget lines: they move the accounts by a fixed amount per point and nothing else, so a square or a cross term
 # would only fit noise. Three degrees of freedom each, handed back to the levers that need them.
@@ -509,9 +546,10 @@ FOLDS = 5
 # comparison: world prices, the pace of AI, the last-decade world — and, since v3.1, how strongly people and
 # firms respond (the sensitivity levers) and how often people change profession, which the status quo has too.
 # Leaving the sensitivities out ran the reform under one set of behaviours and its status quo under another.
-WORLD_PRICES = ("tourism_price", "marine_price", "aluminium_price", "import_price", "ai", "history_world", "windfall")
+WORLD_PRICES = ("tourism_price", "marine_price", "aluminium_price", "import_price", "ai", "robotics", "history_world",
+                "windfall")
 WORLD = WORLD_PRICES + ("s_emigration", "s_fertility", "s_labour_demand", "s_tourism", "s_avoidance", "s_downsizing",
-                         "prof_moves")
+                         "s_top_income", "s_family_care", "prof_moves")
 WORLD_POINTS = 120
 
 _PO = params.DEFAULTS["property_ownership"]
@@ -806,7 +844,8 @@ def simulate(a):
     # These runs are the same every time for a given design, and they cost half an hour. Cached, so that
     # restarting a long build — which happens — does not pay for them again.
     refs, sq_world = [None] * len(W), [None] * len(W)
-    tag = f"{a.world_points}x{a.years}x{a.seed}x{len(KEYS)}"
+    # the model's own fingerprint too: runs cached under one model are not the status quo of another
+    tag = f"{a.world_points}x{a.years}x{a.seed}x{len(KEYS)}x{params_fingerprint()}"
     cache = RAW.with_name("emulator_world.pkl")
     cached = pickle.loads(cache.read_bytes()) if cache.exists() else None
     have = len(cached["W"]) if cached else 0
@@ -825,13 +864,14 @@ def simulate(a):
         old = json.loads(RAW.read_text())
         m = len(old["X"])
         # the runs saved are kept if they are the start of this design (anchors are added after the hypercube)
-        same = old["levers"] == KEYS and old["years"] == a.years and m <= n and np.shape(old["X"])[1] == X.shape[1]
+        same = old["levers"] == KEYS and old["years"] == a.years and m <= n and np.shape(old["X"])[1] == X.shape[1] \
+            and old.get("model") == params_fingerprint()
         if same and np.allclose(old["X"], X[:m]):
             Y = old["Y"][:m] + [None] * (n - m)
             print(f"resuming: {sum(y is not None for y in Y)} runs already saved", flush=True)
 
     def save():
-        RAW.write_text(json.dumps({"X": X.tolist(), "Y": Y, "levers": KEYS, "years": a.years,
+        RAW.write_text(json.dumps({"X": X.tolist(), "Y": Y, "levers": KEYS, "years": a.years, "model": params_fingerprint(),
                                    "status_quo": status_quo, "world": {"W": W.tolist(), "of": world_of.tolist(),
                                                                        "status_quo": sq_world},
                                    "generated": time.strftime("%Y-%m-%d")},

@@ -1,0 +1,2120 @@
+{
+ "source": "Hagstofa MAN03250 (population by region, 1 January), TEK02003 (taxable wages and employees by residence, monthly, 2025; m.kr.), VIN01104 (labour force survey by region, %, hours), MAN01002 (moves between regions and abroad, all ages), VIS01106 (residential property price index, December), MAN07108 (nuclear families by municipality, 1 January), IDN03001 and IDN03002 (dwellings completed, Iceland and the capital region)",
+ "fetched": "2026-10-23",
+ "population": {
+  "Total": {
+   "2015": 323024,
+   "2020": 354042,
+   "2025": 389444,
+   "2026": 394324
+  },
+  "Capital region": {
+   "2015": 206690,
+   "2020": 226169,
+   "2025": 249054,
+   "2026": 251912
+  },
+  "Southwest": {
+   "2015": 21662,
+   "2020": 26835,
+   "2025": 29577,
+   "2026": 29644
+  },
+  "West": {
+   "2015": 15384,
+   "2020": 16281,
+   "2025": 17761,
+   "2026": 17997
+  },
+  "Westfjords": {
+   "2015": 6832,
+   "2020": 6913,
+   "2025": 7176,
+   "2026": 7341
+  },
+  "Northwest": {
+   "2015": 7070,
+   "2020": 7210,
+   "2025": 7355,
+   "2026": 7353
+  },
+  "Northeast": {
+   "2015": 28981,
+   "2020": 30020,
+   "2025": 32026,
+   "2026": 32296
+  },
+  "East": {
+   "2015": 10247,
+   "2020": 10572,
+   "2025": 11217,
+   "2026": 11211
+  },
+  "South": {
+   "2015": 26158,
+   "2020": 30042,
+   "2025": 35278,
+   "2026": 36570
+  }
+ },
+ "taxable_wages_2025": {
+  "2025M01": {
+   "Total": {
+    "Taxable wages": 167069,
+    "Number of employees": 206241
+   },
+   "Capital Region": {
+    "Taxable wages": 111227,
+    "Number of employees": 131473
+   },
+   "Southwest": {
+    "Taxable wages": 11850,
+    "Number of employees": 15176
+   },
+   "West": {
+    "Taxable wages": 7026,
+    "Number of employees": 8824
+   },
+   "Westfjords": {
+    "Taxable wages": 3022,
+    "Number of employees": 3808
+   },
+   "Northwest": {
+    "Taxable wages": 2594,
+    "Number of employees": 3601
+   },
+   "Northeast": {
+    "Taxable wages": 12042,
+    "Number of employees": 16388
+   },
+   "East": {
+    "Taxable wages": 4593,
+    "Number of employees": 5873
+   },
+   "South": {
+    "Taxable wages": 12869,
+    "Number of employees": 17893
+   }
+  },
+  "2025M02": {
+   "Total": {
+    "Taxable wages": 170759,
+    "Number of employees": 205934
+   },
+   "Capital Region": {
+    "Taxable wages": 112748,
+    "Number of employees": 131011
+   },
+   "Southwest": {
+    "Taxable wages": 12120,
+    "Number of employees": 15173
+   },
+   "West": {
+    "Taxable wages": 7356,
+    "Number of employees": 8861
+   },
+   "Westfjords": {
+    "Taxable wages": 3027,
+    "Number of employees": 3825
+   },
+   "Northwest": {
+    "Taxable wages": 2666,
+    "Number of employees": 3586
+   },
+   "Northeast": {
+    "Taxable wages": 12624,
+    "Number of employees": 16530
+   },
+   "East": {
+    "Taxable wages": 4995,
+    "Number of employees": 5886
+   },
+   "South": {
+    "Taxable wages": 13311,
+    "Number of employees": 17995
+   }
+  },
+  "2025M03": {
+   "Total": {
+    "Taxable wages": 172569,
+    "Number of employees": 207622
+   },
+   "Capital Region": {
+    "Taxable wages": 113616,
+    "Number of employees": 131628
+   },
+   "Southwest": {
+    "Taxable wages": 12230,
+    "Number of employees": 15269
+   },
+   "West": {
+    "Taxable wages": 7430,
+    "Number of employees": 8983
+   },
+   "Westfjords": {
+    "Taxable wages": 3026,
+    "Number of employees": 3825
+   },
+   "Northwest": {
+    "Taxable wages": 2699,
+    "Number of employees": 3632
+   },
+   "Northeast": {
+    "Taxable wages": 12931,
+    "Number of employees": 16724
+   },
+   "East": {
+    "Taxable wages": 4830,
+    "Number of employees": 5953
+   },
+   "South": {
+    "Taxable wages": 13747,
+    "Number of employees": 18372
+   }
+  },
+  "2025M04": {
+   "Total": {
+    "Taxable wages": 178164,
+    "Number of employees": 210194
+   },
+   "Capital Region": {
+    "Taxable wages": 116228,
+    "Number of employees": 132430
+   },
+   "Southwest": {
+    "Taxable wages": 12677,
+    "Number of employees": 15508
+   },
+   "West": {
+    "Taxable wages": 7851,
+    "Number of employees": 9212
+   },
+   "Westfjords": {
+    "Taxable wages": 3145,
+    "Number of employees": 3928
+   },
+   "Northwest": {
+    "Taxable wages": 2793,
+    "Number of employees": 3725
+   },
+   "Northeast": {
+    "Taxable wages": 13461,
+    "Number of employees": 17012
+   },
+   "East": {
+    "Taxable wages": 5237,
+    "Number of employees": 6102
+   },
+   "South": {
+    "Taxable wages": 14541,
+    "Number of employees": 18724
+   }
+  },
+  "2025M05": {
+   "Total": {
+    "Taxable wages": 186707,
+    "Number of employees": 219633
+   },
+   "Capital Region": {
+    "Taxable wages": 121465,
+    "Number of employees": 137461
+   },
+   "Southwest": {
+    "Taxable wages": 13565,
+    "Number of employees": 16125
+   },
+   "West": {
+    "Taxable wages": 7970,
+    "Number of employees": 9523
+   },
+   "Westfjords": {
+    "Taxable wages": 3458,
+    "Number of employees": 4164
+   },
+   "Northwest": {
+    "Taxable wages": 2948,
+    "Number of employees": 3823
+   },
+   "Northeast": {
+    "Taxable wages": 14189,
+    "Number of employees": 17761
+   },
+   "East": {
+    "Taxable wages": 5338,
+    "Number of employees": 6412
+   },
+   "South": {
+    "Taxable wages": 15035,
+    "Number of employees": 19587
+   }
+  },
+  "2025M06": {
+   "Total": {
+    "Taxable wages": 187751,
+    "Number of employees": 225278
+   },
+   "Capital Region": {
+    "Taxable wages": 121846,
+    "Number of employees": 139630
+   },
+   "Southwest": {
+    "Taxable wages": 13448,
+    "Number of employees": 16482
+   },
+   "West": {
+    "Taxable wages": 7856,
+    "Number of employees": 9762
+   },
+   "Westfjords": {
+    "Taxable wages": 3412,
+    "Number of employees": 4340
+   },
+   "Northwest": {
+    "Taxable wages": 2972,
+    "Number of employees": 3995
+   },
+   "Northeast": {
+    "Taxable wages": 14334,
+    "Number of employees": 18395
+   },
+   "East": {
+    "Taxable wages": 5253,
+    "Number of employees": 6654
+   },
+   "South": {
+    "Taxable wages": 15033,
+    "Number of employees": 20294
+   }
+  },
+  "2025M07": {
+   "Total": {
+    "Taxable wages": 182880,
+    "Number of employees": 228281
+   },
+   "Capital Region": {
+    "Taxable wages": 118006,
+    "Number of employees": 142107
+   },
+   "Southwest": {
+    "Taxable wages": 12717,
+    "Number of employees": 16737
+   },
+   "West": {
+    "Taxable wages": 7323,
+    "Number of employees": 9716
+   },
+   "Westfjords": {
+    "Taxable wages": 3268,
+    "Number of employees": 4268
+   },
+   "Northwest": {
+    "Taxable wages": 2900,
+    "Number of employees": 4003
+   },
+   "Northeast": {
+    "Taxable wages": 14096,
+    "Number of employees": 18305
+   },
+   "East": {
+    "Taxable wages": 5644,
+    "Number of employees": 6677
+   },
+   "South": {
+    "Taxable wages": 14920,
+    "Number of employees": 20289
+   }
+  },
+  "2025M08": {
+   "Total": {
+    "Taxable wages": 181954,
+    "Number of employees": 225685
+   },
+   "Capital Region": {
+    "Taxable wages": 116638,
+    "Number of employees": 140203
+   },
+   "Southwest": {
+    "Taxable wages": 12775,
+    "Number of employees": 16621
+   },
+   "West": {
+    "Taxable wages": 7424,
+    "Number of employees": 9699
+   },
+   "Westfjords": {
+    "Taxable wages": 3269,
+    "Number of employees": 4201
+   },
+   "Northwest": {
+    "Taxable wages": 2864,
+    "Number of employees": 3972
+   },
+   "Northeast": {
+    "Taxable wages": 14168,
+    "Number of employees": 18222
+   },
+   "East": {
+    "Taxable wages": 5770,
+    "Number of employees": 6707
+   },
+   "South": {
+    "Taxable wages": 15066,
+    "Number of employees": 20086
+   }
+  },
+  "2025M09": {
+   "Total": {
+    "Taxable wages": 182848,
+    "Number of employees": 216698
+   },
+   "Capital Region": {
+    "Taxable wages": 117260,
+    "Number of employees": 134554
+   },
+   "Southwest": {
+    "Taxable wages": 13194,
+    "Number of employees": 15955
+   },
+   "West": {
+    "Taxable wages": 7614,
+    "Number of employees": 9265
+   },
+   "Westfjords": {
+    "Taxable wages": 3372,
+    "Number of employees": 4088
+   },
+   "Northwest": {
+    "Taxable wages": 2911,
+    "Number of employees": 3775
+   },
+   "Northeast": {
+    "Taxable wages": 14087,
+    "Number of employees": 17430
+   },
+   "East": {
+    "Taxable wages": 5729,
+    "Number of employees": 6277
+   },
+   "South": {
+    "Taxable wages": 15053,
+    "Number of employees": 19429
+   }
+  },
+  "2025M10": {
+   "Total": {
+    "Taxable wages": 180175,
+    "Number of employees": 213259
+   },
+   "Capital Region": {
+    "Taxable wages": 116131,
+    "Number of employees": 133097
+   },
+   "Southwest": {
+    "Taxable wages": 12832,
+    "Number of employees": 15748
+   },
+   "West": {
+    "Taxable wages": 7590,
+    "Number of employees": 9188
+   },
+   "Westfjords": {
+    "Taxable wages": 3399,
+    "Number of employees": 4008
+   },
+   "Northwest": {
+    "Taxable wages": 2834,
+    "Number of employees": 3693
+   },
+   "Northeast": {
+    "Taxable wages": 13627,
+    "Number of employees": 17121
+   },
+   "East": {
+    "Taxable wages": 5529,
+    "Number of employees": 6188
+   },
+   "South": {
+    "Taxable wages": 14949,
+    "Number of employees": 19182
+   }
+  },
+  "2025M11": {
+   "Total": {
+    "Taxable wages": 196714,
+    "Number of employees": 217569
+   },
+   "Capital Region": {
+    "Taxable wages": 127692,
+    "Number of employees": 136477
+   },
+   "Southwest": {
+    "Taxable wages": 14135,
+    "Number of employees": 15959
+   },
+   "West": {
+    "Taxable wages": 8254,
+    "Number of employees": 9386
+   },
+   "Westfjords": {
+    "Taxable wages": 3614,
+    "Number of employees": 4073
+   },
+   "Northwest": {
+    "Taxable wages": 3103,
+    "Number of employees": 3781
+   },
+   "Northeast": {
+    "Taxable wages": 14717,
+    "Number of employees": 17390
+   },
+   "East": {
+    "Taxable wages": 6053,
+    "Number of employees": 6360
+   },
+   "South": {
+    "Taxable wages": 16322,
+    "Number of employees": 19628
+   }
+  },
+  "2025M12": {
+   "Total": {
+    "Taxable wages": 186936,
+    "Number of employees": 212957
+   },
+   "Capital Region": {
+    "Taxable wages": 123935,
+    "Number of employees": 134917
+   },
+   "Southwest": {
+    "Taxable wages": 12617,
+    "Number of employees": 15394
+   },
+   "West": {
+    "Taxable wages": 7577,
+    "Number of employees": 9099
+   },
+   "Westfjords": {
+    "Taxable wages": 3315,
+    "Number of employees": 4060
+   },
+   "Northwest": {
+    "Taxable wages": 2960,
+    "Number of employees": 3764
+   },
+   "Northeast": {
+    "Taxable wages": 13930,
+    "Number of employees": 17005
+   },
+   "East": {
+    "Taxable wages": 5257,
+    "Number of employees": 6132
+   },
+   "South": {
+    "Taxable wages": 15110,
+    "Number of employees": 19065
+   }
+  }
+ },
+ "labour_force_survey": {
+  "Total": {
+   "Activity rate": {
+    "2015": 80.9,
+    "2016": 82,
+    "2017": 80.9,
+    "2018": 79.8,
+    "2019": 79.3,
+    "2020": 77.7,
+    "2021": 79,
+    "2022": 80.6,
+    "2023": 80.7,
+    "2024": 82.2,
+    "2025": 81.4
+   },
+   "Employment rate": {
+    "2015": 77.2,
+    "2016": 79.2,
+    "2017": 78.3,
+    "2018": 77.3,
+    "2019": 76.2,
+    "2020": 72.9,
+    "2021": 74.4,
+    "2022": 77.7,
+    "2023": 78,
+    "2024": 79.5,
+    "2025": 77.8
+   },
+   "Employed part time": {
+    "2015": 23.6,
+    "2016": 24.3,
+    "2017": 24.2,
+    "2018": 23.2,
+    "2019": 22.6,
+    "2020": 24,
+    "2021": 24.9,
+    "2022": 24.7,
+    "2023": 24.2,
+    "2024": 24.4,
+    "2025": 24.3
+   },
+   "Unemployment rate": {
+    "2015": 4.6,
+    "2016": 3.4,
+    "2017": 3.3,
+    "2018": 3.1,
+    "2019": 3.9,
+    "2020": 6.3,
+    "2021": 5.8,
+    "2022": 3.6,
+    "2023": 3.4,
+    "2024": 3.3,
+    "2025": 4.3
+   },
+   "Average hours of work": {
+    "2015": 40.2,
+    "2016": 40.1,
+    "2017": 39.8,
+    "2018": 39.5,
+    "2019": 39.5,
+    "2020": 37.8,
+    "2021": 36.5,
+    "2022": 36.2,
+    "2023": 36.3,
+    "2024": 36.3,
+    "2025": 35.9
+   }
+  },
+  "Capital region": {
+   "Activity rate": {
+    "2015": 81.8,
+    "2016": 82.3,
+    "2017": 81.4,
+    "2018": 80.6,
+    "2019": 79.8,
+    "2020": 79,
+    "2021": 80,
+    "2022": 81.5,
+    "2023": 81.3,
+    "2024": 82.3,
+    "2025": 82.2
+   },
+   "Employment rate": {
+    "2015": 77.5,
+    "2016": 79.1,
+    "2017": 78.6,
+    "2018": 77.9,
+    "2019": 76.4,
+    "2020": 73.7,
+    "2021": 75.2,
+    "2022": 78.5,
+    "2023": 78.1,
+    "2024": 79.2,
+    "2025": 78.1
+   },
+   "Employed part time": {
+    "2015": 24.8,
+    "2016": 24.3,
+    "2017": 24.5,
+    "2018": 23.7,
+    "2019": 22.5,
+    "2020": 23.4,
+    "2021": 24.6,
+    "2022": 25.3,
+    "2023": 24,
+    "2024": 24.8,
+    "2025": 25.4
+   },
+   "Unemployment rate": {
+    "2015": 5.2,
+    "2016": 3.8,
+    "2017": 3.4,
+    "2018": 3.4,
+    "2019": 4.3,
+    "2020": 6.7,
+    "2021": 6,
+    "2022": 3.8,
+    "2023": 3.9,
+    "2024": 3.7,
+    "2025": 4.9
+   },
+   "Average hours of work": {
+    "2015": 38.9,
+    "2016": 39.1,
+    "2017": 38.8,
+    "2018": 38.6,
+    "2019": 38.3,
+    "2020": 36.8,
+    "2021": 35.6,
+    "2022": 35.1,
+    "2023": 35.4,
+    "2024": 34.9,
+    "2025": 34.5
+   }
+  },
+  "Reykjavík - Capital": {
+   "Activity rate": {
+    "2015": 80.1,
+    "2016": 81.6,
+    "2017": 80.8,
+    "2018": 80.5,
+    "2019": 79.9,
+    "2020": 79.6,
+    "2021": 79.7,
+    "2022": 81.4,
+    "2023": 80.7,
+    "2024": 82.4,
+    "2025": 82.5
+   },
+   "Employment rate": {
+    "2015": 75.7,
+    "2016": 78.3,
+    "2017": 78,
+    "2018": 77.7,
+    "2019": 76.2,
+    "2020": 73.8,
+    "2021": 74.9,
+    "2022": 78.1,
+    "2023": 77,
+    "2024": 78.5,
+    "2025": 77.5
+   },
+   "Employed part time": {
+    "2015": 25,
+    "2016": 23.5,
+    "2017": 24.9,
+    "2018": 23.9,
+    "2019": 22.1,
+    "2020": 23,
+    "2021": 24.1,
+    "2022": 26.2,
+    "2023": 24.9,
+    "2024": 25.8,
+    "2025": 27
+   },
+   "Unemployment rate": {
+    "2015": 5.5,
+    "2016": 4.1,
+    "2017": 3.4,
+    "2018": 3.5,
+    "2019": 4.6,
+    "2020": 7.3,
+    "2021": 6,
+    "2022": 4,
+    "2023": 4.6,
+    "2024": 4.7,
+    "2025": 6
+   },
+   "Average hours of work": {
+    "2015": 38.9,
+    "2016": 38.8,
+    "2017": 38.7,
+    "2018": 38.3,
+    "2019": 38.3,
+    "2020": 36.5,
+    "2021": 35.5,
+    "2022": 34.8,
+    "2023": 35.1,
+    "2024": 34.4,
+    "2025": 34
+   }
+  },
+  "Surrounding Reykjavik": {
+   "Activity rate": {
+    "2015": 84.1,
+    "2016": 83.3,
+    "2017": 82.2,
+    "2018": 80.8,
+    "2019": 79.7,
+    "2020": 78.2,
+    "2021": 80.3,
+    "2022": 81.7,
+    "2023": 82.2,
+    "2024": 82.1,
+    "2025": 81.8
+   },
+   "Employment rate": {
+    "2015": 80,
+    "2016": 80.3,
+    "2017": 79.4,
+    "2018": 78.2,
+    "2019": 76.7,
+    "2020": 73.5,
+    "2021": 75.6,
+    "2022": 79,
+    "2023": 79.7,
+    "2024": 80.2,
+    "2025": 78.9
+   },
+   "Employed part time": {
+    "2015": 24.7,
+    "2016": 25.4,
+    "2017": 24.1,
+    "2018": 23.4,
+    "2019": 22.9,
+    "2020": 24,
+    "2021": 25.3,
+    "2022": 24.1,
+    "2023": 22.9,
+    "2024": 23.6,
+    "2025": 23.3
+   },
+   "Unemployment rate": {
+    "2015": 4.8,
+    "2016": 3.5,
+    "2017": 3.5,
+    "2018": 3.2,
+    "2019": 3.8,
+    "2020": 6,
+    "2021": 5.9,
+    "2022": 3.4,
+    "2023": 3,
+    "2024": 2.4,
+    "2025": 3.6
+   },
+   "Average hours of work": {
+    "2015": 38.9,
+    "2016": 39.4,
+    "2017": 39,
+    "2018": 38.9,
+    "2019": 38.3,
+    "2020": 37.2,
+    "2021": 35.7,
+    "2022": 35.6,
+    "2023": 35.7,
+    "2024": 35.5,
+    "2025": 35.1
+   }
+  },
+  "Other regions": {
+   "Activity rate": {
+    "2015": 79.4,
+    "2016": 81.6,
+    "2017": 80.1,
+    "2018": 78.4,
+    "2019": 78.3,
+    "2020": 75.5,
+    "2021": 77.2,
+    "2022": 79.1,
+    "2023": 79.6,
+    "2024": 82.1,
+    "2025": 79.9
+   },
+   "Employment rate": {
+    "2015": 76.6,
+    "2016": 79.4,
+    "2017": 77.7,
+    "2018": 76.2,
+    "2019": 75.8,
+    "2020": 71.5,
+    "2021": 73,
+    "2022": 76.5,
+    "2023": 77.8,
+    "2024": 79.9,
+    "2025": 77.3
+   },
+   "Employed part time": {
+    "2015": 21.5,
+    "2016": 24.3,
+    "2017": 23.6,
+    "2018": 22.4,
+    "2019": 22.9,
+    "2020": 25.1,
+    "2021": 25.6,
+    "2022": 23.8,
+    "2023": 24.4,
+    "2024": 23.5,
+    "2025": 22.4
+   },
+   "Unemployment rate": {
+    "2015": 3.5,
+    "2016": 2.7,
+    "2017": 3,
+    "2018": 2.7,
+    "2019": 3.2,
+    "2020": 5.3,
+    "2021": 5.5,
+    "2022": 3.3,
+    "2023": 2.3,
+    "2024": 2.8,
+    "2025": 3.2
+   },
+   "Average hours of work": {
+    "2015": 42.5,
+    "2016": 42,
+    "2017": 41.6,
+    "2018": 41.3,
+    "2019": 41.7,
+    "2020": 39.6,
+    "2021": 38.4,
+    "2022": 38.2,
+    "2023": 38.1,
+    "2024": 38.9,
+    "2025": 38.4
+   }
+  }
+ },
+ "migration": {
+  "2015": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 794,
+    "To West": 557,
+    "To Westfjords": 218,
+    "To Northwest": 173,
+    "To Norrheast": 610,
+    "To East": 219,
+    "To South": 940,
+    "To foreign countries": 7362
+   },
+   "From Southwest": {
+    "To capital area": 715,
+    "To Southwest": 0,
+    "To West": 57,
+    "To Westfjords": 27,
+    "To Northwest": 13,
+    "To Norrheast": 83,
+    "To East": 21,
+    "To South": 69,
+    "To foreign countries": 665
+   },
+   "From West": {
+    "To capital area": 555,
+    "To Southwest": 65,
+    "To West": 0,
+    "To Westfjords": 33,
+    "To Northwest": 24,
+    "To Norrheast": 43,
+    "To East": 12,
+    "To South": 50,
+    "To foreign countries": 419
+   },
+   "From Westfjords": {
+    "To capital area": 280,
+    "To Southwest": 59,
+    "To West": 60,
+    "To Westfjords": 0,
+    "To Northwest": 0,
+    "To Norrheast": 21,
+    "To East": 1,
+    "To South": 30,
+    "To foreign countries": 197
+   },
+   "From Northwest": {
+    "To capital area": 179,
+    "To Southwest": 12,
+    "To West": 17,
+    "To Westfjords": 5,
+    "To Northwest": 0,
+    "To Norrheast": 42,
+    "To East": 16,
+    "To South": 11,
+    "To foreign countries": 157
+   },
+   "From Northeast": {
+    "To capital area": 661,
+    "To Southwest": 101,
+    "To West": 55,
+    "To Westfjords": 30,
+    "To Northwest": 57,
+    "To Norrheast": 0,
+    "To East": 87,
+    "To South": 44,
+    "To foreign countries": 634
+   },
+   "From East": {
+    "To capital area": 284,
+    "To Southwest": 34,
+    "To West": 5,
+    "To Westfjords": 9,
+    "To Northwest": 9,
+    "To Norrheast": 110,
+    "To East": 0,
+    "To South": 51,
+    "To foreign countries": 269
+   },
+   "From South": {
+    "To capital area": 866,
+    "To Southwest": 82,
+    "To West": 56,
+    "To Westfjords": 26,
+    "To Northwest": 8,
+    "To Norrheast": 74,
+    "To East": 38,
+    "To South": 0,
+    "To foreign countries": 823
+   },
+   "From abroad": {
+    "To capital area": 8107,
+    "To Southwest": 773,
+    "To West": 496,
+    "To Westfjords": 202,
+    "To Northwest": 119,
+    "To Norrheast": 668,
+    "To East": 235,
+    "To South": 1029,
+    "To foreign countries": 0
+   }
+  },
+  "2016": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 1076,
+    "To West": 499,
+    "To Westfjords": 197,
+    "To Northwest": 165,
+    "To Norrheast": 523,
+    "To East": 222,
+    "To South": 1001,
+    "To foreign countries": 7232
+   },
+   "From Southwest": {
+    "To capital area": 664,
+    "To Southwest": 0,
+    "To West": 41,
+    "To Westfjords": 27,
+    "To Northwest": 23,
+    "To Norrheast": 49,
+    "To East": 21,
+    "To South": 69,
+    "To foreign countries": 734
+   },
+   "From West": {
+    "To capital area": 539,
+    "To Southwest": 67,
+    "To West": 0,
+    "To Westfjords": 22,
+    "To Northwest": 14,
+    "To Norrheast": 44,
+    "To East": 9,
+    "To South": 63,
+    "To foreign countries": 380
+   },
+   "From Westfjords": {
+    "To capital area": 260,
+    "To Southwest": 27,
+    "To West": 40,
+    "To Westfjords": 0,
+    "To Northwest": 6,
+    "To Norrheast": 30,
+    "To East": 8,
+    "To South": 22,
+    "To foreign countries": 200
+   },
+   "From Northwest": {
+    "To capital area": 167,
+    "To Southwest": 21,
+    "To West": 18,
+    "To Westfjords": 10,
+    "To Northwest": 0,
+    "To Norrheast": 58,
+    "To East": 7,
+    "To South": 21,
+    "To foreign countries": 149
+   },
+   "From Northeast": {
+    "To capital area": 616,
+    "To Southwest": 115,
+    "To West": 45,
+    "To Westfjords": 22,
+    "To Northwest": 36,
+    "To Norrheast": 0,
+    "To East": 87,
+    "To South": 64,
+    "To foreign countries": 741
+   },
+   "From East": {
+    "To capital area": 279,
+    "To Southwest": 42,
+    "To West": 11,
+    "To Westfjords": 9,
+    "To Northwest": 15,
+    "To Norrheast": 102,
+    "To East": 0,
+    "To South": 32,
+    "To foreign countries": 261
+   },
+   "From South": {
+    "To capital area": 931,
+    "To Southwest": 96,
+    "To West": 45,
+    "To Westfjords": 13,
+    "To Northwest": 18,
+    "To Norrheast": 78,
+    "To East": 37,
+    "To South": 0,
+    "To foreign countries": 877
+   },
+   "From abroad": {
+    "To capital area": 10044,
+    "To Southwest": 1521,
+    "To West": 550,
+    "To Westfjords": 281,
+    "To Northwest": 204,
+    "To Norrheast": 1098,
+    "To East": 337,
+    "To South": 1333,
+    "To foreign countries": 0
+   }
+  },
+  "2017": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 976,
+    "To West": 528,
+    "To Westfjords": 182,
+    "To Northwest": 139,
+    "To Norrheast": 515,
+    "To East": 203,
+    "To South": 1232,
+    "To foreign countries": 7307
+   },
+   "From Southwest": {
+    "To capital area": 755,
+    "To Southwest": 0,
+    "To West": 50,
+    "To Westfjords": 44,
+    "To Northwest": 32,
+    "To Norrheast": 86,
+    "To East": 34,
+    "To South": 66,
+    "To foreign countries": 942
+   },
+   "From West": {
+    "To capital area": 561,
+    "To Southwest": 48,
+    "To West": 0,
+    "To Westfjords": 17,
+    "To Northwest": 18,
+    "To Norrheast": 46,
+    "To East": 40,
+    "To South": 50,
+    "To foreign countries": 409
+   },
+   "From Westfjords": {
+    "To capital area": 237,
+    "To Southwest": 21,
+    "To West": 42,
+    "To Westfjords": 0,
+    "To Northwest": 4,
+    "To Norrheast": 45,
+    "To East": 8,
+    "To South": 16,
+    "To foreign countries": 230
+   },
+   "From Northwest": {
+    "To capital area": 147,
+    "To Southwest": 29,
+    "To West": 24,
+    "To Westfjords": 9,
+    "To Northwest": 0,
+    "To Norrheast": 66,
+    "To East": 9,
+    "To South": 18,
+    "To foreign countries": 153
+   },
+   "From Northeast": {
+    "To capital area": 633,
+    "To Southwest": 78,
+    "To West": 38,
+    "To Westfjords": 18,
+    "To Northwest": 42,
+    "To Norrheast": 0,
+    "To East": 98,
+    "To South": 62,
+    "To foreign countries": 970
+   },
+   "From East": {
+    "To capital area": 208,
+    "To Southwest": 51,
+    "To West": 27,
+    "To Westfjords": 6,
+    "To Northwest": 3,
+    "To Norrheast": 109,
+    "To East": 0,
+    "To South": 27,
+    "To foreign countries": 242
+   },
+   "From South": {
+    "To capital area": 806,
+    "To Southwest": 97,
+    "To West": 39,
+    "To Westfjords": 16,
+    "To Northwest": 27,
+    "To Norrheast": 67,
+    "To East": 27,
+    "To South": 0,
+    "To foreign countries": 887
+   },
+   "From abroad": {
+    "To capital area": 11922,
+    "To Southwest": 2159,
+    "To West": 675,
+    "To Westfjords": 401,
+    "To Northwest": 215,
+    "To Norrheast": 1619,
+    "To East": 386,
+    "To South": 1668,
+    "To foreign countries": 0
+   }
+  },
+  "2018": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 958,
+    "To West": 504,
+    "To Westfjords": 209,
+    "To Northwest": 95,
+    "To Norrheast": 506,
+    "To East": 219,
+    "To South": 1059,
+    "To foreign countries": 8629
+   },
+   "From Southwest": {
+    "To capital area": 875,
+    "To Southwest": 0,
+    "To West": 39,
+    "To Westfjords": 39,
+    "To Northwest": 17,
+    "To Norrheast": 63,
+    "To East": 44,
+    "To South": 75,
+    "To foreign countries": 1072
+   },
+   "From West": {
+    "To capital area": 542,
+    "To Southwest": 51,
+    "To West": 0,
+    "To Westfjords": 25,
+    "To Northwest": 16,
+    "To Norrheast": 43,
+    "To East": 13,
+    "To South": 82,
+    "To foreign countries": 502
+   },
+   "From Westfjords": {
+    "To capital area": 235,
+    "To Southwest": 31,
+    "To West": 29,
+    "To Westfjords": 0,
+    "To Northwest": 16,
+    "To Norrheast": 45,
+    "To East": 9,
+    "To South": 32,
+    "To foreign countries": 297
+   },
+   "From Northwest": {
+    "To capital area": 115,
+    "To Southwest": 23,
+    "To West": 16,
+    "To Westfjords": 11,
+    "To Northwest": 0,
+    "To Norrheast": 79,
+    "To East": 10,
+    "To South": 19,
+    "To foreign countries": 159
+   },
+   "From Northeast": {
+    "To capital area": 637,
+    "To Southwest": 63,
+    "To West": 41,
+    "To Westfjords": 20,
+    "To Northwest": 56,
+    "To Norrheast": 0,
+    "To East": 68,
+    "To South": 79,
+    "To foreign countries": 1209
+   },
+   "From East": {
+    "To capital area": 229,
+    "To Southwest": 40,
+    "To West": 19,
+    "To Westfjords": 8,
+    "To Northwest": 11,
+    "To Norrheast": 77,
+    "To East": 0,
+    "To South": 25,
+    "To foreign countries": 265
+   },
+   "From South": {
+    "To capital area": 922,
+    "To Southwest": 101,
+    "To West": 59,
+    "To Westfjords": 22,
+    "To Northwest": 26,
+    "To Norrheast": 73,
+    "To East": 43,
+    "To South": 0,
+    "To foreign countries": 1074
+   },
+   "From abroad": {
+    "To capital area": 12135,
+    "To Southwest": 1979,
+    "To West": 674,
+    "To Westfjords": 383,
+    "To Northwest": 214,
+    "To Norrheast": 1083,
+    "To East": 404,
+    "To South": 1666,
+    "To foreign countries": 0
+   }
+  },
+  "2019": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 881,
+    "To West": 475,
+    "To Westfjords": 159,
+    "To Northwest": 149,
+    "To Norrheast": 508,
+    "To East": 181,
+    "To South": 1136,
+    "To foreign countries": 9312
+   },
+   "From Southwest": {
+    "To capital area": 851,
+    "To Southwest": 0,
+    "To West": 32,
+    "To Westfjords": 41,
+    "To Northwest": 27,
+    "To Norrheast": 83,
+    "To East": 40,
+    "To South": 60,
+    "To foreign countries": 1281
+   },
+   "From West": {
+    "To capital area": 491,
+    "To Southwest": 45,
+    "To West": 0,
+    "To Westfjords": 48,
+    "To Northwest": 27,
+    "To Norrheast": 48,
+    "To East": 16,
+    "To South": 88,
+    "To foreign countries": 506
+   },
+   "From Westfjords": {
+    "To capital area": 235,
+    "To Southwest": 50,
+    "To West": 26,
+    "To Westfjords": 0,
+    "To Northwest": 4,
+    "To Norrheast": 26,
+    "To East": 3,
+    "To South": 15,
+    "To foreign countries": 258
+   },
+   "From Northwest": {
+    "To capital area": 141,
+    "To Southwest": 18,
+    "To West": 26,
+    "To Westfjords": 6,
+    "To Northwest": 0,
+    "To Norrheast": 54,
+    "To East": 4,
+    "To South": 28,
+    "To foreign countries": 216
+   },
+   "From Northeast": {
+    "To capital area": 621,
+    "To Southwest": 55,
+    "To West": 43,
+    "To Westfjords": 21,
+    "To Northwest": 35,
+    "To Norrheast": 0,
+    "To East": 89,
+    "To South": 73,
+    "To foreign countries": 894
+   },
+   "From East": {
+    "To capital area": 268,
+    "To Southwest": 33,
+    "To West": 25,
+    "To Westfjords": 5,
+    "To Northwest": 10,
+    "To Norrheast": 76,
+    "To East": 0,
+    "To South": 47,
+    "To foreign countries": 299
+   },
+   "From South": {
+    "To capital area": 829,
+    "To Southwest": 88,
+    "To West": 68,
+    "To Westfjords": 17,
+    "To Northwest": 19,
+    "To Norrheast": 55,
+    "To East": 21,
+    "To South": 0,
+    "To foreign countries": 1299
+   },
+   "From abroad": {
+    "To capital area": 11042,
+    "To Southwest": 1437,
+    "To West": 548,
+    "To Westfjords": 291,
+    "To Northwest": 283,
+    "To Norrheast": 950,
+    "To East": 376,
+    "To South": 1602,
+    "To foreign countries": 0
+   }
+  },
+  "2020": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 1027,
+    "To West": 464,
+    "To Westfjords": 255,
+    "To Northwest": 167,
+    "To Norrheast": 499,
+    "To East": 273,
+    "To South": 1257,
+    "To foreign countries": 8554
+   },
+   "From Southwest": {
+    "To capital area": 978,
+    "To Southwest": 0,
+    "To West": 54,
+    "To Westfjords": 27,
+    "To Northwest": 15,
+    "To Norrheast": 71,
+    "To East": 39,
+    "To South": 93,
+    "To foreign countries": 1175
+   },
+   "From West": {
+    "To capital area": 578,
+    "To Southwest": 48,
+    "To West": 0,
+    "To Westfjords": 27,
+    "To Northwest": 16,
+    "To Norrheast": 50,
+    "To East": 12,
+    "To South": 56,
+    "To foreign countries": 532
+   },
+   "From Westfjords": {
+    "To capital area": 302,
+    "To Southwest": 30,
+    "To West": 47,
+    "To Westfjords": 0,
+    "To Northwest": 18,
+    "To Norrheast": 29,
+    "To East": 4,
+    "To South": 15,
+    "To foreign countries": 278
+   },
+   "From Northwest": {
+    "To capital area": 177,
+    "To Southwest": 12,
+    "To West": 20,
+    "To Westfjords": 11,
+    "To Northwest": 0,
+    "To Norrheast": 65,
+    "To East": 10,
+    "To South": 24,
+    "To foreign countries": 221
+   },
+   "From Northeast": {
+    "To capital area": 653,
+    "To Southwest": 60,
+    "To West": 30,
+    "To Westfjords": 21,
+    "To Northwest": 59,
+    "To Norrheast": 0,
+    "To East": 53,
+    "To South": 75,
+    "To foreign countries": 812
+   },
+   "From East": {
+    "To capital area": 264,
+    "To Southwest": 36,
+    "To West": 30,
+    "To Westfjords": 7,
+    "To Northwest": 9,
+    "To Norrheast": 127,
+    "To East": 0,
+    "To South": 46,
+    "To foreign countries": 310
+   },
+   "From South": {
+    "To capital area": 1037,
+    "To Southwest": 116,
+    "To West": 58,
+    "To Westfjords": 25,
+    "To Northwest": 39,
+    "To Norrheast": 81,
+    "To East": 41,
+    "To South": 0,
+    "To foreign countries": 1288
+   },
+   "From abroad": {
+    "To capital area": 10413,
+    "To Southwest": 1106,
+    "To West": 553,
+    "To Westfjords": 285,
+    "To Northwest": 232,
+    "To Norrheast": 824,
+    "To East": 421,
+    "To South": 1415,
+    "To foreign countries": 0
+   }
+  },
+  "2021": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 1242,
+    "To West": 544,
+    "To Westfjords": 236,
+    "To Northwest": 148,
+    "To Norrheast": 627,
+    "To East": 252,
+    "To South": 1376,
+    "To foreign countries": 7462
+   },
+   "From Southwest": {
+    "To capital area": 927,
+    "To Southwest": 0,
+    "To West": 56,
+    "To Westfjords": 25,
+    "To Northwest": 5,
+    "To Norrheast": 59,
+    "To East": 43,
+    "To South": 86,
+    "To foreign countries": 968
+   },
+   "From West": {
+    "To capital area": 523,
+    "To Southwest": 54,
+    "To West": 0,
+    "To Westfjords": 25,
+    "To Northwest": 30,
+    "To Norrheast": 46,
+    "To East": 16,
+    "To South": 85,
+    "To foreign countries": 465
+   },
+   "From Westfjords": {
+    "To capital area": 291,
+    "To Southwest": 62,
+    "To West": 41,
+    "To Westfjords": 0,
+    "To Northwest": 11,
+    "To Norrheast": 32,
+    "To East": 9,
+    "To South": 30,
+    "To foreign countries": 256
+   },
+   "From Northwest": {
+    "To capital area": 157,
+    "To Southwest": 16,
+    "To West": 34,
+    "To Westfjords": 11,
+    "To Northwest": 0,
+    "To Norrheast": 112,
+    "To East": 5,
+    "To South": 33,
+    "To foreign countries": 179
+   },
+   "From Northeast": {
+    "To capital area": 598,
+    "To Southwest": 54,
+    "To West": 46,
+    "To Westfjords": 35,
+    "To Northwest": 44,
+    "To Norrheast": 0,
+    "To East": 68,
+    "To South": 71,
+    "To foreign countries": 660
+   },
+   "From East": {
+    "To capital area": 279,
+    "To Southwest": 54,
+    "To West": 17,
+    "To Westfjords": 6,
+    "To Northwest": 19,
+    "To Norrheast": 104,
+    "To East": 0,
+    "To South": 51,
+    "To foreign countries": 279
+   },
+   "From South": {
+    "To capital area": 1035,
+    "To Southwest": 108,
+    "To West": 58,
+    "To Westfjords": 29,
+    "To Northwest": 22,
+    "To Norrheast": 74,
+    "To East": 26,
+    "To South": 0,
+    "To foreign countries": 1019
+   },
+   "From abroad": {
+    "To capital area": 10047,
+    "To Southwest": 1168,
+    "To West": 689,
+    "To Westfjords": 423,
+    "To Northwest": 244,
+    "To Norrheast": 894,
+    "To East": 490,
+    "To South": 1461,
+    "To foreign countries": 0
+   }
+  },
+  "2022": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 1201,
+    "To West": 691,
+    "To Westfjords": 276,
+    "To Northwest": 154,
+    "To Norrheast": 611,
+    "To East": 227,
+    "To South": 1136,
+    "To foreign countries": 8928
+   },
+   "From Southwest": {
+    "To capital area": 972,
+    "To Southwest": 0,
+    "To West": 64,
+    "To Westfjords": 30,
+    "To Northwest": 30,
+    "To Norrheast": 93,
+    "To East": 52,
+    "To South": 98,
+    "To foreign countries": 1123
+   },
+   "From West": {
+    "To capital area": 521,
+    "To Southwest": 124,
+    "To West": 0,
+    "To Westfjords": 54,
+    "To Northwest": 22,
+    "To Norrheast": 61,
+    "To East": 21,
+    "To South": 78,
+    "To foreign countries": 550
+   },
+   "From Westfjords": {
+    "To capital area": 257,
+    "To Southwest": 27,
+    "To West": 43,
+    "To Westfjords": 0,
+    "To Northwest": 4,
+    "To Norrheast": 39,
+    "To East": 4,
+    "To South": 50,
+    "To foreign countries": 288
+   },
+   "From Northwest": {
+    "To capital area": 191,
+    "To Southwest": 31,
+    "To West": 28,
+    "To Westfjords": 3,
+    "To Northwest": 0,
+    "To Norrheast": 88,
+    "To East": 7,
+    "To South": 38,
+    "To foreign countries": 209
+   },
+   "From Northeast": {
+    "To capital area": 563,
+    "To Southwest": 87,
+    "To West": 34,
+    "To Westfjords": 25,
+    "To Northwest": 60,
+    "To Norrheast": 0,
+    "To East": 66,
+    "To South": 70,
+    "To foreign countries": 796
+   },
+   "From East": {
+    "To capital area": 243,
+    "To Southwest": 30,
+    "To West": 22,
+    "To Westfjords": 10,
+    "To Northwest": 10,
+    "To Norrheast": 100,
+    "To East": 0,
+    "To South": 58,
+    "To foreign countries": 391
+   },
+   "From South": {
+    "To capital area": 872,
+    "To Southwest": 133,
+    "To West": 52,
+    "To Westfjords": 27,
+    "To Northwest": 17,
+    "To Norrheast": 67,
+    "To East": 42,
+    "To South": 0,
+    "To foreign countries": 1264
+   },
+   "From abroad": {
+    "To capital area": 14363,
+    "To Southwest": 2508,
+    "To West": 958,
+    "To Westfjords": 416,
+    "To Northwest": 296,
+    "To Norrheast": 1116,
+    "To East": 526,
+    "To South": 2026,
+    "To foreign countries": 0
+   }
+  },
+  "2023": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 1058,
+    "To West": 627,
+    "To Westfjords": 240,
+    "To Northwest": 163,
+    "To Norrheast": 562,
+    "To East": 230,
+    "To South": 1127,
+    "To foreign countries": 9356
+   },
+   "From Southwest": {
+    "To capital area": 1281,
+    "To Southwest": 0,
+    "To West": 112,
+    "To Westfjords": 19,
+    "To Northwest": 16,
+    "To Norrheast": 105,
+    "To East": 41,
+    "To South": 119,
+    "To foreign countries": 1399
+   },
+   "From West": {
+    "To capital area": 483,
+    "To Southwest": 45,
+    "To West": 0,
+    "To Westfjords": 31,
+    "To Northwest": 19,
+    "To Norrheast": 42,
+    "To East": 25,
+    "To South": 89,
+    "To foreign countries": 640
+   },
+   "From Westfjords": {
+    "To capital area": 202,
+    "To Southwest": 33,
+    "To West": 41,
+    "To Westfjords": 0,
+    "To Northwest": 15,
+    "To Norrheast": 27,
+    "To East": 7,
+    "To South": 49,
+    "To foreign countries": 307
+   },
+   "From Northwest": {
+    "To capital area": 165,
+    "To Southwest": 12,
+    "To West": 35,
+    "To Westfjords": 13,
+    "To Northwest": 0,
+    "To Norrheast": 62,
+    "To East": 6,
+    "To South": 30,
+    "To foreign countries": 216
+   },
+   "From Northeast": {
+    "To capital area": 494,
+    "To Southwest": 64,
+    "To West": 23,
+    "To Westfjords": 17,
+    "To Northwest": 56,
+    "To Norrheast": 0,
+    "To East": 80,
+    "To South": 97,
+    "To foreign countries": 948
+   },
+   "From East": {
+    "To capital area": 234,
+    "To Southwest": 29,
+    "To West": 12,
+    "To Westfjords": 10,
+    "To Northwest": 2,
+    "To Norrheast": 95,
+    "To East": 0,
+    "To South": 54,
+    "To foreign countries": 407
+   },
+   "From South": {
+    "To capital area": 821,
+    "To Southwest": 72,
+    "To West": 70,
+    "To Westfjords": 14,
+    "To Northwest": 13,
+    "To Norrheast": 76,
+    "To East": 37,
+    "To South": 0,
+    "To foreign countries": 1498
+   },
+   "From abroad": {
+    "To capital area": 13317,
+    "To Southwest": 2804,
+    "To West": 741,
+    "To Westfjords": 410,
+    "To Northwest": 296,
+    "To Norrheast": 1161,
+    "To East": 581,
+    "To South": 2250,
+    "To foreign countries": 0
+   }
+  },
+  "2024": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 902,
+    "To West": 594,
+    "To Westfjords": 226,
+    "To Northwest": 139,
+    "To Norrheast": 573,
+    "To East": 256,
+    "To South": 1283,
+    "To foreign countries": 9923
+   },
+   "From Southwest": {
+    "To capital area": 2129,
+    "To Southwest": 0,
+    "To West": 139,
+    "To Westfjords": 60,
+    "To Northwest": 38,
+    "To Norrheast": 167,
+    "To East": 48,
+    "To South": 402,
+    "To foreign countries": 1529
+   },
+   "From West": {
+    "To capital area": 477,
+    "To Southwest": 36,
+    "To West": 0,
+    "To Westfjords": 20,
+    "To Northwest": 33,
+    "To Norrheast": 40,
+    "To East": 21,
+    "To South": 64,
+    "To foreign countries": 634
+   },
+   "From Westfjords": {
+    "To capital area": 249,
+    "To Southwest": 23,
+    "To West": 31,
+    "To Westfjords": 0,
+    "To Northwest": 6,
+    "To Norrheast": 18,
+    "To East": 4,
+    "To South": 53,
+    "To foreign countries": 350
+   },
+   "From Northwest": {
+    "To capital area": 170,
+    "To Southwest": 9,
+    "To West": 28,
+    "To Westfjords": 7,
+    "To Northwest": 0,
+    "To Norrheast": 72,
+    "To East": 11,
+    "To South": 47,
+    "To foreign countries": 222
+   },
+   "From Northeast": {
+    "To capital area": 607,
+    "To Southwest": 42,
+    "To West": 36,
+    "To Westfjords": 13,
+    "To Northwest": 44,
+    "To Norrheast": 0,
+    "To East": 65,
+    "To South": 83,
+    "To foreign countries": 945
+   },
+   "From East": {
+    "To capital area": 250,
+    "To Southwest": 34,
+    "To West": 35,
+    "To Westfjords": 9,
+    "To Northwest": 10,
+    "To Norrheast": 83,
+    "To East": 0,
+    "To South": 62,
+    "To foreign countries": 472
+   },
+   "From South": {
+    "To capital area": 1023,
+    "To Southwest": 89,
+    "To West": 63,
+    "To Westfjords": 25,
+    "To Northwest": 29,
+    "To Norrheast": 84,
+    "To East": 45,
+    "To South": 0,
+    "To foreign countries": 1670
+   },
+   "From abroad": {
+    "To capital area": 12689,
+    "To Southwest": 1868,
+    "To West": 670,
+    "To Westfjords": 369,
+    "To Northwest": 313,
+    "To Norrheast": 1164,
+    "To East": 604,
+    "To South": 2112,
+    "To foreign countries": 0
+   }
+  },
+  "2025": {
+   "From capital area": {
+    "To capital area": 0,
+    "To Southwest": 861,
+    "To West": 545,
+    "To Westfjords": 278,
+    "To Northwest": 107,
+    "To Norrheast": 556,
+    "To East": 199,
+    "To South": 1428,
+    "To foreign countries": 9744
+   },
+   "From Southwest": {
+    "To capital area": 1188,
+    "To Southwest": 0,
+    "To West": 46,
+    "To Westfjords": 43,
+    "To Northwest": 25,
+    "To Norrheast": 76,
+    "To East": 23,
+    "To South": 129,
+    "To foreign countries": 1499
+   },
+   "From West": {
+    "To capital area": 489,
+    "To Southwest": 59,
+    "To West": 0,
+    "To Westfjords": 28,
+    "To Northwest": 28,
+    "To Norrheast": 59,
+    "To East": 13,
+    "To South": 72,
+    "To foreign countries": 561
+   },
+   "From Westfjords": {
+    "To capital area": 219,
+    "To Southwest": 22,
+    "To West": 31,
+    "To Westfjords": 0,
+    "To Northwest": 2,
+    "To Norrheast": 27,
+    "To East": 10,
+    "To South": 36,
+    "To foreign countries": 342
+   },
+   "From Northwest": {
+    "To capital area": 136,
+    "To Southwest": 15,
+    "To West": 40,
+    "To Westfjords": 4,
+    "To Northwest": 0,
+    "To Norrheast": 52,
+    "To East": 7,
+    "To South": 40,
+    "To foreign countries": 245
+   },
+   "From Northeast": {
+    "To capital area": 573,
+    "To Southwest": 32,
+    "To West": 46,
+    "To Westfjords": 26,
+    "To Northwest": 39,
+    "To Norrheast": 0,
+    "To East": 58,
+    "To South": 105,
+    "To foreign countries": 948
+   },
+   "From East": {
+    "To capital area": 215,
+    "To Southwest": 27,
+    "To West": 12,
+    "To Westfjords": 7,
+    "To Northwest": 11,
+    "To Norrheast": 75,
+    "To East": 0,
+    "To South": 64,
+    "To foreign countries": 505
+   },
+   "From South": {
+    "To capital area": 841,
+    "To Southwest": 100,
+    "To West": 67,
+    "To Westfjords": 26,
+    "To Northwest": 38,
+    "To Norrheast": 96,
+    "To East": 58,
+    "To South": 0,
+    "To foreign countries": 1663
+   },
+   "From abroad": {
+    "To capital area": 11632,
+    "To Southwest": 1838,
+    "To West": 693,
+    "To Westfjords": 428,
+    "To Northwest": 270,
+    "To Norrheast": 1141,
+    "To East": 522,
+    "To South": 2150,
+    "To foreign countries": 0
+   }
+  }
+ },
+ "house_price_index": {
+  "2015M12": {
+   "Capital area, multi-flat houses": 333.3,
+   "Capital area, single-flat houses": 327.2,
+   "Outside capital area, total": 260.5,
+   "Whole country, total": 313.4
+  },
+  "2016M12": {
+   "Capital area, multi-flat houses": 379.1,
+   "Capital area, single-flat houses": 375.6,
+   "Outside capital area, total": 305.5,
+   "Whole country, total": 359.4
+  },
+  "2017M12": {
+   "Capital area, multi-flat houses": 433.6,
+   "Capital area, single-flat houses": 446.1,
+   "Outside capital area, total": 346.4,
+   "Whole country, total": 413.3
+  },
+  "2018M12": {
+   "Capital area, multi-flat houses": 456.8,
+   "Capital area, single-flat houses": 468.9,
+   "Outside capital area, total": 396.7,
+   "Whole country, total": 441.8
+  },
+  "2019M12": {
+   "Capital area, multi-flat houses": 471.8,
+   "Capital area, single-flat houses": 482.3,
+   "Outside capital area, total": 430.6,
+   "Whole country, total": 460.7
+  },
+  "2020M12": {
+   "Capital area, multi-flat houses": 508,
+   "Capital area, single-flat houses": 527.5,
+   "Outside capital area, total": 459.5,
+   "Whole country, total": 496.5
+  },
+  "2021M12": {
+   "Capital area, multi-flat houses": 583.9,
+   "Capital area, single-flat houses": 622.5,
+   "Outside capital area, total": 535.3,
+   "Whole country, total": 575.2
+  },
+  "2022M12": {
+   "Capital area, multi-flat houses": 699.4,
+   "Capital area, single-flat houses": 749,
+   "Outside capital area, total": 650.3,
+   "Whole country, total": 691.8
+  },
+  "2023M12": {
+   "Capital area, multi-flat houses": 721.3,
+   "Capital area, single-flat houses": 764,
+   "Outside capital area, total": 702.1,
+   "Whole country, total": 721.1
+  },
+  "2024M12": {
+   "Capital area, multi-flat houses": 774.2,
+   "Capital area, single-flat houses": 850.3,
+   "Outside capital area, total": 770.6,
+   "Whole country, total": 783.9
+  },
+  "2025M12": {
+   "Capital area, multi-flat houses": 793.1,
+   "Capital area, single-flat houses": 885.8,
+   "Outside capital area, total": 815.2,
+   "Whole country, total": 812.5
+  }
+ },
+ "families": {
+  "note": "MAN07108, 1 January: nuclear families plus persons not in one, each counted as a unit; the capital region is its seven municipalities",
+  "units": {
+   "Total": {
+    "2015": 177147,
+    "2016": 179944,
+    "2017": 185243,
+    "2018": 192752,
+    "2019": 198374,
+    "2020": 201305,
+    "2021": 202927,
+    "2022": 206979,
+    "2023": 215049,
+    "2024": 221852,
+    "2025": 226258,
+    "2026": 230270
+   },
+   "Capital region": {
+    "2015": 115135,
+    "2016": 116976,
+    "2017": 120078,
+    "2018": 124315,
+    "2019": 128153,
+    "2020": 130095,
+    "2021": 131657,
+    "2022": 133874,
+    "2023": 138446,
+    "2024": 142234,
+    "2025": 145557,
+    "2026": 147812
+   }
+  },
+  "persons": {
+   "Total": {
+    "2015": 323024,
+    "2016": 326036,
+    "2017": 332507,
+    "2018": 342183,
+    "2019": 349468,
+    "2020": 354042,
+    "2021": 358298,
+    "2022": 364917,
+    "2023": 375218,
+    "2024": 383726,
+    "2025": 389444,
+    "2026": 394324
+   },
+   "Capital region": {
+    "2015": 206690,
+    "2016": 208809,
+    "2017": 212623,
+    "2018": 218028,
+    "2019": 222981,
+    "2020": 226169,
+    "2021": 229647,
+    "2022": 233364,
+    "2023": 239289,
+    "2024": 244177,
+    "2025": 249054,
+    "2026": 251912
+   }
+  }
+ },
+ "completions": {
+  "note": "IDN03001, IDN03002: dwellings completed during the year",
+  "Total": {
+   "2015": 1120,
+   "2016": 1513,
+   "2017": 1768,
+   "2018": 2303,
+   "2019": 3033,
+   "2020": 3816,
+   "2021": 3190
+  },
+  "Capital region": {
+   "2015": 877,
+   "2016": 1169,
+   "2017": 1337,
+   "2018": 1435,
+   "2019": 2046,
+   "2020": 2527,
+   "2021": 2215
+  }
+ }
+}

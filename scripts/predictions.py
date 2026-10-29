@@ -1,7 +1,7 @@
 """The status quo's forecasts for 2026-2030, written down before the record exists, with the margin each must meet.
 
-    .venv/bin/python scripts/predictions.py            # write data/processed/predictions.json
-    .venv/bin/python scripts/predictions.py --check    # set them against data/processed/record.json, once it exists
+    .venv/bin/python scripts/predictions.py            # write data/processed/predictions_<version>.json
+    .venv/bin/python scripts/predictions.py --check    # set every version's against data/processed/record.json
 
 The forecasts are the exact status-quo run the explorer page carries (artifacts/explorer_v3/emulator.js): today's
 tax and benefit rules, the world as the forecasts describe it (prices near the 2.5% target, world prices for tourism,
@@ -12,7 +12,8 @@ scripts/backcast.py makes for 2016-2025: run the years with the world as it was 
 
 The margins are set from the backcast's errors over 2016-2025 and stated here, before the record, so they cannot be
 chosen to fit it. A forecast outside its margin in two or more years counts as a failure, and the forecast is then
-reported as failed, with the version that made it.
+reported as failed, with the version that made it. Each release writes its own file and the earlier ones stay as
+they were made: a later version's forecasts never replace an earlier version's.
 
 Record sources: Hagstofa's labour force survey, consumer price index, population (MAN00101), births (MAN05201) and
 EU-SILC at-risk-of-poverty rates for persons and for children under 18 (LIF01151).
@@ -23,7 +24,7 @@ import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 EMU = ROOT / "artifacts/explorer_v3/emulator.js"
-OUT = ROOT / "data/processed/predictions.json"
+CITATION = ROOT / "CITATION.cff"
 RECORD = ROOT / "data/processed/record.json"
 YEARS = [2026, 2027, 2028, 2029, 2030]
 
@@ -54,9 +55,19 @@ def status_quo():
     return {k: {y: d["status_quo"][k][years.index(y)] for y in YEARS} for k, *_ in FORECASTS}, d["meta"]["generated"]
 
 
+def version():
+    """The release, from CITATION.cff, as major.minor: a patch release changes no forecast."""
+    line = next(l for l in CITATION.read_text().splitlines() if l.startswith("version:"))
+    return ".".join(line.split(":", 1)[1].strip().strip('"').split(".")[:2])
+
+
 def write():
     sq, generated = status_quo()
-    out = {"made": generated, "conditional_on": "today's rules; the forecast world; AI at today's pace",
+    v = version()
+    OUT = ROOT / f"data/processed/predictions_{v}.json"
+    if OUT.exists() and json.loads(OUT.read_text()).get("made") != generated:
+        raise SystemExit(f"{OUT.name} already holds version {v}'s forecasts, made earlier; they are not rewritten")
+    out = {"version": v, "made": generated, "conditional_on": "today's rules; the forecast world; AI at today's pace",
            "rule": "a forecast outside its margin in two or more of the five years has failed",
            "forecasts": {k: {"what": what, "margin": m, "unit": unit, "why": why, "forecast": sq[k]}
                          for k, what, m, unit, why in FORECASTS}}
@@ -68,8 +79,13 @@ def write():
 
 
 def check():
-    pred = json.loads(OUT.read_text())["forecasts"]
     rec = json.loads(RECORD.read_text())
+    for f in sorted(ROOT.glob("data/processed/predictions_*.json")):
+        print(f"== forecasts of version {f.stem.split('_', 1)[1]}")
+        check_one(json.loads(f.read_text())["forecasts"], rec)
+
+
+def check_one(pred, rec):
     for k, p in pred.items():
         misses, seen = 0, 0
         for y, f in p["forecast"].items():

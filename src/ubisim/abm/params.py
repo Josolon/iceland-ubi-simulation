@@ -259,6 +259,12 @@ DEFAULTS = {
         # Advance inheritance and gifts. Taxed like inheritance today, 10%. Set below the inheritance rate and
         # estates move into gifts while the giver is alive.
         "gift_tax_rate": .10,
+        # 1.1, as in Germany (§ 13 Abs. 1 Nr. 4c ErbStG): the home the deceased lived in is exempt if an heir lives in it
+        # for ten years (up to 200 m² for a child in Germany); everything else is taxed. 0 = off, 1 = on.
+        "inheritance_home_exempt": 0.0,
+        # 1.1: the state pays this share of a junior's wage, for their first years of work, in the professions where
+        # machines take entry-level work (careers.py)
+        "junior_wage_subsidy": 0.0,
         # A tax on moving assets abroad: on the unrealised gains of people who emigrate with financial wealth above
         # the threshold (2025 krónur), as Norway (about 38% on gains above NOK 3 m) and Denmark (27-42%) levy
         # them. Iceland has none. It also closes moving abroad as a way round the inheritance tax.
@@ -438,6 +444,9 @@ DEFAULTS = {
         # CALIBRATED: the share of the model's renters who claim, to ~23,000 households and 11.2 ma.kr. (HMS 2025);
         # see policy.housing_benefit
         "housing_benefit_claim_share": .33,
+        # 1.1, CALIBRATED: the share of those the model finds entitled to social assistance who claim it, to the record's
+        # ~2,700 recipients (PAYE 2023) from the 7,300 it reached paid in full (policy._net_income)
+        "social_assistance_claim_share": .37,
         # the resulting 67+ mean is checked in scripts/quality_check.py. Of base monthly earnings, full career; to
         # ~357k per RESIDENT 67+ in 2025 (Skatturinn's income-by-age file: 214.1 ma.kr. for 2024 over ~52,700 residents,
         # not the register's 60,403, less ~6 ma.kr. paid abroad, +8.5% per person to 2025). v8 used ~307k (.365),
@@ -510,6 +519,17 @@ DEFAULTS = {
         # almost nothing. Expected earnings are unchanged — what changes is the risk, which is what a floor
         # under income actually removes.
         "study_full_time_cost": 1.4,      # EST: how much harder a course makes holding a full-time job
+        # DATA: share of students without a paid job during the lecture period, Iceland 2022 (EUROSTUDENT 8, Figure
+        # B6.1: 62% work through it, 14% from time to time). The choice model's student constant is fitted to it.
+        "student_nonwork_share": .24,
+        # 2.0, social norms in the choice to work (model.norm_term, docs/LIMITS.md §5). EST, from Norway: a point more
+        # long-term claimants among close neighbours raises one's own chance of claiming by about 0.2 points, a social
+        # multiplier near 1.25 (Markussen and Røed 2015, JHR); similar for disability pensions (Rege, Telle and
+        # Votruba 2012) and from parents to children (Dahl, Kostøl and Mogstad 2014). Here the peers are people of the
+        # same age band and sex, and the response is to the share out of work for any reason. norm_scale is the
+        # sensitivity lever: 0 turns the norm off, 2 doubles it.
+        "norm_marginal_effect": .20,
+        "norm_scale": 1.0,
         "independent_sale_probability": .5,
         "independent_floor_share": .10,   # EST: what the work still earns in a year it does not sell
         "baseline_independent_share": .015,  # EST: share of 16-74s doing this today (unpaid or barely paid)
@@ -653,6 +673,157 @@ DEFAULTS = {
         # net of debts and funeral costs, and much passes to a surviving spouse in an undivided estate first.
         # EST, set so the status quo raises about the 14.7 ma.kr. collected in 2024.
         "valuation_share": .45,
+        # 1.1, the family home exempt where an heir lives in it (model.home_exemption). EST: about one inherited home
+        # in seven is lived in by an heir with no tax reason; more move in the more tax it saves (per króna of tax
+        # saved on a króna of the home's equity), at most `home_occupy_max`. Germany's limit of 200 m² leaves part of
+        # the largest homes taxed (EST: they average about 250 m²).
+        "home_occupy_base": .15, "home_occupy_response": 2.0, "home_occupy_max": .6,
+        "home_exempt_share_by_size": [1, 1, 1, 1, 1, .8],
+        "home_lock_years": 10,
+        # Older owners hold on to the home rather than turn exempt equity into taxable cash: downsizing falls by this
+        # many times the tax it would cost them (the rate on a króna of the home's equity, times the chance an heir
+        # moves in). EST.
+        "downsize_deterrence": 3.0,
+    },
+
+    # ---------------------------------------------------------- 1.1: the career ladder (careers.py)
+    "careers": {
+        "entry_years": 3,                  # a junior: less than this many years of experience
+        # pay for a year of experience gained or lost against one's peers (EST: returns to early experience run 3-5%
+        # a year and fall later; Kahn 2010 and Oreopoulos et al. 2012 find a slump's start costing 5-9% at first)
+        "return_per_year": .02, "min_factor": .80, "max_factor": 1.10, "max_gap": 10,
+        "initial_work_share": .8,          # EST: share of the years since leaving school that people have worked
+        # how much a degree's expected worth turns on the first job, against the career's pay (EST)
+        "first_job_weight": .5,
+    },
+
+    # ---------------------------------------------------------- 1.1: unpaid care in the family (familycare.py)
+    "family_care": {
+        # share caring for a relative at least once a week, Iceland 2019, by age from each edge on (EHIS,
+        # Eurostat hlth_ehis_ic1e, "providing care to relatives"); 16-24 takes the survey's 15-24
+        "age_edges": [16, 25, 35, 45, 55, 65, 75],
+        "weekly_share": [.265, .219, .182, .308, .331, .203, .128],
+        "max_age": 110,
+        # hours a week a carer gives, from EU-SILC 2016's bands for Iceland (ilc_ats18) at midpoints of 4, 14.5
+        # and 30 hours: carers in work 81/13/6%, carers out of work 76/16/9%
+        "hours_working": 6.9,
+        "hours_not_working": 7.9,
+        # EST: a care assistant's hours that an hour of family care takes the place of. Substitution holds for help
+        # at home and fades for nursing care (Bonsang 2009; Van Houtven and Norton 2004); care assistants' work is
+        # mostly the former
+        "substitution": .5,
+        "full_time_week": 40,              # hours, a full-time post (Hagstofa labour force survey, about 40-41)
+    },
+
+    # ---------------------------------------------------------- 2.0: the informal economy (informal.py)
+    "informal": {
+        # EST: shares of earnings kept off the books at today's marginal rates. Self-reported income is hidden far
+        # more than income a third party reports (Kleven et al. 2011: 37% against 0.3% in Denmark's audits);
+        # employees' share is cash work no employer reports
+        "self_share": .20, "employee_share": .02,
+        "reference_rate": .45,             # EST: the marginal rate these shares are at (set from the status quo)
+        "elasticity": .5,                  # EST: Clotfelter (1983) 0.5-0.8; Kleven et al. (2011) smaller
+        "max_share": .60,
+    },
+
+    # ---------------------------------------------------------- 2.0: banks and pension funds (financial.py)
+    "financial": {
+        # ma.kr. at 31 December 2025 (THJ10001): banks' loans and equity, households' loans and the funds' part of
+        # them, the funds' bonds and total financial assets
+        "bank_loans": 4928.5, "bank_equity": 866.0, "household_loans": 3476.5,
+        "fund_loans": 805.0, "fund_bonds": 2809.1, "fund_assets": 8824.5,
+        "return_on_equity": .11,           # EST: the large banks' return on equity, 2023-25
+        "loss_rate": .002,                 # EST: loan losses a year in normal times
+        "loss_unemployment": .2,           # EST: more losses a year per point of unemployment above the base year's
+        "loss_house_prices": .04,          # EST: more losses a year per unit of a fall in house prices
+        "capital_spread": .13,             # EST: lending spread per unit of shortfall in equity/loans (BCBS 2010)
+        "bond_premium": .05,               # EST: yield per unit of GDP of bonds the funds no longer buy
+    },
+
+    # ---------------------------------------------------------- 2.0: hours within a job (hours.py)
+    # ---------------------------------------------------------- 2.0: the capital area and the rest (regions.py)
+    "regions": {
+        # Hagstofa MAN03250, 1 January 2025: 249,054 of 389,444; TEK02003, 2025: taxable pay per employee, capital
+        # area against the rest; MAN01002, 2025: moves between the two, of each area's people; arrivals from abroad
+        "capital_share": .639, "pay_ratio": 1.11,
+        "move_rate_from_capital": .0160, "move_rate_to_capital": .0261, "arrival_capital_share": .623,
+        "value_ratio": 1.25 / .8,          # the base population's homes (population.assign_wealth)
+        "household_size_ratio": .984,      # MAN07108, 1 January 2025: persons per family or single person, against the rest
+        "build_capital_share": .693,       # IDN03001, IDN03002: the capital area's share of dwellings completed, 2015-21
+        "housing_share": .30,              # the CPI's weight on housing (markets.w_housing)
+        "mover_pay_premium": .05,          # EST: about half the gap in pay; the rest is who lives where
+        "elasticity": 1.0,                 # EST: rate per unit of the log gain; weak in Nordic data (regions.py)
+        # EST: the rate by age of the household's lead, against its average (the age schedule of migration)
+        "age_profile": [[18, 22, 30, 40, 50, 67, 80], [2.5, 3.0, 2.0, 1.0, .6, .4, .3]],
+    },
+
+    "hours": {
+        "elasticity": .15,                 # EST: compensated, within the job (Chetty 2012: at most 0.33)
+        "income_effect": .04,              # EST: Vivalt et al. (NBER w32719): within the job, at most 2% for 40% more
+        "speed": .5,                       # EST: share of the way to the chosen week in a year
+        "lowest": .75, "highest": 1.10,    # a three-and-three-quarter-day week, and overtime
+    },
+
+    # ---------------------------------------------------------- 2.0: the business capital stock (capital.py)
+    "capital": {
+        # business sector, end of 2025: net stock 6,540 ma.kr. at current prices, 1.32 x GDP; consumption of fixed
+        # capital 576 ma.kr., 8.8% of the stock (THJ03204); real growth 3.1% a year over 2015-25, where firms'
+        # expected growth starts
+        "stock_to_gdp": 1.32, "depreciation": .088, "growth": .031,
+        "expectation_speed": .2,           # EST: how far firms' expected growth moves to what they see in a year
+        "tax0": .20,                       # corporate income tax today
+        "real_rate0": .035,                # the real rate firms borrow at in the base year (markets.real_rate0)
+        "risk_premium": .04,               # EST: what owners ask beyond the real rate
+        "adjustment": .12,                 # EST: investment/stock per unit of q above 1 (Chirinko 1993: slow)
+        "build_years": 2,                  # time to build: decided two years before (Koeva 2000)
+        "elasticity": .33,                 # EST: capital's share of income
+        # capital goods' share of the input VAT the restriction to value-chain inputs no longer refunds: 119.1 of
+        # 488.6 ma.kr. at 2025 rates in the central variant of the 2025 estimate (DESIGN.md R1)
+        "vat_capital_share": .244,
+    },
+
+    # ---------------------------------------------------------- 2.0: the pension funds' balance sheet (pensions.py)
+    "pensions": {
+        # ma.kr. at 31 December 2025, mutual (samtrygging) divisions: assets, and rights already earned at 3.5% real
+        # (Central Bank of Iceland, pension fund statistics, parts I and III a). Funds no employer guarantees, and
+        # the divisions the state and municipalities guarantee (LSR B, Brú B/R/E)
+        "assets_free": 7528.2, "rights_free": 7605.8,
+        "assets_guaranteed": 344.9, "rights_guaranteed": 1484.5,
+        # 2025 flows, ma.kr.: member and employer contributions with the special payments to funds no employer
+        # guarantees (LSR A, disability equalisation: 13.0); the special payments to the guaranteed divisions
+        # (LSR B 50.0, Brú 6.8); pensions paid (samtrygging, Central Bank)
+        "contributions_2025": 308.4, "special_guaranteed_2025": 56.8, "payouts_2025": 309.3,
+        "special_free_2025": 13.0,         # of contributions_2025: the state's special payments (8.5 + 4.6)
+        # EST: share of pensions the guaranteed divisions pay — their special payments and the return on their
+        # assets, with the assets about level (56.8 + .0381 x 344.9 = 70 of 309)
+        "guaranteed_payout_share": .226,
+        # future contributions of today's members against their accrued rights, for the law's total position (LIVE,
+        # actuarial review 31.12.2025: 742.0 against 1,626.6 ma.kr.)
+        "future_share": .456,
+        "discount_rate": .035,             # the rate rights are valued at (regulation 391/1998 under law 129/1997)
+        # law 129/1997, 39. gr.: a gap above 10%, or above 5% five years running, must be closed
+        "gap_now": .10, "gap_persistent": .05, "persistent_years": 5,
+        "restore_to": 0.0,                 # the position a fund restores (EST: funds bring it to about level)
+        "state_cover": 0.0,                # POLICY: share of a cut the state pays into the funds instead
+        "guarantee_saving": 1.0,           # POLICY: the state's special payments end with what they pay for
+        "return_path": None,               # a year-by-year real return in place of the mean (stress tests)
+    },
+
+    # ---------------------------------------------------------- 1.1: top incomes
+    # Pay above the second threshold answers the net-of-tax share against today's (policy.top_income_response).
+    # The elasticity of taxable income runs .12-.40 in the survey by Saez, Slemrod and Giertz (2012), .05-.20 for most
+    # Danes and more at the top (Kleven and Schultz 2014). Iceland has no estimate of its own. EST throughout.
+    "top_incomes": {
+        "eti_middle": .10,                 # pay between the second and the top threshold
+        "eti_top": .25,                    # pay above the top threshold
+        # the share of the response that is less earned; the rest is hidden, deferred or paid in kind, and kept
+        "real_share": .5,
+        # Owners of their own firm take pay as dividends when a króna of dividends keeps more against a króna of pay
+        # than today (Alstadsæter and Jacob 2016, Sweden's 3:12 rules; Norway's dual income tax): the share of their
+        # pay above the threshold moved for each point the gap widens, at most `shift_max`
+        "shift_response": 1.5, "shift_max": .6,
+        "corporate_tax_today": .20,
+        "scale": 1.0,                      # one multiplier on both responses: a sensitivity, 1 = central
     },
 
     # ---------------------------------------------------------- tax enforcement
@@ -660,7 +831,9 @@ DEFAULTS = {
     # today. What more investigators recover runs into diminishing returns. Vinnumálastofnun's four-person benefit
     # unit recovered 572 m kr. in 2012 (Alþingi 591/143) — 143 m kr. each a year.
     "enforcement": {
-        "evasion_bn": 200.0,              # EST
+        # EST: all tax evasion, 2025; the finance ministry's working group put it at 3-5% of GDP (June 2017), 148-247
+        # ma.kr. on 2025's GDP. Its labour part is modelled by informal.py
+        "evasion_bn": 200.0,
         "recoverable_share": .25,         # EST: what enforcement can reach at all
         "yield_per_fte_m": 100.0,         # EST: m kr. a year for the first investigators, falling as more are added
         "cost_per_fte_m": 14.0,           # EST: pay and overheads
@@ -885,23 +1058,57 @@ DEFAULTS = {
         "adoption_curvature": 3.0,        # EST
         "adoption_speed": .25,            # EST: share of the gap closed each year (capital takes time)
         "operating_cost_share": .40,      # EST: running, energy and maintenance costs of the machines
-        "output_gain": .25,               # EST: output per remaining worker at full automation of exposed tasks
+        # 1.1: share of the output of automated work that stays domestic value added: the energy and most upkeep are
+        # bought at home, parts, licences and the machines' depreciation partly abroad (EST)
+        "machine_value_added": .80,
+        # 1.1: share of machines' earnings after tax that reaches households here, as their firms' owners — the
+        # rest goes to foreign owners and to software rents abroad (EST) — paid out at `dividend_payout`, in
+        # proportion to financial wealth (model.pay_machine_dividends)
+        "domestic_ownership": .50,
+        "output_gain": 0.0,                # 1.1: was .25, a stand-in for what machines produce; their value added is
+                                          # now counted in output itself (macro), and AI at 5% gives +4.8% by 2035
         # clawback levers
         "levy_rate": 0.0,                 # tax on machine income, on top of corporate tax
         "state_capital_share": 0.0,       # public ownership stake in automation capital
         "dividend_payout": .6,
         "stake_required_return": .07,     # EST: return equity investors ask of automation capital (its price)
         "stake_financing_rate": .03,      # EST: the state's long-run real cost of borrowing to buy a stake
-        "exposure": {                     # EST share of a profession's tasks a machine could do
-            "Clerks": .85, "Other machine operators": .70, "Fish processing workers": .70,
-            "Bus and truck drivers": .65, "Retail and other service": .60, "Refuse collectors": .55,
-            "Other elementary": .55, "Business professionals": .55, "Other associate professionals": .55,
-            "Lawyers": .50, "Cleaners": .45, "Engineers and IT": .45, "Other professionals": .45,
-            "Waiters and bar staff": .45, "Fishers and farm workers": .40, "Cooks": .35, "Managers": .30,
-            "Other craft and trades": .35, "Artists and writers": .35, "Pilots, officers and controllers": .35,
-            "Academics": .25, "Doctors": .25, "Secondary teachers": .20, "Nurses and midwives": .15,
-            "Primary and pre-school teachers": .15, "Care assistants": .10, "Child-care workers": .05,
+        # 1.1: office AI's share of a profession's tasks (EST after Eloundou et al. 2024 and Gmyrek, Berg and Bescond,
+        # ILO 2023: clerical work most exposed, then professionals and technicians; manual work hardly at all). Until
+        # v10 one exposure covered every machine, physical ones included; split, the two add up to about the same.
+        "exposure": {
+            "Clerks": .80, "Business professionals": .60, "Other associate professionals": .55, "Lawyers": .55,
+            "Engineers and IT": .50, "Other professionals": .45, "Artists and writers": .40, "Managers": .35,
+            "Academics": .35, "Retail and other service": .30, "Secondary teachers": .25, "Doctors": .25,
+            "Pilots, officers and controllers": .25, "Primary and pre-school teachers": .15, "Nurses and midwives": .15,
+            "Other elementary": .10, "Bus and truck drivers": .10, "Other machine operators": .10,
+            "Other craft and trades": .10, "Waiters and bar staff": .05, "Cooks": .05, "Fish processing workers": .05,
+            "Fishers and farm workers": .05, "Care assistants": .05, "Cleaners": .03, "Refuse collectors": .03,
+            "Child-care workers": .03,
         },
+        # 1.1: robotics' share (EST, the routine and non-routine manual task content of each profession; Acemoglu and
+        # Restrepo 2020 on industrial robots): processing lines, driving, cleaning, kitchens, shelves and building.
+        "exposure_physical": {
+            "Fish processing workers": .65, "Other machine operators": .60, "Bus and truck drivers": .55,
+            "Refuse collectors": .55, "Cleaners": .50, "Other elementary": .45, "Fishers and farm workers": .35,
+            "Cooks": .35, "Waiters and bar staff": .35, "Retail and other service": .30, "Other craft and trades": .30,
+            "Care assistants": .15, "Pilots, officers and controllers": .10, "Nurses and midwives": .08,
+            "Clerks": .05, "Doctors": .05, "Child-care workers": .03, "Primary and pre-school teachers": .02,
+            "Secondary teachers": .02, "Managers": .02, "Engineers and IT": .02, "Artists and writers": .02,
+        },
+        # 1.1: robotics. Its pace is the world's (0 = robots no abler than today's); a robot costs far more capital for
+        # each post it fills than software does, so take-up needs a larger cost advantage (EST).
+        "robot_progress_rate": 0.0,
+        "robot_adoption_midpoint": 2.2,   # EST, against 1.6 for office AI
+        "robot_adoption_speed": .15,      # EST: machines, not licences
+        # the state's share of what adopting each costs (reform levers), and what each costs, in years of the wages
+        # of the work it takes over (EST: a robot about two, software and integration about half a year)
+        "ai_subsidy": 0.0, "robot_subsidy": 0.0,
+        "capex_years_ai": .5, "capex_years_robot": 2.0,
+        # how much faster entry-level work goes than the profession's work as a whole: office AI takes junior tasks
+        # first (EST, after Brynjolfsson, Chandar and Chen 2025: -13% relative employment at 22-25 in the most exposed
+        # occupations, older workers' rising); a robot takes a post whoever holds it
+        "junior_load_ai": 2.5, "junior_load_robot": 1.0,
         # v3: augmentation and new tasks (automation.py). Complementarity EST after Pizzinelli et al. (IMF WP
         # 2023/216): the share of a profession's work AI makes faster rather than replaces.
         "complementarity": {
@@ -988,6 +1195,13 @@ DEFAULTS = {
         "real_wage_absorption": .0,
         "max_yearly_erosion": .06,        # EST: most purchasing power a single year can take away
         "dismissal_speed": .8,            # share of surplus staff let go per year, given notice periods
+        # EST: of those whose job ends for frictional reasons, the share who go straight to another post before the
+        # year is out, where their profession has open posts: max * v / (v + half) at a vacancy rate v. Without it
+        # separations put a floor under unemployment whatever the demand (3.5% with 60% more demand than the base
+        # year's, where Iceland's tightest year since 2015 had 3.1%), and the backcast reached for arrivals instead.
+        # Fewer people entering unemployment is about half of its movements outside the English-speaking economies
+        # (Elsby, Hobijn and Sahin 2013).
+        "refill_max": .5, "refill_half": .05,
         # The state raises pay where it cannot fill its own posts, instead of leaving the service short. EST: a
         # profession with a tenth of its public posts unfilled gains about 3.5% a year on the going rate, half of
         # what it gained falls away once the posts fill, and the state will go up to 40% above the market before
@@ -1414,12 +1628,32 @@ DEFAULTS = {
     "wealth": {
         "net_worth_excl_pensions_pct_gdp": 206,  # Landssamtök lífeyrissjóða (2022): 206% of GDP
         "liquid_share": .30,              # EST: financial net wealth share; the rest is housing equity
-        "wealth_sd": 1.2,                 # EST: lognormal dispersion
-        "pareto_alpha": 1.6,              # EST: tail of the top 1% (wealth taxes and top shares: ~1.4-1.8)
+        # 1.1: the spread is fitted by family to the 2025 tax returns (Hagstofa THJ09005, THJ09007;
+        # data/reference/wealth_tax_returns_2025.json): the richest tenth hold 50.0% of net worth and the next 21.9%,
+        # 13.9% and 8.6%, the median family 11.9 m.kr., and the 99th percentile is 2.66 times the 90th. Fitted:
+        # 50.9, 21.7, 12.1 and 7.3%, 12.8 m.kr. and 2.69. The fitted tail, 2.3, is close to the 2.36 that ratio
+        # implies. v10 had 34% with the richest tenth and a median of 33 m.kr.
+        "wealth_sd": 1.6,                 # lognormal dispersion of savings and other assets (v10: 1.2, EST)
+        "pareto_alpha": 2.3,              # Pareto tail above `pareto_from` (v10: 1.6 above the 99th, EST)
+        "pareto_from": .90,               # the percentile of savings and other assets the tail starts at
+        "home_value_sd": .35,             # lognormal spread of real estate held, before household size (v10: .2)
+        "home_value_wealth_elasticity": .6,   # real estate held against savings and other assets (v10: 0)
+        # The returns value shares at nominal value, not market value, so they understate the top: a sensitivity,
+        # not a finding. The richest 1%'s savings and other assets are multiplied by this before the national
+        # total is pinned again (1: as the returns have it)
+        "top_share_valuation": 1.0,
         "mpc_bottom": .98, "mpc_top": 0.862,  # TUNED 2016-25 backcast; was EST: marginal propensity to consume out of income, by income rank
         "mpc_liquid_wealth": 0.0249,         # TUNED 2016-25 backcast; was EST: yearly consumption out of liquid wealth
         "mpc_housing_wealth": .015,       # EST: yearly consumption out of housing equity
-        "liquid_return": .02,             # EST: real return
+        "liquid_return": .02,             # EST: real return, on all savings and other assets together
+        # 2.0: the extra return by rank in savings and other assets (model.wealth_returns), the whole shifted so
+        # the total return stays as above. EST from Fagereng et al. (2020): 1.6 points from the 10th to the 90th
+        # percentile on financial wealth; about 4.5 points between the 75th percentile and the top 0.1% on net worth
+        "return_gradient": {"percentile": [50, 75, 90, 99, 99.9], "extra": [0.0, .005, .015, .030, .045]},
+        # 0 by the backcast: with one return for all, the richest tenth's wealth outside housing grows 4.7% a year
+        # over 2016-25 against about 4% in the tax returns (THJ09005); Norway's gradient (1) takes it to 5.6%. A
+        # sensitivity, at 1 for the gradient as Norway's records have it
+        "return_gradient_scale": 0.0,
         "annuity_rate": .04,              # wealth drawdown available to finance not working
         "borrowing_limit_months": 3,
         # household consumption is calibrated to the observed saving rate: consumption 2,439.6 bn against

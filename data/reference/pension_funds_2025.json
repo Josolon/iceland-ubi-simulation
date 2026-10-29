@@ -1,0 +1,29 @@
+{
+ "source": "Central Bank of Iceland, pension fund statistics (parts I and III a), year-end 2025; Landssamtök lífeyrissjóða, net real returns of the mutual divisions (table 3.1, from the Central Bank's data); LIVE (Lífeyrissjóður verzlunarmanna), actuarial review 31.12.2025",
+ "fetched": "2026-10-24",
+ "unit": "ma.kr. (billion krónur), nominal 2025",
+ "mutual_divisions": {
+  "net_assets": 7854.5,
+  "accrued_rights": 9090.3,
+  "accrued_position": -1217.2,
+  "not_guaranteed": {"accrued_rights": 7605.8, "accrued_position": -77.6},
+  "employer_guaranteed": {"accrued_rights": 1484.5, "accrued_position": -1139.7}
+ },
+ "flows_2025": {
+  "member_contributions": 81.1, "employer_contributions": 216.7, "special_additional_contributions": 69.8,
+  "special_by_payer": {"LSR B (state guarantee)": 50.0, "Brú municipal divisions": 6.8, "LSR A": 8.5,
+                       "disability equalisation and other": 4.6},
+  "pensions_paid": 309.3
+ },
+ "discount_rate_real": 0.035,
+ "LIVE_31_12_2025": {"accrued_assets": 1531.8, "accrued_obligations": 1626.6, "future_contributions": 742.0,
+                     "total_obligations": 2403.3, "total_position_pct": -5.4},
+ "net_real_return_pct": {
+  "1997": 7.98, "1998": 7.34, "1999": 12.43, "2000": -0.37, "2001": -1.83, "2002": -2.73, "2003": 11.11,
+  "2004": 10.58, "2005": 13.60, "2006": 10.24, "2007": 0.69, "2008": -21.78, "2009": -0.02, "2010": 2.35,
+  "2011": 2.32, "2012": 7.40, "2013": 5.62, "2014": 7.50, "2015": 8.00, "2016": 0.04, "2017": 5.51,
+  "2018": 1.99, "2019": 11.97, "2020": 9.63, "2021": 10.89, "2022": -11.53, "2023": 0.27, "2024": 6.76,
+  "2025": 2.75
+ },
+ "rule": "law 129/1997, 39. gr.: a total position outside 10%, or outside 5% five years running, must be closed by changing the fund's rules"
+}
