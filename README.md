@@ -27,35 +27,44 @@ start-ups, work that suits people better, less administration) is matched by a c
 levers with stated ranges. [docs/DESIGN.md](docs/DESIGN.md) sets out the hypotheses and the results that would
 refute them.
 
-## What it finds at present (version 2.0)
+## What it finds at present (version 2.1)
 
 These are for the reference reform at 300 þús. kr. a month, run in the model itself, in 2035 against the status
 quo in the same year:
 
 | | Reform | Status quo |
 |---|---|---|
-| Public balance, ma.kr. a year | +369 | −241 |
-| Net public debt, % of GDP | 18 | 71 |
-| Household income after tax and transfers, þús. a month | 829 | 784 |
-| Work per adult, full-time equivalents | 0.58 | 0.69 |
-| Unemployment | 3.7% | 4.0% |
-| Price level, 2025 = 1 | 2.11 | 1.72 |
-| Child poverty | 13.5% | 20.2% |
-| Poverty against a fixed 2025 line | 5.5% | 5.7% |
-| Essential public services short, full-time posts | 4,101 | 1,797 |
+| Public balance, ma.kr. a year | −348 | −207 |
+| Net public debt, % of GDP | 105 | 73 |
+| Household income after tax and transfers, þús. a month | 898 | 783 |
+| Work per adult, full-time equivalents | 0.59 | 0.69 |
+| Unemployment | 3.7% | 4.4% |
+| Price level, 2025 = 1 | 2.20 | 1.39 |
+| Child poverty | 14.0% | 19.2% |
+| Poverty against a fixed 2025 line | 3.0% | 6.0% |
+| Essential public services short, full-time posts | 1,403 | 1,256 |
+
+Each figure is the mean of five runs with different random draws; the budget's spread between them is ±10 ma.kr.
 
 How to read this:
 
-* **The surplus rests on a few large financing choices.** Measured one at a time, the largest are restricting VAT
-  refunds to value-chain inputs, folding the pension funds into the scheme, abolishing the personal tax credit and
-  a higher property tax. The VAT figure is an estimate with a range of 385–574 ma.kr. a year, and no country has
-  applied that rule. If these choices yield less than estimated, the balance moves towards the status quo's.
-* **Work falls and prices rise.** Work per adult is about 15% lower, the price level about 23% higher (the single
-  VAT rate adds to it once, and inflation then runs higher), and public services are shorter of staff. In 1.0 work
+* **The reference reform falls short of the status quo's budget.** Its largest financing line, restricting VAT
+  refunds to value-chain inputs, is now a cost to someone: what it raises falls on prices, pay, profits or
+  investment, and 20–40% is taken off for avoidance, leaving 275–370 of its 459.5 ma.kr. a year. The 459.5 is itself an
+  estimate, with a range of 385–574, of a rule no country has applied. Packages that
+  do keep up with the status quo exist: at 250 and 300 þús. the named scenarios come to +73 to +234 in 2035, and the
+  Guide's start, at 275 þús., to −132.
+* **Work falls and prices rise.** Work per adult is about 14% lower and the price level about 59% higher: the single
+  VAT rate adds to it once, and pay set by what it takes to fill each profession (the haggling round) raises the
+  pay of the work people least want to do, which households then pay for. Essential public services are somewhat
+  shorter of staff than in the status quo (about 1,400 posts against 1,260). In 2.0, with today's agreements
+  kept, prices rose about 23% and public services were shorter of staff. In 1.0 work
   fell about 7%; the young adults' choices and unemployment without a floor in 1.1 added about 4.5 points, the
   norm to work among peers about 2 and hours within a job about 1.
-* **Groups differ.** Pensioners' median income is about 5% lower unless the top-up lever is used. The poorest
-  tenth gains most.
+* **Groups differ.** Pensioners' median income is about 11% higher, now that earned pensions are paid alongside
+  the payment; in-work income about 25% higher. The poorest tenth gains most. Of the adults of 2025, 21% have lost
+  more than 5% of their household's real income by 2035, against 25% in the status quo (on the page's fitted
+  surface).
 * **Treat directions and orders of magnitude as the finding,** never the decimals. Around thirty behavioural
   settings are estimates; [docs/VALIDATION.md](docs/VALIDATION.md) lists what is calibrated, what was checked
   out of sample, where the model is known to fail, and the predictions by which it can be shown wrong.
@@ -97,7 +106,7 @@ The calibration targets (`data/processed/baseline_2025.json`, `baseline_2015.jso
 from Hagstofa's API, run `PYTHONPATH=src .venv/bin/python -m ubisim.abm.data_prep` (add `--year 2015` for the
 backcast's starting point). The first run calibrates the base society, about 25 minutes, and caches it. `quality_check.py` writes its results
 to `data/processed/quality_check.md`. The explorer's fitted surface is rebuilt with `scripts/build_emulator.py`,
-from about 4,300 model runs, which takes a day or more on six cores.
+from about 6,400 model runs, which takes two days or more on ten cores.
 
 Some source files are not redistributed here. Where a figure comes from a source that cannot be shared, the
 parameter's comment names the publisher, and [docs/DATA.md](docs/DATA.md) says how to obtain it.

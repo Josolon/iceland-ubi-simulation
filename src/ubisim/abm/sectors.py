@@ -40,9 +40,12 @@ class Sectors:
         return self.p["policy"]["regime"] == "platform"
 
     # ------------------------------------------------------------------ fisheries
-    def fisheries(self, fx, wage_index, p_nontradable, real_rate, frontier=None):
+    def fisheries(self, year, fx, wage_index, p_nontradable, real_rate, frontier=None):
         f = self.p["fisheries"]
         labour_factor = frontier["fisheries_labour_factor"] if frontier else 1.0
+        # 2.1: the same catch takes fewer hands each year, as everywhere (markets.productivity_growth). With the hands
+        # fixed and pay rising, the rent the fee is levied on wore away for no reason: 72 ma.kr. to 58 by 2045
+        labour_factor = labour_factor * (1 + self.p["markets"]["productivity_growth"]) ** -year
         revenue_factor = frontier["fisheries_revenue_factor"] if frontier else 1.0
         w = float((self.fish_mix * wage_index).sum())
         # what the world pays for fish sets what the catch earns, and so the rent a quota lease can capture
@@ -106,7 +109,7 @@ class Sectors:
 
     # ------------------------------------------------------------------ yearly
     def update(self, year, fx, wage_index, p_nontradable, real_rate, frontier=None):
-        self.state = {**self.fisheries(fx, wage_index, p_nontradable, real_rate, frontier), **self.energy(year, fx),
+        self.state = {**self.fisheries(year, fx, wage_index, p_nontradable, real_rate, frontier), **self.energy(year, fx),
                       **self.windfall(year, fx)}
         self.year = year
         return self.state

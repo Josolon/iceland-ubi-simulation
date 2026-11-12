@@ -226,12 +226,19 @@ def build(p, rng=None):
     # people worked, three quarters of those under 30, and the earnings test took most of their pension.
     total = int(n_dis * p["benefits"].get("disability_register_ratio", 1.0))
     n_work = int(total * p["benefits"].get("disability_working_share", .2))
-    cand = np.flatnonzero((status == NONWORK) & (age >= 20) & (age <= 66))
-    w = (age[cand] - 15.0) ** 1.5
-    disabled[rng.choice(cand, min(len(cand), total - n_work), replace=False, p=w / w.sum())] = True
-    cand = np.flatnonzero((status == PART) & (age >= 20) & (age <= 66))
-    w = (age[cand] - 15.0) ** 1.5
-    disabled[rng.choice(cand, min(len(cand), n_work), replace=False, p=w / w.sum())] = True
+    # 2.1: drawn to an age profile. Weighting non-workers by age put 34% of those aged 60-66 on a disability pension
+    # against 12% of the 40-49s: non-workers are many at that age for other reasons. A stock that old retires 1,900 a
+    # year, and no inflow near the register's 1,200-1,500 could hold it, so the share of 16-66 fell by a fifth in
+    # five years.
+    ages_up = np.array(sorted(p["benefits"]["disability_age_profile"]))
+    wanted = np.array([p["benefits"]["disability_age_profile"][a] for a in ages_up])
+    band = np.searchsorted(ages_up, age, side="right") - 1
+    for pool, n in ((NONWORK, total - n_work), (PART, n_work)):
+        cand = np.flatnonzero((status == pool) & (age >= 20) & (age <= 66))
+        people = np.bincount(band[(age >= 20) & (age <= 66)], minlength=len(wanted))
+        pooled = np.bincount(band[cand], minlength=len(wanted))
+        w = (wanted * people / np.maximum(pooled, 1))[band[cand]]
+        disabled[rng.choice(cand, min(len(cand), n), replace=False, p=w / w.sum())] = True
     A["disabled"] = disabled
     A["student"] = ((status == NONWORK) & (age >= 16) & (age <= 24)) | ((status == PART) & (age <= 22) & (rng.random(N) < .5))
     A["retired"] = age >= 67
@@ -494,6 +501,9 @@ def assign_wealth(A, p, rng):
     scale = total * (1 - w["liquid_share"]) / max(equity_raw.sum(), 1)
     A["home_value"] = home * scale
     A["mortgage_debt"] = A["home_value"] * ltv
+    A["other_assets"] = np.zeros(N)                # 2.1: what saving goes into besides savings (update_wealth)
+    A["income0"] = np.full(N, np.nan)              # 2.1: an adult's income before the first step (start_panel)
+    A["group0"] = np.full(N, -1, dtype=np.int8)
 
 
 def assign_capital_income(A, p, rng):

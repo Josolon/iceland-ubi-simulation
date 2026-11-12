@@ -5,9 +5,9 @@ component is a lever on the page and can be set back to today or anywhere in its
 page's scenario "300 þús., reference reform" (`yours300` in `artifacts/explorer_v3/index.html`); its results in
 the model are in the [README](../README.md).
 
-Only what the model represents is listed. The reference reform assumes the world as the last decade went (prices
-rising about 4% a year, a weakening króna, rents outrunning incomes), and the status quo it is compared with runs in
-that same world.
+Only what the model represents is listed. The reference reform runs in the page's default world (the export price
+forecasts, no machine age and no windfall), and the status quo it is compared with runs in that same world. The
+last decade's prices and króna are a lever, "history repeats".
 
 ## The payment
 
@@ -68,7 +68,7 @@ that same world.
 | Pay setting | collective agreements | contract by contract |
 | Statutory minimum wage | none | none |
 | Ownership caps | none | no company or group may own more than 5% of homes for rent or 10% of commercial space; new construction exempt |
-| Capital controls | none | moderate (strictness 50%) |
+| Capital controls | none | none |
 
 ## Behavioural settings in the reference picture
 

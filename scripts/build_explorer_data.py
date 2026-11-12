@@ -1,13 +1,12 @@
-"""Run the scenario grid for the interactive explorer and write artifacts/explorer_v2/data.js.
+"""Run the reference reform at each level of the payment and write artifacts/explorer_v3/data.js, which the
+Professions tab reads, with its status quo.
 
     .venv/bin/python scripts/build_explorer_data.py [--years 15] [--recalibrate]
 
-Grid: UBI level x immigration regime x extra property tax x output gain x smelter exit, each compared with the
-status quo. Also bundles every experiment battery (data/experiments/*/results.json) and Monte Carlo result
+Also holds the metric names and the calibration cache the other builders use, and bundles every experiment battery (data/experiments/*/results.json) and Monte Carlo result
 (data/montecarlo/*/results.json) so the explorer can show them.
 """
 import argparse
-import itertools
 import hashlib
 import json
 import os
@@ -27,13 +26,6 @@ from ubisim.abm.population import CHARACTERS  # noqa: E402
 
 OUT = ROOT / "artifacts/explorer_v3/data.js"
 UBI = [250_000, 300_000, 350_000, 400_000, 450_000, 500_000]
-IMMIGRATION = {"open": {}, "closed": {"immigration_cap_multiple": 1.0, "residence_rules_strictness": 1.0}}
-# The lever dataset (build_lever_data.py) now covers property tax, the frontier programmes and króna support as
-# interactive levers, so the grid no longer sweeps them. What the grid alone still provides is the full metric set
-# — every profession, every character — at each UBI level and immigration regime.
-FRONTIER = [[]]
-FX_SUPPORT = [0.0]
-PROP_TAX = [0.0]
 
 METRICS = {
     "population": "population", "emp": "employment_rate_16_74", "fte": "fte_per_adult_16_74",
@@ -45,6 +37,7 @@ METRICS = {
     "debt": "debt_pct_gdp", "interest": "interest_bn", "balance": "balance_bn", "balance_op": "balance_operational_bn", "output": "output_index",
     "exports": "exports_bn", "imports": "imports_bn",
     "ubi_cost": "acc_ubi_adult", "child_cost": "acc_child_payments", "income_tax": "acc_income_tax",
+    "exported_payments": "acc_exported_payments",
     "social_security": "acc_social_security", "vat": "acc_vat", "property_tax": "acc_property_tax",
     "public_payroll": "acc_public_payroll", "fund_assets": "acc_fund_assets", "state_equity": "acc_state_equity",
     "consumption": "acc_consumption_real", "benefits": "acc_benefits",
@@ -70,6 +63,13 @@ METRICS = {
     "children_1_5": "children_1_5", "kg_demand": "kindergarten_demand", "kg_full_day": "kindergarten_full_day_demand",
     "kg_under2": "kindergarten_demand_under_2", "kg_gap": "kindergarten_gap",
     "parent_hours": "parent_hours_index", "parents_not_working": "parents_not_working_share",
+    # 2.1: poverty after housing, children against a fixed line, by sex, origin and what people were in 2025, and
+    # how many are worse or better off than they were
+    **{k: k for k in ("child_poverty_anchored", "poverty_after_housing", "lost_over_5", "lost_over_10", "gained_over_5",
+                      "poverty_women", "poverty_men", "poverty_foreign", "poverty_native",
+                      "income_women", "income_men", "income_foreign", "income_native",
+                      *[f"poverty_start_{g}" for g in ("pensioners", "disabled", "students", "out_of_work", "in_work")],
+                      *[f"anchored_start_{g}" for g in ("pensioners", "disabled", "students", "out_of_work", "in_work")])},
     "poverty": "poverty_rate", "poverty_anchored": "poverty_rate_anchored", "hardship": "hardship_rate", "real_income_median": "real_income_median",
     "forced_idle": "forced_idle_share", "automated": "automated_share", "machine_income": "machine_income_bn",
     "displaced": "automation_displaced_fte", "auto_tax": "acc_automation_tax", "auto_levy": "acc_automation_levy",
@@ -115,6 +115,8 @@ METRICS = {
     "inc_out_of_work": "income_out_of_work", "inc_in_work": "income_in_work",
     "essential_gap": "essential_services_gap", "nurse_gap": "shortfall_nurse", "doctor_gap": "shortfall_doctor",
     "teacher_gap": "shortfall_teacher", "care_gap": "shortfall_care",
+    # 2.1: work for oneself (ownrun.py)
+    "self_employed": "self_employed", "self_employed_share": "self_employed_share", "owner_run": "owner_run_extra",
     "gdp_pc": "gdp_per_capita_index", "productivity": "productivity_per_hour",
     "ownership_under35": "home_ownership_under_35", "weekly_hours": "weekly_hours_per_adult",
     "tax_labour": "tax_share_labour", "tax_consumption": "tax_share_consumption",
@@ -220,41 +222,35 @@ def run(args):
 
 
 def main():
+    # imported here because build_emulator imports this module
+    from build_emulator import KEYS, LEVERS, overrides_for, reference_x, world_overrides
     ap = argparse.ArgumentParser()
     ap.add_argument("--years", type=int, default=15)
     ap.add_argument("--recalibrate", action="store_true")
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     a = ap.parse_args()
     t = time.time()
-    status_quo, runs = {}, {}
-    for spirit in [1.0]:
-        base = calibrated(spirit, a.recalibrate)
-        base_bytes = pickle.dumps(base)
-        soc_ref = model.scenario(base, {})
-        rows = [soc_ref.step() for _ in range(a.years)]
-        status_quo[f"s{spirit:g}"] = {short: [None if r.get(col) is None or r.get(col) != r.get(col)
-                                              else float(f"{r.get(col):.4g}") for r in rows]
-                                      for short, col in METRICS.items()}
-        reference = soc_ref.own_history  # full accounts incl. occupation supply and market fields
-        print(f"spirit {spirit}: calibrated and status quo done ({time.time() - t:.0f}s)", flush=True)
-        jobs = []
-        for ubi, (imm, imm_pol), tax, front, fx in itertools.product(UBI, IMMIGRATION.items(), PROP_TAX, FRONTIER, FX_SUPPORT):
-            pol = {"regime": "platform", "wage_setting": "free_market", "ubi_adult": ubi, "ubi_child": ubi,
-                   "prop_tax_extra_pp": tax, "frontier_programmes": front, "pension_fx_support_bn": fx, **imm_pol}
-            jobs.append((base_bytes, {"policy": pol}, a.years, reference,
-                         f"{imm}|{ubi // 1000}|t{tax:g}|f{int(bool(front))}|x{int(fx)}"))
-        with ProcessPoolExecutor(a.workers) as ex:
-            for i, (key, series, _) in enumerate(ex.map(run, jobs, chunksize=2)):
-                runs[key] = series
-                if i % 12 == 11:
-                    print(f"  {i + 1}/{len(jobs)} runs ({time.time() - t:.0f}s)", flush=True)
-    meta = {
-        "years": a.years, "base_year": 2025, "ubi": [u // 1000 for u in UBI], "immigration": list(IMMIGRATION),
-        "prop_tax": PROP_TAX, "frontier": [0, 1], "fx_support": [int(x) for x in FX_SUPPORT],
-        "professions": OCCUPATIONS, "harsh": params.HARSH, "top_paid": params.TOP_PAID,
-        "occupations": OCCUPATIONS, "characters": CHARACTERS, "generated": time.strftime("%Y-%m-%d"),
-    }
-    write(meta, status_quo, runs)
+    base = calibrated(1.0, a.recalibrate)
+    base_bytes = pickle.dumps(base)
+    x = reference_x()
+    lo, hi = next((l[3], l[4]) for l in LEVERS if l[0] == "ubi")
+    at = lambda ubi: [(ubi / 1000 - lo) / (hi - lo) if k == "ubi" else x[k] for k in KEYS]
+    soc_ref = model.scenario(base, world_overrides(at(UBI[1])))
+    rows = [soc_ref.step() for _ in range(a.years)]
+    status_quo = {short: [None if r.get(col) is None or r.get(col) != r.get(col) else float(f"{r.get(col):.4g}") for r in rows]
+                  for short, col in METRICS.items()}
+    reference = soc_ref.own_history  # full accounts incl. occupation supply and market fields
+    print(f"calibrated and status quo done ({time.time() - t:.0f}s)", flush=True)
+    jobs = [(base_bytes, overrides_for(at(u)), a.years, reference, f"open|{u // 1000}|t0|f0|x0") for u in UBI]
+    runs = {}
+    with ProcessPoolExecutor(a.workers) as ex:
+        for key, series, _ in ex.map(run, jobs):
+            runs[key] = series
+            print(f"  {key} ({time.time() - t:.0f}s)", flush=True)
+    meta = {"years": a.years, "base_year": 2025, "ubi": [u // 1000 for u in UBI], "professions": OCCUPATIONS,
+            "harsh": params.HARSH, "top_paid": params.TOP_PAID, "occupations": OCCUPATIONS, "characters": CHARACTERS,
+            "generated": time.strftime("%Y-%m-%d")}
+    write(meta, {"s1": status_quo}, runs)
 
 
 def bundle(folder):

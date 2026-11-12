@@ -68,7 +68,7 @@ def load_base(blob):
 
 def picture_x(name):
     if name == "guide":
-        sc = next(s for s in json.loads((ROOT / "data/processed/scenarios_guide_start.json").read_text()) if s["id"] == "B")
+        sc = next(s for s in json.loads((ROOT / "data/processed/scenarios_guide_page.json").read_text()) if s["id"] == "B")
     else:
         page = (ROOT / "artifacts/explorer_v3/index.html").read_text()
         sc = next(s for s in json.loads(re.search(r"^const SCENARIOS = (\[.*\]);$", page, re.M).group(1))

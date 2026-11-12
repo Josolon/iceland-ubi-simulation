@@ -20,6 +20,7 @@ Writes artifacts/explorer_v3/timeline.js (window.UBI_TIMELINE) and data/processe
 """
 import argparse
 import copy
+import hashlib
 import json
 import pathlib
 import pickle
@@ -78,15 +79,27 @@ SHOCKS = {
                     "Korinek & Suh (2024), NBER w32255: scenarios for the transition to AGI"]},
     "amoc": {
         "name": "Atlantic overturning collapse (AMOC)",
-        "note": "The ocean circulation that keeps Iceland mild weakens and collapses over a decade. Winters colder by "
-                "several degrees, sea ice nearer the coast, fish stocks move: fish earnings fall by up to 30%, "
-                "tourism by 20%, food and imports cost 10% more, output per worker 2% lower, more people leave and "
-                "fewer come. Iceland's National Security Council listed a collapse as a national security risk in "
-                "2025. The sizes are EST: no economic study of a collapse for Iceland exists yet.",
+        "note": "The ocean circulation that keeps Iceland mild weakens and collapses over a decade, and does not come "
+                "back. Winters several degrees colder, sea ice in the harbours and on the fishing grounds as in the "
+                "hafís years of 1965-71, cod and capelin moving away: fish earnings fall by half, as when the herring "
+                "went in 1967-69, and stay down. Tourism falls by a third, farming and transport in the north and "
+                "east suffer, glaciers and rivers feed the power stations less (aluminium 10% lower), the trading "
+                "partners are in recession (demand 4% lower) and food and imports cost 15% more. Output per worker "
+                "is 5% lower, half as many people come and half as many again leave. Sized as the 1967-69 crisis "
+                "made permanent; no economic study of a collapse for Iceland exists. 'AMOC, mild' keeps the first "
+                "sizing, a third of this.",
         "sources": ["van Westen, Kliphuis & Dijkstra (2024), Science Advances 10: AMOC on tipping course",
                     "Ditlevsen & Ditlevsen (2023), Nature Communications 14: collapse likely 2025-2095",
+                    "Jackson et al. (2015), Climate Dynamics 45: European impacts of an AMOC slowdown",
                     "Ritchie et al. (2020), Nature Food 1: AMOC collapse and British agriculture",
+                    "Cruz et al. (2026): Scandinavia among the larger GDP losses from a collapse (spatial IAM)",
+                    "Jónsson (1994), Economic History of Iceland: the herring collapse and the sea-ice years",
                     "Government of Iceland, National Security Council (2025): AMOC as a security risk"]},
+    "amoc_mild": {
+        "name": "AMOC collapse, mild",
+        "note": "The first sizing, kept for comparison: fish earnings 30% lower, tourism 20%, imports 10% dearer, "
+                "output per worker 2% lower, over a decade.",
+        "sources": ["As for the AMOC collapse"]},
     "pandemic": {
         "name": "Pandemic",
         "note": "Tourism falls by three-quarters for a year and recovers over three, as it did in 2020-22; the state "
@@ -147,6 +160,11 @@ def shock_settings(name, k, w0, platform=False):
     elif name == "ai_shock":
         m["ai"] = .25
     elif name == "amoc":
+        r = min(1.0, (k + 1) / 10)
+        m.update(marine=1 - .50 * r, tourism=1 - .33 * r, aluminium=1 - .10 * r, prod=1 - .05 * r,
+                 demand=1 - .04 * r, arrive=1 - .50 * r, leave=1 + .50 * r)
+        m["import"] = 1 + .15 * r
+    elif name == "amoc_mild":
         r = min(1.0, (k + 1) / 10)
         m.update(marine=1 - .30 * r, tourism=1 - .20 * r, prod=1 - .02 * r, arrive=1 - .30 * r, leave=1 + .30 * r)
         m["import"] = 1 + .10 * r
@@ -367,7 +385,15 @@ def run_mode(mode, base, scenarios, shocks, workers):
     # every run is kept as it finishes, so a build that is stopped picks up where it was
     CACHE.mkdir(parents=True, exist_ok=True)
     span = PAST_AHEAD if mode == "past" else TODAY_YEARS      # a short smoke test never stands in for a full run
-    key = lambda kind, a, b: CACHE / f"{mode}_{kind}_{a}_{b}_{span}y.pkl"
+    # the past's runs walk through the identified shocks, which are identified again when the model changes
+    # without its parameters changing, so they are kept under the shocks too (2026-11-04)
+    tag = ("_" + hashlib.sha1(json.dumps(bc.load_shocks(), sort_keys=True).encode()).hexdigest()[:8]
+           if mode == "past" else "")
+    key = lambda kind, a, b: CACHE / f"{mode}{tag}_{kind}_{a}_{b}_{span}y.pkl"
+    # 2.1: a scenario's runs are kept under its settings as well as its name. The scenarios are found again after
+    # each refit and keep their names, and a near round's new ones were served the old ones' runs (2026-11-04).
+    pf_key = lambda sid, s: key("pf", f"{sid}_" + hashlib.sha1(
+        json.dumps(pf_over[sid], sort_keys=True, default=str).encode()).hexdigest()[:10], s)
     sq_rows, hist = {}, {}
     with Pool(workers, initializer=load_base, initargs=(blob, TODAY_YEARS)) as pool:
         todo = []
@@ -389,14 +415,14 @@ def run_mode(mode, base, scenarios, shocks, workers):
                     continue                     # COVID's other answer, shown without a shock ahead
                 if not sc["id"].endswith((PAY_SUFFIX, SHIELD_SUFFIX)):   # a variant reads its scenario's status quo
                     out[s]["status_quo"][sc["id"]] = sq_rows[(world_of[sc["id"]], s)]
-                k = key("pf", sc["id"], s)
+                k = pf_key(sc["id"], s)
                 if k.exists():
                     out[s]["platform"][sc["id"]] = pickle.loads(k.read_bytes())
                 else:
                     jobs.append(((s, sc["id"]), pf_over[sc["id"]], hist[(world_of[sc["id"]], s)], s))
         for (s, sid), rows, _ in pool.imap_unordered(fn, jobs):
             out[s]["platform"][sid] = rows
-            key("pf", sid, s).write_bytes(pickle.dumps(rows))
+            pf_key(sid, s).write_bytes(pickle.dumps(rows))
             print(f"  {mode} {sid}, {s} ({time.time() - t:.0f}s)", flush=True)
     return out
 

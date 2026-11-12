@@ -12,35 +12,38 @@ GROUPS = ["Managers", "Professionals", "Associate professionals", "Clerks", "Ser
           "Agriculture and fishery", "Craft and trades", "Plant and machine operators", "Elementary"]
 
 # The labour market clears profession by profession. Professions, their pay and their size come from the wage
-# survey (VIN02001, 2025) via data_prep; how pleasant and how meaningful the work is are EST judgements here.
+# survey (VIN02001, 2025) via data_prep.
+# Meaning and strain from what the people doing the work say: ISSP 2015, Iceland shrunk towards the Nordic
+# samples, put on the range the earlier judgements used (scripts/job_traits.py, docs/JOB_TRAITS.md; 2.1).
+# Minimum education 0-2 as before.
 PROFESSION_TRAITS = {                     # name: (disamenity, meaning, minimum education 0-2)
-    "Managers":                         (.25, .60, 1),
-    "Doctors":                          (.45, .80, 2),
-    "Nurses and midwives":              (.55, .80, 2),
-    "Primary and pre-school teachers":  (.45, .75, 2),
-    "Secondary teachers":               (.35, .70, 2),
-    "Academics":                        (.20, .80, 2),
-    "Lawyers":                          (.30, .45, 2),
-    "Engineers and IT":                 (.20, .60, 2),
-    "Artists and writers":              (.20, .90, 0),
-    "Business professionals":           (.25, .45, 1),
-    "Other professionals":              (.25, .60, 2),
-    "Pilots, officers and controllers": (.45, .65, 1),
-    "Other associate professionals":    (.25, .50, 1),
-    "Clerks":                           (.40, .35, 0),
-    "Child-care workers":               (.45, .75, 0),
-    "Care assistants":                  (.60, .75, 0),
-    "Cooks":                            (.55, .55, 0),
-    "Waiters and bar staff":            (.55, .40, 0),
-    "Retail and other service":         (.45, .40, 0),
-    "Fishers and farm workers":         (.70, .55, 0),
-    "Fish processing workers":          (.75, .35, 0),
-    "Other craft and trades":           (.35, .60, 0),
-    "Bus and truck drivers":            (.50, .40, 0),
-    "Other machine operators":          (.60, .30, 0),
-    "Cleaners":                         (.75, .25, 0),
-    "Refuse collectors":                (.90, .30, 0),
-    "Other elementary":                 (.70, .30, 0),
+    "Managers":                         (0.39, 0.59, 1),
+    "Doctors":                          (0.47, 0.82, 2),
+    "Nurses and midwives":              (0.67, 0.82, 2),
+    "Primary and pre-school teachers":  (0.40, 0.79, 2),
+    "Secondary teachers":               (0.39, 0.79, 2),
+    "Academics":                        (0.34, 0.73, 2),
+    "Lawyers":                          (0.24, 0.74, 2),
+    "Engineers and IT":                 (0.23, 0.51, 2),
+    "Artists and writers":              (0.54, 0.56, 0),
+    "Business professionals":           (0.09, 0.50, 1),
+    "Other professionals":              (0.30, 0.75, 2),
+    "Pilots, officers and controllers": (0.70, 0.62, 1),
+    "Other associate professionals":    (0.28, 0.58, 1),
+    "Clerks":                           (0.19, 0.42, 0),
+    "Child-care workers":               (0.23, 0.73, 0),
+    "Care assistants":                  (0.72, 0.71, 0),
+    "Cooks":                            (0.64, 0.54, 0),
+    "Waiters and bar staff":            (0.87, 0.32, 0),
+    "Retail and other service":         (0.61, 0.42, 0),
+    "Fishers and farm workers":         (0.76, 0.55, 0),
+    "Fish processing workers":          (0.46, 0.21, 0),
+    "Other craft and trades":           (0.46, 0.48, 0),
+    "Bus and truck drivers":            (0.62, 0.50, 0),
+    "Other machine operators":          (0.58, 0.35, 0),
+    "Cleaners":                         (0.44, 0.34, 0),
+    "Refuse collectors":                (0.41, 0.23, 0),
+    "Other elementary":                 (0.40, 0.27, 0),
 }
 _BASELINE = pathlib.Path(__file__).resolve().parents[3] / "data/processed/baseline_2025.json"
 PROFESSIONS = json.loads(_BASELINE.read_text())["professions_2025"] if _BASELINE.exists() else []
@@ -79,6 +82,12 @@ def expand_mix(group_mix, weights):
     total = sum(out) or 1.0
     return [v / total for v in out]
 
+
+# Professions a newcomer cannot enter within a year: a licence after years of study (medicine six years plus
+# internship; teaching a five-year master's since 2008; nursing four years; law five plus the bar; flight and
+# air-traffic licences). In the haggling round they keep or lose their people but gain none (sorting.py).
+LICENSED_PROFESSIONS = ["Doctors", "Nurses and midwives", "Primary and pre-school teachers", "Secondary teachers",
+                        "Lawyers", "Pilots, officers and controllers"]
 
 CREATIVE_PROFESSIONS = ["Artists and writers", "Academics", "Other professionals", "Secondary teachers"]
 
@@ -148,7 +157,6 @@ DEFAULTS = {
         # starting something easier, as a windfall does (Blanchflower and Oswald 1998: inheritances raise
         # self-employment); `fund_venture_decay` is how fast that advantage wears off as the money is used.
         "fund_venture_decay": .20,        # EST
-        "fund_deposit_share": .15,        # a payout worth this much of a dwelling buys a way in
         "wage_setting": "free_market",   # "free_market" | "status_quo" (downward-rigid agreed wages)
         "income_tax_brackets": [[0, .3149], [498_122, .3799], [1_398_450, .4629]],
         "platform_income_tax_scale": 1.0,  # multiply bracket rates under the reform
@@ -241,6 +249,10 @@ DEFAULTS = {
         # sets how much of it is applied. It also raises exporters' costs (markets.vat_input_export_burden_bn).
         "vat_input_restriction_gain": 459.5,
         "vat_input_restriction_full_bn": 459.5,
+        # 2.1: taken off the yield and off every cost of it, for avoidance and disputes over what counts as an input to
+        # the value chain. EST, range 20-40%: untried anywhere, and it turns on a line firms have every reason to contest.
+        # The pages give the yield over that range.
+        "vat_input_avoidance": .30,
         # The real return on pension-fund assets (187% of GDP) paid to the UBI instead of to pensions. EST 3%.
         "pension_fund_real_return": .0381,   # 1997-2025 (pension_funds_returns_1997_2025.csv); was .03 EST
         # How far the pension system is folded into the UBI. 1 = the reform: contributions (15.5%) go to the state
@@ -341,6 +353,12 @@ DEFAULTS = {
         # The state leads on costs: a public job pays, after tax and with the UBI, what it paid before the UBI.
         # Pay is cut by the UBI grossed up at the employee's marginal tax rate. 0 = no cut, 1 = the full offset.
         "public_wage_offset_ubi": 0.0,
+        # The haggling round: in the reform's first year the agreements end, every contract reopens, everyone decides
+        # again whether and how much to work, and each profession's pay is whatever clears it. Public pay is the
+        # market's (no cut, no premium). Afterwards pay either keeps following the market ("market") or is run up
+        # with prices alone ("indexed").
+        "wage_reset": False,
+        "wage_after_reset": "market",
         "culture_support_cut": 0.0,      # share of state support for the arts withdrawn (reform: 1.0)
         # --- further levers
         "minimum_wage": 0,               # statutory monthly floor, ISK (0 = none; agreements set the floor today)
@@ -404,6 +422,9 @@ DEFAULTS = {
         # more people out of work than the survey has, and the response to unearned income fell below the lottery
         # evidence (2026-10-12; v8's 46% had the opposite fault).
         "disability_working_share": .325,
+        # EST: share of each ten-year age group on a disability pension, from age 20, 30, ... Only the shape counts: the
+        # number comes from the register. Rises steeply with age, as the register's does; 60-66 is a judgment
+        "disability_age_profile": {20: .03, 30: .07, 40: .115, 50: .175, 60: .26},
         # unemployment benefit: individual, for those who lost a job and seek another
         "unemployment_basic": 383_870,    # Félags- og húsnæðismálaráðuneyti 2026
         "unemployment_income_related_cap": 605_159,  # Félags- og húsnæðismálaráðuneyti 2026
@@ -507,8 +528,13 @@ DEFAULTS = {
         "reoptimise_rate": .35,           # share of agents re-choosing each year
         "reoptimise_rate_first_year": .5, # a large reform prompts more people to reconsider
         "part_time_hours": .55,
-        "gamma_meaning": .6,
-        "gamma_disamenity": .8,
+        # 2.1: what meaning and strain are worth against income (alpha, about 10.6 once calibrated). At .6 and .8
+        # the whole strain scale was worth about 7% of consumption, while Mas and Pallais (2017, AER) put a schedule
+        # an employer sets at short notice alone at about 20% of pay. EST: mapped onto the survey's strain scale,
+        # where an irregular schedule is an eighth of it, that is about 4; halved, because the survey's "irregular"
+        # takes in regular shifts as well. Meaning keeps its ratio to strain. docs/JOB_TRAITS.md.
+        "gamma_meaning": 1.5,
+        "gamma_disamenity": 2.0,
         "leisure_mean": .5, "leisure_sd": .45,
         "meaning_sd": .15,
         "work_ethic": 0.0,                # added to utility of any work (tweak)
@@ -591,14 +617,16 @@ DEFAULTS = {
     # hardship weight below is set to reproduce.
     "health": {
         "public_spending_bn": 405.8,
-        "hospital_share": .643,           # 261.0 of 405.8
         "disability_penalty": .55,        # EST: a disability's place in health, in the drawing and the dynamics alike
         "hardship_penalty": .18,          # EST: what living below subsistence does to health
         "unemployment_penalty": .10,      # EST: involuntary idleness, over and above the income
         "recovery_rate": .25,             # EST: how fast health returns once the cause is removed
         "age_gradient": .009,             # EST: yearly decline with age past 40
         "cost_elasticity": 1.6,           # EST: how sharply poor health raises what care costs
-        "disability_onset": .004,         # EST: yearly chance of leaving work through ill health, at mean health
+        # yearly chance of reaching a disability pension, at mean health. Set so new cases run at the 1,200-1,500 a year
+        # recorded over twenty years (Tryggingastofnun's figures in Laeknabladid 2021). .004, an estimate, gave 500-600
+        # against a stock of 29,465, and the share of working age on a pension fell by a quarter in twenty years
+        "disability_onset": .0122,
     },
 
     # ---------------------------------------------------- who owns the buildings
@@ -614,7 +642,7 @@ DEFAULTS = {
         "residential_markup": .06,        # EST: rent above competitive, from concentrated ownership
         "commercial_markup": .09,         # EST: the same for commercial space, where concentration is higher
         "residential_top_share": .14,     # EST: share of the rental stock the largest group holds today
-        "commercial_top_share": .22,      # EST
+        "commercial_top_share": .22,      # EST: share of commercial space the largest group holds today
         "divestment_years": 4,            # how long a forced sale takes to work through
         "commercial_rent_share_of_costs": .12,   # EST: rent as a share of a small firm's costs
         # New construction exempt from the caps. The cap then bites on buying existing stock but not on adding new,
@@ -660,6 +688,13 @@ DEFAULTS = {
     # ---------------------------------------------------------- inheritance
     # 14.7 ma.kr. in 2024, of which 9.1 from advance inheritance (fyrirframgreiddur arfur) and 5.6 from estates
     # (Vísir, 2025). Gifts are taxed alike, so revenue from them is carried in proportion to the estates.
+    # 2.1: payments that follow people abroad (Society.exported_payments)
+    "exported": {
+        "stay_abroad_share": .5,          # EST: of those who leave, the share who never come back to live here
+        "treaty_share": .85,              # EST: of those, the share in a country with a treaty (EEA, Nordic, US, UK, Canada)
+        "children_abroad_per_eea_worker": .2,   # EST
+        "paid_at_home_share": .15,        # EST: what the country they live in pays first, as a share of the payment
+    },
     "inheritance": {
         "advance_ratio": 9.1 / 5.6,
         # EST: taxable estates against the net-of-tax rate, about .1-.2 in all (Kopczuk-Slemrod), split by route:
@@ -863,12 +898,8 @@ DEFAULTS = {
         # Tourists pay VAT on hotels, restaurants and tours, mostly at 11% today. A flat rate raises what a stay
         # costs them, and what they buy falls with it; the treasury gains the higher VAT on what remains.
         "tourism_vat_today": .11, "tourism_vatable_share": .50, "tourism_price_elasticity": .8,
-        # Input VAT that businesses can no longer reclaim is a cost to them, and part of it reaches their prices.
-        "vat_input_price_per_100bn": .0078,      # rise in residents' prices per 100 ma.kr. (EST from the supply-use tables; was .02)
         # Most customs duties protect food: without them, imports compete with Icelandic farms.
         "farm_jobs_lost_without_customs": .10,   # share of farm work
-        # Energy and transport subsidies keep heating and fares down: about 0.9% of household spending.
-        "energy_transport_cpi_at_full_cut": .008,
         # Innovation support: the R&D credit and grants buy some research and some new firms.
         "innovation_productivity_at_full_cut": .003,
         "innovation_ideas_at_full_cut": .05,
@@ -896,10 +927,10 @@ DEFAULTS = {
         # EV and transition grants (Orkusjóður, the EV purchase grant). Cutting them slows the switch from petrol:
         # road transport emits about 0.95 Mt CO2e a year (EST, UST inventory), and without the grants EST 0.12 Mt
         # more by the tenth year. Each Mt of road CO2 is about 430 m litres of fuel, EST 35 ma.kr. of imports.
-        "transition_bn": 7.2, "transition_emissions_at_full_cut_mt": .12, "transition_years": 10,
+        "transition_emissions_at_full_cut_mt": .12, "transition_years": 10,
         "fuel_imports_bn_per_mt": 35.0, "transition_cpi_at_full_cut": .001,
         # Strætó's state contract and regional bus and ferry routes: fares rise or routes close.
-        "transport_bn": 6.0, "transport_cpi_at_full_cut": .004, "transport_emissions_at_full_cut_mt": .02,
+        "transport_cpi_at_full_cut": .004, "transport_emissions_at_full_cut_mt": .02,
         # Local green heat. EST: 3 m kr. a home for a heat pump or a share of a small hydro or wind plant, the grant
         # paying half and the owner installing the rest; a converted home needs 60% less bought heat (a heat pump's
         # COP of about 3), so 60% less support, or a 60% smaller bill if the support is cut.
@@ -959,7 +990,6 @@ DEFAULTS = {
         "tourism_fte": 26_000,            # EST: people working in tourism at the 2025 level
         "tourism_revenue_bn": 600.0,      # EST: tourism's export earnings, 2024-25 (Hagstofa, ~600 ma.kr.)
         "tourism_labour_elasticity": 0.574, # TUNED 2016-25 backcast; was EST: how far tourism employment follows the money it earns
-        "tot_income_passthrough": .55,    # EST: share of a terms-of-trade gain that reaches real incomes
     },
 
     # ---------------------------------------------------------------- schooling
@@ -967,7 +997,6 @@ DEFAULTS = {
     # secondary schooling is a cost driven by how many children there are, which migration and fertility move.
     "schooling": {
         "spending_bn": 258.0,             # EST: the 347.5 less the tertiary part modelled elsewhere
-        "children_2025": 84_881,          # MAN00101, under 18
     },
 
     # ------------------------------------------------------------- emissions
@@ -978,7 +1007,6 @@ DEFAULTS = {
     "emissions": {
         "total_mt": 4.6,
         "smelter_mt": 1.8,
-        "per_capita_baseline": True,
         "carbon_price_isk_per_t": 12_000,  # EST: ETS-linked, for valuing the change
     },
 
@@ -1043,6 +1071,7 @@ DEFAULTS = {
     "childcare": {
         # EST: full-day places for 1-5 year olds today (leikskólar); Reykjavík already has a waiting list
         "places_full_time": 19_000,
+        "places_age_1": 1_900,            # EST: of these, what is open to one-year-olds, whom few leikskólar take
         "cost_per_place_bn": 2.6e-3,      # EST: ~2.6 m ISK per place per year
         # EST: dagforeldrar places, which carry much of the under-2 gap before a leikskóli place opens up
         "childminder_places": 1_400,
@@ -1130,8 +1159,6 @@ DEFAULTS = {
         # because the consensus expects little change in unemployment at the pace most forecast.
         "reinstatement_share": .95,       # CALIBRATED: share of displaced work that comes back as new tasks
         "reinstatement_speed": .45,       # CALIBRATED: share of the gap closed each year
-        # share of AI's productivity gain that negotiated rounds pass into pay, as for trend productivity
-        "wage_passthrough": 1.0,
     },
 
     # ------------------------------------------------------------------ culture
@@ -1223,6 +1250,15 @@ DEFAULTS = {
         # disamenity scale. Nurse burnout studies put intention-to-leave sharply higher at high patient loads
         # (Aiken et al. 2002); this is the mechanism that makes a shortage widen itself.
         "workload_disamenity": .4,
+        # 2.1: and the other way. Where more people are in post than there are posts, the work is shared and each
+        # carries less, down to this much below an evenly staffed job (EST: half again as many staff as posts).
+        "workload_relief_max": .25,
+        # 2.1: where pay is set contract by contract, the elasticity of the state's hiring for its posts to their
+        # real pay against the reference. The state buys a service it must provide, but not at any price: at
+        # half again today's real pay it seeks about 12% fewer of its posts, and leaves those empty, with the work
+        # falling on those in post (update_workload). EST: below most private labour-demand elasticities, as a
+        # buyer of a needed service would be. 0 is a state that pays whatever fills every post.
+        "state_pay_resistance": .3,
         # Iceland's collective agreements run in rounds a few years apart (the 2024 settlement was for four
         # years), so pay cannot answer a shortage in the year it appears. Where pay is set job by job it can.
         # People change profession, so the model can ask what happens when people can move to the work they are
@@ -1249,6 +1285,32 @@ DEFAULTS = {
         "public_shortage_pay_speed": .12,
         "public_shortage_pay_decay": .5,
         "public_shortage_pay_cap": 1.4,
+        # How fast the reform's public pay cut comes off where it leaves the state's posts unfilled: the share of
+        # the cut removed each year per unit of the share of posts unfilled. EST: at 2.5 a profession a tenth
+        # short loses a quarter of its cut a year, so a lasting shortage has the cut gone in about four years.
+        # 0 holds the cut for good, as before 2.1.
+        "public_offset_unwind": 2.5,
+        # The haggling round (policy.wage_reset): the search for each profession's pay runs between these shares
+        # of what the job paid, starting from `reset_start`, for up to `reset_rounds` rounds. The bounds are a
+        # solver's safeguard, wide enough not to bind; a run reports any profession that ends at one.
+        "reset_low": .02, "reset_high": 10.0, "reset_start": .5, "reset_rounds": 400,
+        # 2.1: in the round people choose which profession to work in as well as whether to work (sorting.py).
+        # The choice is a logit over the professions their education allows, licensed ones closed to newcomers,
+        # with constants that reproduce today's mix under today's rules and pay. `sorting_switch_share` is how
+        # many would change profession in a round where nothing changed (EST: the model's yearly 4%), which sets
+        # the cost of switching; `sorting_elasticity` is how much a profession's headcount answers 1% more pay
+        # against the rest (EST; the size of the sorting); `switch_wage_loss` is the pay a newcomer gives up
+        # against an incumbent at the same standing (EST: skills specific to the old profession).
+        # `reset_sweeps` alternates clearing pay and choosing professions, at most that many times (it stops once pay
+        # holds); 0 turns the choice of profession off.
+        "reset_sweeps": 11, "sorting_switch_share": .04, "sorting_elasticity": 1.0, "switch_wage_loss": .10,
+        "sorting_damping": .5,
+        # 2.1: the round's settlement is in real terms. Its contracts carry a clause that follows prices from the round
+        # to the end of the first year in place of that year's scheduled raise: the year's expected price level is
+        # paid during it, and what prices did beyond that is made good from the second year, as the review clauses
+        # (forsenduákvæði) of Icelandic agreements do. The share of the price rise the clause covers; 0 leaves the
+        # round's pay in krónur, which the first year's price rise then ate (9% at 350 þús., 2026-10-30).
+        "round_real_settlement": 1.0,
         "clearing_iterations": 80,
         "clearing_step": .15,             # how far the wage solver moves each iteration (small markets overshoot)
         "safety_wage_bound": .15,   # EST: how far a new offer may sit from the wage the job already pays
@@ -1293,6 +1355,7 @@ DEFAULTS = {
     # --------------------------------------------------------------- migration
     "migration": {
         "eea_share_of_immigrants": .72,   # EST
+        "disabled_mobility": .3,   # EST: people on a disability pension move abroad at this share of the rate of others their age
         "emigration_income_elasticity": 0.825,  # TUNED 2016-25 backcast; was EST
         "recent_arrival_emigration_multiplier": 2.5,  # EST: return migration in the first 3 years
         "immigration_income_elasticity": 1.33,  # TUNED 2016-25 backcast; was EST
@@ -1363,6 +1426,7 @@ DEFAULTS = {
         "import_income_elasticity": 1.26,  # TUNED 2016-25 backcast; was EST
         "import_price_elasticity": 0.842,    # TUNED 2016-25 backcast; was EST
         "vat_input_export_burden_bn": 135.3,   # borne by exporters at the full restriction (EST, 97-152)
+        "vat_input_consumption_bn": 2050.0,    # households' consumption in the base year, which the rest falls on
         "fx_current_account_response": 0.544,  # TUNED 2016-25 backcast; was EST: log change in króna per unit change of CA/GDP
         "fx_inflation_passthrough": 0.601,   # TUNED 2016-25 backcast; was EST
         "residential_share": .70,         # EST: share of fasteignamat that is housing
@@ -1429,6 +1493,25 @@ DEFAULTS = {
         "rent_share_of_revenue": .6,      # EST: rent is about 60% of the value produced at typical prices
         "fte_per_100bn": 300,             # EST: direct jobs per 100 ma.kr. of rent (Norway ~25,000 direct on ~8,000 ma.kr.)
         "occupation_mix": [.05, .30, .10, .03, .02, .0, .20, .25, .05],
+    },
+    # 2.1: the owner-run form of the trades households buy from (ownrun.py, which gives the sources). `share` is
+    # today's share of the work done on own account (Eurostat LFS by occupation, 2022-24), `margin` gross operating
+    # surplus over labour cost (Eurostat SBS, 2023-24), `rent_share` rent over value added (EST: a tenth of a
+    # restaurant's takings; less where there are no premises to speak of).
+    "owner_run": {
+        "enabled": 1.0,
+        "trades": {
+            "Cooks": {"share": .056, "margin": .175, "rent_share": .22},
+            "Waiters and bar staff": {"share": .056, "margin": .175, "rent_share": .22},
+            "Retail and other service": {"share": .056, "margin": .388, "rent_share": .22},
+            "Cleaners": {"share": .057, "margin": .229, "rent_share": .03},
+            "Bus and truck drivers": {"share": .169, "margin": .518, "rent_share": .02},
+            "Other craft and trades": {"share": .216, "margin": .526, "rent_share": .03},
+        },
+        "margin_kept": .5,       # EST: the part of the operating surplus that is the owner's return, over capital costs
+        "max_share": .4,         # EST: about the self-employed share in these trades in Greece and Italy
+        "opening": 1.0,          # EST: how fast the share rises as employers are priced out (1 - wage_rel ** -this)
+        "strain_relief": .3,     # EST: how much less strain work without a boss is (Benz and Frey 2008, Economica)
     },
     # The state's deemed stake in every company that raises capital (a reform option). Each funding round, in an
     # old company or a new one, issues the state shares worth one deemed start-of-life fund, diluting the owners;
@@ -1645,6 +1728,9 @@ DEFAULTS = {
         "mpc_bottom": .98, "mpc_top": 0.862,  # TUNED 2016-25 backcast; was EST: marginal propensity to consume out of income, by income rank
         "mpc_liquid_wealth": 0.0249,         # TUNED 2016-25 backcast; was EST: yearly consumption out of liquid wealth
         "mpc_housing_wealth": .015,       # EST: yearly consumption out of housing equity
+        "illiquid_saving_share": .70,     # EST: of what home-owners save, the share that goes into the home, a private
+                                          # pension or a firm and not into savings; set so that liquid savings in
+                                          # the status quo grow with income. Renters' savings stay liquid
         "liquid_return": .02,             # EST: real return, on all savings and other assets together
         # 2.0: the extra return by rank in savings and other assets (model.wealth_returns), the whole shifted so
         # the total return stays as above. EST from Fagereng et al. (2020): 1.6 points from the 10th to the 90th
@@ -1675,6 +1761,7 @@ DEFAULTS = {
     "demography": {
         "couple_catch_up": .3,             # EST: share of each age band's shortfall in couples closed in a year (step_partnerships)
         "births_per_year": 4300,          # EST ~2025
+        "births_to_couples_share": .82,   # EST: share of births to a mother married or living with a partner
         "fertility_income_elasticity": .5,  # EST (range .1-1): births change per unit (usable child income change / household income)
         "deaths_per_year": 2600,          # EST
         "mortality_improvement": .012,    # EST: yearly fall in death rates at every age (Hagstofa's projections

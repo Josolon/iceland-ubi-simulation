@@ -8,6 +8,122 @@ published: the model's own v0–v6.1 (2026-09-15 to 2026-09-18; sections 9–30 
 describe each step), then explorer versions v1 to v10 (from 2026-09-18). Comments in the code and in ABM.md refer to
 those development versions as v1, v2 and so on. From 1.0 on, each release is a git tag.
 
+## 2.1.0 (2026-11-12)
+
+The first part of the path the review of 2.0 set out ([docs/REVIEW.md](docs/REVIEW.md) §4): a reference reform in a
+form the law allows, and pay set by what it takes to fill each profession instead of by the agreements. The status
+quo is unchanged. The base year is recalibrated and the surface rebuilt.
+
+**The reference reform, now in a lawful form.** Its figures move against 2.0's because the reform itself has changed:
+* Earned pensions are paid (`pension_keep` on); 2.0's reform ended them.
+* The pension and disability floor is kept (`benefit_floor` 100, was 0).
+* No standing capital controls (0, was 50). EEA law allows only temporary ones (EEA art. 43; EFTA Court E-3/11).
+* No stake is taken in companies that exist today; a new lever, off in the reform, shows it
+  (`deemed_stake`, Constitution art. 72, ECHR P1-1).
+* The residence test is described as Dir. 2004/38 has it: sufficient resources, judged case by case.
+* Pay is set in a haggling round (below) as today's agreements expire, in place of keeping them.
+
+**New in the model**
+* **The haggling round** (`model.haggle`, the `haggle` lever, on in the reform). Before the reform's first year,
+  in a round without time, everyone chooses whether to work and in which profession their education allows. Each
+  profession's pay, the state's included, is set at what it takes to fill it. The extension law (Act 55/1980) is
+  repealed; unions stay. After the round, pay follows the market.
+  * The state seeks fewer public posts the dearer they become, and leaves the rest unfilled
+    (`labour.state_pay_resistance`).
+  * Where posts fill, the work per person falls (`labour.workload_relief_max`).
+  * The round prices labour against the spending its own choices would bring, not today's spending.
+  * Its pay holds its real value through the first year, as the review clauses of Icelandic agreements do
+    (`labour.round_real_settlement`).
+  * People choose professions with meaning and strain from ISSP 2015 ([docs/JOB_TRAITS.md](docs/JOB_TRAITS.md)).
+* **The owner-run trades** (`ownrun.py`). In restaurants, shops, cleaning, driving and the crafts, more of the work
+  is done on own account as employers are priced out. Today's shares come from Eurostat's labour survey for
+  Iceland; the margins come from its business statistics. Cheaper commercial rent widens the margin.
+  [docs/CONSEQUENCES.md](docs/CONSEQUENCES.md) traces the round's results one at a time.
+* **The public pay cut comes off where it leaves the state's posts unfilled** (`labour.public_offset_unwind`).
+  2.0's cut was permanent.
+
+**On the pages**
+* A new headline card: how many people work for themselves, against the status quo.
+* An error band on every verdict card, from Guide answer sets held out of the fit. The budget card gives the
+  chance of a surplus and of beating the status quo.
+* The Guide's starting picture follows the lawful reform. Every lever in it is now named, so the Guide, the
+  explorer's Guide preset and the check in the model read the same package; 2.0's left the newer levers to each
+  page's own default. At 275 þús. it restricts VAT refunds to value-chain inputs in full, with VAT at 25%, residence
+  rules at their strictest, 80% of the fisheries rent and a 40% levy on machine income. In 2035 the budget is −132
+  ma.kr. in the model against the status quo's −207, and child poverty 3.3% (19.2%). The page now says the start
+  does no worse for the budget than today's path, as the named scenarios are held to, instead of that it balances.
+* New on the pages: poverty by what people were in 2025, on the relative and on a fixed
+  2025 line; poverty by sex and origin; poverty after housing costs; the shares of adults who lost more than 5% or
+  10% of their real income or gained more than 5%; and what is paid abroad.
+* Levers that do nothing at the settings shown are greyed out with the reason. Dead fallback code and data (884 KB)
+  are gone from the page.
+* Differences on the cards carry thousands separators.
+
+**The surface** is fitted to 5,800 runs, now to each run's difference from the status quo in its own world, with
+713 more kept out to score it: 600 sets of Guide answers and 113 runs that move one lever alone. A fourth round of
+runs is centred on the published scenarios and the Guide's start. On the held-out answer sets the 2035 budget is off
+by 265 ma.kr.; on single moves by 184. At the nine named scenarios, each now the mean of five runs, the surface is
+between 15 below and 279 above the model, 96 on average; at the seven without a windfall, 8 to 81. The scenarios
+themselves show the model's own figures ([docs/VALIDATION.md](docs/VALIDATION.md) §4). Every scenario and the
+headline table stand in the page's own world; "the world as the last decade" remains a lever.
+
+**Checks.** The quality check now runs the round. It checks that the round settles and fills more essential posts
+than keeping the agreements. The check that holding public take-home at its old level cuts the public payroll is
+measured where the cut is held. Where the cut may come off as posts go unfilled, it comes off faster now that the
+owner-run trades draw workers, so a second check holds that run only to costing less. The decade's shocks are
+identified again under 2.1. The 2.0 shocks had come to miss the record's population by 1,496 on average. The new
+ones miss it by 599, and "The past" and the long view from 2015 are rerun on them. Runs from the past are now kept
+under the shocks as well as the parameters, so a run on old shocks is never reused.
+
+**From the review's 2.1, still to come:** a ledger of pension rights not honoured.
+
+**Corrected before release.** A review of the whole model before release found the faults below; all are corrected
+in this version, which was rebuilt once for all of them.
+* **The input-VAT restriction now costs someone.** Its yield was counted, but about half of it had no visible cost.
+  What it raises now falls on prices, pay, profits or investment (exporters about 135 ma.kr. at the full
+  restriction), and 20–40% is taken off for avoidance and disputes over what counts as an input (30% in the model).
+  In full it comes to 459.5 ma.kr. a year, 275–370 after avoidance. This is the main reason the reference reform
+  now falls short of the status quo's budget: in 2035 −348 ma.kr. against −207, debt 105% of GDP against 73%.
+* **Self-employment drained away:** the flag was drawn only for the 2025 population. It is now drawn for people
+  who come of age or arrive, and the status quo's count holds (12.3% of those working in 2026, 11.6% in 2060).
+* **People coming of age** were drawn from teenagers alive in 2025, and after 2045, when none were left, took their
+  mother's profession and pay. They are now drawn from those teenagers as they were at the start.
+* **Disability.** Arrivals copied from residents kept their disability and could draw a pension on arrival; the
+  disabled stock was too old (34% of 60–66-year-olds) and left the country as readily as anyone; the inflow was an
+  estimate. The stock is now drawn to an age profile, the disabled move abroad at 0.3 of the general rate, and the
+  inflow is set so the share holds: 10.7% of 16–66-year-olds falling to 9.8% by 2045, where it fell to 7.9%.
+* **Births** were drawn by age alone, so half went to single women and children with a single parent reached half
+  of all children. 82% now go to couples, and that share holds near a quarter. The rise in status-quo child poverty
+  that is left is the base year settling into the model's own ([docs/LIMITS.md](docs/LIMITS.md) §7).
+* **Savings never settled:** households saved 8–10% of income a year into bank accounts and real liquid wealth
+  nearly tripled by 2045. Home-owners' saving now goes 70% into their homes and pensions.
+* **The first year.** Capital per worker read last year's hours, so a fall in hours took output down with no gain in
+  output per hour; the trade block had no reference year; the policy rate acted only at the year's end, so
+  spending jumped 27% in the first year and imports 46%. All three now use the year's own values.
+* **Childcare** counted mothers rather than children and pooled ages 1–5, so no shortage ever arose and the lever
+  did nothing. Places are now counted per child and by age.
+* **The fisheries rent** wore away (72 to 58 ma.kr. by 2045) because the same catch never took fewer hands. The
+  sector now shares the economy's productivity growth.
+* **Students** no longer count as peers out of work in the norm to work.
+* **Two status quos.** The forecasts read the status quo in one world and the pages in another. There is now one.
+* **Payments exported** under Reg. 883/2004 are in the budget: the payment for children of EEA workers living
+  abroad and pensions to people who left (47 ma.kr. in 2035 at the reference reform, 9 in the status quo).
+* The inflation forecast's description is corrected: 3–4% a year, above the 2.5% target. Ten unread parameters are
+  removed.
+* **The pages' text.** Every Guide question, lever note, card explanation and scenario note now names what it
+  speaks of and gives the figure behind it. Corrected on the way: free health care was costed at up to 78 ma.kr. a
+  year, where it covers about 15 of the 65 ma.kr. households pay; the outside world was described with inflation
+  near target; scenario notes now give each 2035 figure beside the status quo's. The Guide's question on corporate
+  tax where the state holds a stake is removed: that stake is off in every lawful form of the reform, so no answer
+  changed anything. The Guide has 35 questions.
+
+**The build.** One script runs every step in order and resumes after an interruption
+(`scripts/rebuild_all.sh`), and a gate fails if any page file is older than the model (`scripts/build_stamp.py`).
+A unittest suite (`tests/`) covers the checks above; the childcare check and the directional checks now need an
+effect of a stated size, not 0.5% of slack. A new note, `data/processed/work_sensitivity.json`, gives the fall in
+work under other settings of labour demand and the norm, and by channel ([docs/VALIDATION.md](docs/VALIDATION.md)
+§3).
+
 ## 2.0.0 (2026-10-29)
 
 The limits 1.0 named, each given a part of the model, with its evidence, findings and checks in

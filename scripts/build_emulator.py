@@ -37,6 +37,7 @@ firms is its own lever; teenagers can move out on their own borgaralaun; farm su
 """
 import argparse
 import json
+import re
 import os
 import pathlib
 import pickle
@@ -59,8 +60,9 @@ OUT = ROOT / "artifacts/explorer_v3/emulator.js"
 # travel with it so the page can explain itself.
 LEVERS = [
     ("ubi", "Borgaralaun", "þús. kr./mán.", 0, 800, "policy.ubi_adult", 1000,
-     "Paid to every resident each month, the same again for each child, most of a child's share going into "
-     "their start-of-life fund. Everything else on this page is read against it."),
+     "Paid to every resident each month, and the same amount for each child; the lever 'Child payment held in their "
+     "fund' sets how much of a child's share goes into their start-of-life fund. Every other figure on the page "
+     "measures what this payment costs and does."),
     ("vat", "VAT", "%", 15, 32, "policy.vat_platform", .01,
      "One rate on everything. The reform sets 25%; today's mix of 24%, 11% and exemptions averages about 18%."),
     ("income_tax", "Income tax rates", "%", 70, 140, "policy.platform_income_tax_scale", .01,
@@ -89,8 +91,8 @@ LEVERS = [
      "payments rise when inflation is high, debt is paid down faster, and interest rates reach spending sooner — "
      "the stated reason for the change; its size is an estimate. Government bonds and pension assets stay indexed."),
     ("taper", "UBI withdrawal rate", "%", 0, 60, "policy.ubi_taper_rate", .01,
-     "Withdraws the borgaralaun above 600 þús. of earnings, turning it into a negative income tax. Cheaper, but "
-     "it raises the effective marginal rate on the people it is taken from."),
+     "Withdraws the borgaralaun above 600 þús. of earnings, turning it into a negative income tax. It costs the state "
+     "less, but raises the effective marginal tax rate of the people it is withdrawn from."),
     ("payroll_cut", "Fewer public-sector jobs", "% of public jobs", 0, 40, "policy.public_payroll_cut", .01,
      "Removes this share of public-sector jobs; those who stay are paid as before, and the borgaralaun is not "
      "deducted from anyone's public pay. The public wage bill was 709.6 ma.kr. in 2025."),
@@ -104,13 +106,15 @@ LEVERS = [
     ("housing", "State-built dwellings", "per year", 0, 3000, "policy.public_dwellings_per_year", 1,
      "Built regardless of price. About 165,000 dwellings exist and the market adds roughly 1.1% a year."),
     ("retraining", "Retraining", "ma.kr./yr", 0, 40, "policy.retraining_bn_per_year", 1,
-     "Speeds movement between professions."),
+     "State spending on retraining courses, which speeds people's moves into professions that are short of staff."),
     ("fund", "Surplus into a fund", "%", 0, 100, "policy.sovereign_fund_share", .01,
-     "Share of any surplus put aside at a real return rather than used to repay debt."),
+     "The share of any budget surplus put into a fund earning a real return, instead of being used to repay debt."),
     ("fx", "Pension funds hold the króna", "ma.kr./yr", 0, 300, "policy.pension_fx_support_bn", 1,
-     "Foreign assets sold to finance imports. It works, but the fund shrinks and so does what it pays the UBI."),
+     "The pension funds sell this much of their foreign assets a year to pay for imports, which supports the króna. "
+     "The funds shrink as they sell, and so does the return they pay towards the UBI."),
     ("culture", "Culture support cut", "%", 0, 100, "policy.culture_support_cut", .01,
-     "How much state support for the arts is withdrawn, leaving the rest to ticket sales."),
+     "The share of state support for the arts that is withdrawn. Today that support pays for about 45% of the work "
+     "artists are paid for; ticket sales and other buyers pay the rest."),
     ("ai", "AI progress", "%/yr", 0, 25, "automation.ai_progress_rate", .01,
      "How fast machines get cheaper and abler. Take-up still depends on what labour costs, so dearer labour "
      "automates faster."),
@@ -167,13 +171,14 @@ LEVERS = [
      "takes the concentration premium out of rents over about four years."),
     ("comm_cap", "Cap on owning commercial space", "% of stock, 100 = no cap", 5, 100,
      "policy.commercial_ownership_cap", .01,
-     "The same for commercial property, where concentration is higher. Rent is a fixed cost that decides "
-     "whether a small business in Reykjavík is viable at all, so this feeds straight into how many get started."),
+     "The same cap for commercial property, where ownership is more concentrated. Rent is a fixed cost that decides "
+     "whether a small business in Reykjavík is viable at all, so lower commercial rents raise the number of small "
+     "businesses that start."),
     ("dev_exempt", "New construction exempt from the caps", "% exempt", 0, 100, "policy.developer_exemption", .01,
-     "Newly built property is exempt from the ownership cap, so the rule bites on buying existing stock rather "
-     "than on construction. It cuts both ways and the model carries both: about 18% more building at full "
-     "exemption, but the rent effect of the cap falls from -3.6% to -2.6% because concentration can rebuild "
-     "through new stock. Which way it nets out depends on how much the extra supply lowers rents."),
+     "Newly built property is exempt from the ownership cap, so the cap limits buying existing property, not building."
+     " The exemption has two effects, and the model carries both: about 18% more building at full exemption, but the "
+     "cap lowers rents by 2.6% instead of 3.6%, because large owners can rebuild their share through new property. "
+     "Which effect is larger depends on how much the extra building lowers rents."),
     ("custodianship", "Custodianship instead of ownership", "%", 0, 100, "policy.custodianship", .01,
      "Whoever holds an asset — a home, a building, a firm, land, a quota — keeps it, and their heirs after them, "
      "for as long as they keep investing in it and it keeps earning. What is neglected goes back to the market "
@@ -233,6 +238,12 @@ LEVERS = [
      "public, which has paid for its founders' and investors' schooling, health care and payment — so the "
      "state holds shares worth one fund in each round. That is the premise of a corporate tax, held as "
      "ownership. At 0 the stake replaces the tax for the firms that carry one; at 100 they pay both."),
+    ("deemed_stake", "State stake in every company that raises capital", "off / on", 0, 1, "public_equity.enabled", 1,
+     "On, every company that raises capital is deemed to have taken one start-of-life fund from the public, and "
+     "issues the state shares worth it in each round. Taking shares in companies that exist today without paying "
+     "for them is an expropriation (Constitution art. 72, ECHR Protocol 1 art. 1), so the reform's lawful form "
+     "leaves it off and the corporate tax does the same work as a tax. The stake in firms founded on the "
+     "borgaralaun is a separate option, agreed to when the firm is founded."),
     ("leave_scheme", "Sick pay and parental leave to employers", "%", 0, 100, "policy.state_leave_ended", .01,
      "The state's sick pay and the parental leave fund end, because the borgaralaun is already the floor. "
      "Employers carry the period law and agreements give them, rising with seniority, and insure the rest, as "
@@ -290,8 +301,9 @@ LEVERS = [
     ("vat_input", "VAT refunds only on value-chain inputs", "% of the full restriction", 0, 100,
      "policy.vat_input_restriction_gain", 4.595,
      "Input VAT reclaimable only on what goes into the product: the carpenter's lumber, not the saw. In full it "
-     "raises 459.5 ma.kr. a year net of dearer government purchases and corporate tax (from the 997 ma.kr. firms "
-     "reclaimed in 2025; range 385-574), and exporters bear about 135 ma.kr. of it. Applied in part, in proportion."),
+     "comes to 459.5 ma.kr. a year net of dearer government purchases and corporate tax, from the 997 ma.kr. firms "
+     "reclaimed in 2025. 20-40% of that is taken off for avoidance, and the rest falls on prices, pay, profits or "
+     "investment. Exporters bear about 135 ma.kr. of it. Applied in part, in proportion."),
     ("pension_return", "Pension-fund returns to the UBI", "% real a year", 0, 5, "policy.pension_fund_real_return", .01,
      "The pension funds, 187% of GDP, pay their real return to the UBI instead of to occupational pensions: "
      "about 93 ma.kr. for each percentage point. 3% is an estimate of the long-run real return."),
@@ -313,13 +325,13 @@ LEVERS = [
      "work on tax enforcement instead, against evasion put at 80-100 ma.kr. a year in 2014, about 4% of GDP. Each investigator "
      "recovers less than the one before; they also narrow the ways round the inheritance tax."),
     ("prison_ubi", "Borgaralaun withheld in prison", "% of prison time", 0, 100, "policy.prison_ubi_withheld", .01,
-     "Today benefits stop after four months in prison, about 60% of prison time. A prison day costs the state "
-     "56,750 kr. The saving is small, and the evidence is that the certainty of being "
+     "Today benefits stop after four months in prison, which covers about 60% of all prison time. A prison day costs "
+     "the state 56,750 kr. Withholding the payment saves little, and the evidence is that the certainty of being "
      "caught deters more than the severity of the sentence (Nagin 2013)."),
     ("ubi_protected", "Borgaralaun cannot back a loan", "%", 0, 100, "policy.ubi_protected", .01,
-     "The payment cannot be pledged, assigned or seized by creditors, as benefits cannot be today, so no lender "
-     "can treat it as collateral and people at risk cannot borrow against next month's. Protecting it does this "
-     "without taking the payment from the borrower and their family."),
+     "The payment cannot be pledged, assigned or seized by creditors, as benefits cannot be today, so no lender can "
+     "take it as security and people in debt trouble cannot borrow against next month's payment. The protection works "
+     "without withholding the payment from the borrower or their family."),
     ("gambling_block", "Payments to foreign gambling sites blocked", "%", 0, 100,
      "policy.gambling_payment_block", .01,
      "About 20 ma.kr. a year goes to foreign betting sites that pay no tax here. Norway blocks the payments "
@@ -341,19 +353,21 @@ LEVERS = [
      "Part of what farm support cost goes to agricultural start-ups through RANNÍS instead, about 15 m kr. each: "
      "support for new ideas, not for established production. Half survive, with 1.5 jobs each once running."),
     ("residence", "Residence rules for new arrivals", "% strictness", 0, 100, "policy.residence_rules_strictness", .01,
-     "Registering residence — and with it the borgaralaun — requires savings or an income, as Austria and "
-     "Denmark require of new arrivals; the reform asks for about €30,000. In the model it reduces arrivals "
+     "Registering residence — and with it the borgaralaun — requires sufficient resources of arrivals who do not "
+     "work, as EEA law allows (Dir. 2004/38 art. 7): assessed case by case against the payment's level, never as "
+     "a fixed sum (art. 8(4)), as Austria assesses against its minimum pension. In the model it reduces arrivals "
      "who would not work. EEA workers are eligible while they work, and everyone after five years."),
     ("capital_controls", "Capital controls", "% strictness", 0, 100, "policy.capital_controls", .01,
-     "Part of the reform. Controls damp the risk premium a large debt would otherwise "
-     "carry, and cost some foreign investment and output, as Iceland's did in 2008-2017."),
+     "Controls damp the risk premium a large debt would otherwise carry, and cost some foreign investment and "
+     "output, as Iceland's did in 2008-2017. The EEA Agreement allows them only as a temporary measure in a crisis "
+     "(art. 43; EFTA Court E-3/11), so the reform's lawful form has none standing."),
     ("inherit_floor", "Tax-free inheritance", "m kr.", 0, 150, "policy.inheritance_tax_floor", 1e6,
      "The part of an estate that passes untaxed, in 2025 krónur: 6.5 m today. Set it at the value of a family "
      "apartment and a family keeps its home whatever the rate."),
     ("smelters", "End smelter power contracts", "% of contracts", 0, 100, "energy.smelter_exit_share", .01,
-     "The reform ends the aluminium smelters' power contracts and sells the electricity to data centres, "
-     "e-fuels, aquaculture and greenhouses. Compensation, lost exports and jobs in the East and at "
-     "Hvalfjörður against the higher price the power fetches."),
+     "The reform ends the aluminium smelters' power contracts and sells the electricity to data centres, e-fuel "
+     "plants, fish farms and greenhouses. The model weighs the compensation owed to the smelters' owners and the "
+     "exports and jobs lost in the East and at Hvalfjörður against the higher price the power fetches."),
     ("pension_fold", "Pension funds folded into the UBI", "%", 0, 100, "policy.pension_fold", .01,
      "The reform turns the pension funds into the UBI's funds: contributions (15.5% of pay) go to the state as "
      "social security, the funds' returns go to the UBI, and occupational pensions stop — with a top-up for "
@@ -395,11 +409,21 @@ LEVERS = [
      "In the reform, pay is no longer set by collective agreements (kjarasamningar) but contract by contract, on the premise that a guaranteed income lets anyone "
      "decline an offer. Off, wages follow today's agreements: price compensation and a share of productivity, renewed "
      "together. On, each contract renews at whatever the market for that profession pays."),
+    ("haggle", "Pay renegotiated all at once", "off / on", 0, 1, "policy.wage_reset", 1,
+     "A haggling round before the reform's first year, taking no time. The reform starts as the current "
+     "agreements expire, and the law extending them to everyone in a sector (Act 55/1980) is repealed, so every "
+     "contract is renegotiated together; unions stay. Everyone decides again whether, how much and in which "
+     "profession to work, among those their education allows, and each profession's pay is whatever clears it, "
+     "public pay included, against what households will spend once the reform is in place. The state does not "
+     "fill every post at any price: the dearer a public post becomes, the more of them it leaves unfilled. Where "
+     "posts do fill, the work gets lighter, so more will do it, for less. Licensed professions take no newcomers "
+     "in the round. The pay agreed holds its real value through the first year; afterwards it follows the market. "
+     "It overrides the lever above. Off, contracts reopen one by one as they expire."),
     # How people and markets respond: the uncertain elasticities the results lean on most, for sensitivity. Ranges
     # from uncertainty.RANGES. Not policy; the centre is the model's estimate.
     ("s_emigration", "How strongly emigration answers income", "elasticity", .8, 2.0,
      "migration.emigration_income_elasticity", 1,
-     "How much more people leave when pay abroad beats pay plus borgaralaun at home. 1.5 is the model's estimate. It applies to the status quo as well, so both sides are run with the same behaviour."),
+     "How much more people leave when pay abroad beats pay plus borgaralaun at home. 0.825, the value fitted to 2016-25, is the model's estimate. It applies to the status quo as well, so both sides are run with the same behaviour."),
     ("s_fertility", "How strongly births answer child income", "elasticity", .1, 1.0,
      "demography.fertility_income_elasticity", 1,
      "Births per unit change in usable child income against household income. 0.5 is the estimate; the "
@@ -440,7 +464,13 @@ OUTPUTS = [
     "balance", "balance_op", "debt", "net_income", "net_income_sd", "net_income_p10", "net_income_p90", "own_net_income",
     *[f"net_d{i}" for i in range(1, 11)],
     "emp", "fte", "standard_weeks", "weekly_hours", "unemp", "part", "independent", "ventures", "tenure",
-    "poverty", "poverty_anchored", "child_poverty", "gini", "p90_p10",
+    "poverty", "poverty_anchored", "child_poverty", "child_poverty_anchored", "poverty_after_housing",
+    "lost_over_5", "lost_over_10", "gained_over_5",
+    "poverty_women", "poverty_men", "poverty_foreign", "poverty_native",
+    "income_women", "income_men", "income_foreign", "income_native",
+    *[f"poverty_start_{g}" for g in ("pensioners", "disabled", "students", "out_of_work", "in_work")],
+    *[f"anchored_start_{g}" for g in ("pensioners", "disabled", "students", "out_of_work", "in_work")],
+    "gini", "p90_p10", "exported_payments",
     "cpi", "infl", "fx", "rent", "house", "price_to_income", "ca", "output", "population", "emig", "imm",
     "births", "kids", "child_cost", "fund_assets",
     "income_tax", "vat", "property_tax", "public_payroll", "ubi_cost", "consumption", "sovereign_fund",
@@ -449,6 +479,7 @@ OUTPUTS = [
     "automated", "machine_income", "ptr", "replacement", "housing_burden", "housing_over_40", "real_income_median",
     "service_unmet", "workload", "health_unmet", "teaching_unmet", "shortage_premium", "shortage_pay", "leave_saved",
     "distress", "brain_drain", "essential_gap", "birth_age", "childcare_short",
+    "self_employed", "self_employed_share", "owner_run",
     "inc_pensioners", "inc_disabled", "inc_students", "inc_out_of_work", "inc_in_work",
     "income_fell_20", "income_fell_40", "income_volatility", "no_buffer", "no_emergency",
     "crime", "crime_cost", "terms_of_trade", "exports", "imports", "emissions", "emissions_vs_2025",
@@ -478,22 +509,25 @@ OUTPUTS = [
 PLATFORM = {
     "ubi": 300, "child_invested": 50, "vat": 25, "income_tax": 100, "prop_tax": 100, "corporate_tax": 20,
     "wealth_tax": 0, "minimum_wage": 0, "hours": 100, "taper": 0, "indexation": 0, "payroll_cut": 10, "transition": 3, "childcare": 0,
-    "housing": 0, "retraining": 0, "fund": 0, "fx": 0, "culture": 0, "ai": 0, "clawback": 0, "frontier": 0,
+    "housing": 0, "retraining": 0, "fund": 0, "fx": 0, "culture": 0, "ai": 5, "clawback": 0, "frontier": 0,
     "infrastructure": 0, "church": 100, "governance": 100, "sick_pay": 0, "resi_cap": 5, "comm_cap": 10,
     "dev_exempt": 100, "custodianship": 0,   # off: the option is not yet specified
-    "tourism_price": 100, "marine_price": 100,
-    "aluminium_price": 100, "import_price": 100,
+    # the one world every scenario, the status quo and the headline stand in: the forecasts' (the page's START)
+    "tourism_price": 97, "marine_price": 100,
+    "aluminium_price": 108, "import_price": 101,
     "public_offset": 100, "customs": 0, "agri_cut": 100, "sub_innovation": 0, "sub_heating": 100, "sub_transition": 100,
     "sub_transport": 100, "sub_other": 100, "fish_rent": 50, "vat_input": 100,
     "pension_return": 3.81, "personal_credit": 0, "inherit_rate": 10, "inherit_floor": 6.5, "smelters": 0,
-    "pension_fold": 100, "pension_keep": 0, "prop_defer": 0, "floor_loan": 0, "venture_stake": 50, "per_diem": 100, "agreements": 1, "teen_moveout": 5, "agri_startups": 1.5,
+    # 2.1: the lawful form (docs/REVIEW.md §1 B): earned pensions paid, no standing capital controls, the
+    # disability and pension floor kept, no stake taken in companies that exist today
+    "pension_fold": 100, "pension_keep": 1, "prop_defer": 0, "floor_loan": 0, "venture_stake": 50, "per_diem": 100, "agreements": 1, "haggle": 1, "teen_moveout": 5, "agri_startups": 1.5,
     "green_heat": .5, "leave_scheme": 100, "leave_top_up": 0,
     # the reform's own settings (revised 2026-09-21)
     "robot_stake": 0, "windfall": 0, "ubi_wage": 0,
-    "history_world": 1, "ubi_index": 100, "security_spend": 10, "prof_moves": 4, "match_gain": 2, "birth_timing": 1, "net_indexation": 0, "benefit_floor": 0,
-    "staked_tax": 0,
+    "history_world": 0, "ubi_index": 100, "security_spend": 10, "prof_moves": 4, "match_gain": 2, "birth_timing": 1, "net_indexation": 0, "benefit_floor": 100,
+    "staked_tax": 0, "deemed_stake": 0,
     "gift_tax": 10, "exit_tax": 0, "enforcement": 100, "prison_ubi": 100, "ubi_protected": 100, "gambling_block": 100,
-    "free_health": 100, "free_internet": 0, "residence": 50, "capital_controls": 50,
+    "free_health": 100, "free_internet": 0, "residence": 50, "capital_controls": 0,
     # the backcast-tuned values (params.py), not the earlier estimates: until 2026-09-25 the page ran the reform
     # at 1.5 and .75 while its status quo ran at these
     "s_emigration": .825, "s_fertility": .5, "s_labour_demand": .471, "s_tourism": .8, "s_avoidance": 1.0,
@@ -511,12 +545,12 @@ TODAY = {
     "public_offset": 0, "customs": 100, "agri_cut": 0, "sub_innovation": 0, "sub_heating": 0, "sub_transition": 0,
     "sub_transport": 0, "sub_other": 0, "fish_rent": 24, "vat_input": 0,
     "personal_credit": 72.5, "inherit_rate": 10, "inherit_floor": 6.5, "smelters": 0, "pension_fold": 0, "pension_keep": 0, "prop_defer": 0,
-    "floor_loan": 0, "inherit_home": 0, "ai_subsidy": 0, "robot_subsidy": 0, "junior_subsidy": 0, "venture_stake": 0, "per_diem": 0, "agreements": 0, "teen_moveout": 0, "agri_startups": 0, "green_heat": 0, "gift_tax": 10, "exit_tax": 0, "enforcement": 0,
+    "floor_loan": 0, "inherit_home": 0, "ai_subsidy": 0, "robot_subsidy": 0, "junior_subsidy": 0, "venture_stake": 0, "per_diem": 0, "agreements": 0, "haggle": 0, "teen_moveout": 0, "agri_startups": 0, "green_heat": 0, "gift_tax": 10, "exit_tax": 0, "enforcement": 0,
     "prison_ubi": 60, "ubi_protected": 100, "gambling_block": 0, "free_health": 0, "free_internet": 0,
-    "residence": 0, "capital_controls": 0,
+    "residence": 0, "capital_controls": 0, "deemed_stake": 0,
 }
 # On or off: sampled at the two ends only, and fitted with no square.
-BINARY = {"agreements", "pension_keep", "prop_defer", "floor_loan", "inherit_home"}
+BINARY = {"agreements", "haggle", "pension_keep", "prop_defer", "floor_loan", "inherit_home", "deemed_stake"}
 KEYS = [l[0] for l in LEVERS]
 # Budget lines: they move the accounts by a fixed amount per point and nothing else, so a square or a cross term
 # would only fit noise. Three degrees of freedom each, handed back to the levers that need them.
@@ -589,15 +623,20 @@ def default_x(key):
     return float(np.clip((PLATFORM[key] - lo) / (hi - lo), 0, 1))
 
 
+# The reference reform, the picture the page opens on: where it differs from the default reform, as positions on each
+# lever. Everything else, the world included, is the default, so it cannot be left behind when an estimate is retuned.
+REFERENCE_REFORM = {"childcare": .25, "housing": 1 / 3, "retraining": .375, "church": 0, "customs": 1, "sub_heating": 0,
+                    "sub_transition": 0, "sub_transport": 0, "sub_other": 0, "pension_return": .6, "enforcement": 1}
+
+
+def reference_x():
+    return {k: float(REFERENCE_REFORM.get(k, default_x(k))) for k in KEYS}
+
+
 def status_quo_x(key):
-    """Where the exact status-quo run sits on a world lever: the model's own default, which is not always where
-    the reform's page opens (the last-decade world, for one). The page measures the status quo's world
-    changes from here, so the two are never compared in different worlds."""
-    _, _, _, lo, hi, path, scale, _ = LEVERS[KEYS.index(key)]
-    node = params.DEFAULTS
-    for part in path.split("."):
-        node = node[part]
-    return float(np.clip((float(node) / scale - lo) / (hi - lo), 0, 1))
+    """Where the exact status-quo run sits on a world lever: the one world (PLATFORM), as status_quo_series runs it.
+    The page measures the status quo's world changes from here, so the two are never compared in different worlds."""
+    return default_x(key)
 
 
 def set_path(tree, dotted, value):
@@ -628,6 +667,9 @@ def overrides_for(x):
             set_path(over, path, int(round(value)))
         elif name == "agreements":
             over["policy"]["wage_setting"] = "free_market" if xi >= .5 else "status_quo"
+        elif name == "haggle":
+            over["policy"]["wage_reset"] = xi >= .5
+            over["policy"]["wage_after_reset"] = "market"
         elif name == "smelters":
             over.setdefault("energy", {})["smelter_exit_share"] = value
         elif name == "frontier":
@@ -712,8 +754,42 @@ def status_quo_run(job):
 def status_quo_series(years):
     base = calibrated(1.0, recalibrate=False)
     load_base(pickle.dumps(base))        # in this process too: the same global the workers use
-    _, hist, sq = status_quo_run((0, None, years))
+    # 2.1: in the one world, not the model's bare defaults: the forecasts read this series and the page showed
+    # another, -172 and -134 ma.kr. for the same year
+    _, hist, sq = status_quo_run((0, np.array([default_x(k) for k in KEYS]), years))
     return base, hist, sq
+
+
+def frozen_guide_start():
+    """The Guide's start as it stood when this model's spread and test rounds were first drawn. The start is moved on
+    the first surface of a rebuild (scripts/guide_start.py), and the rounds drawn on top of it must stay the same
+    for the next stage to resume; the near round that follows is centred on the start as it now is."""
+    frozen = RAW.with_name("emulator_guide_start.json")
+    was = json.loads(frozen.read_text()) if frozen.exists() else {}
+    if was.get("model") != params_fingerprint():
+        t = (ROOT / "artifacts/explorer_v3/index.html").read_text()
+        was = {"model": params_fingerprint(),
+               "start": json.loads(re.search(r"const GUIDE_START = (\{.*?\});", t).group(1))}
+        frozen.write_text(json.dumps(was))
+    return was["start"]
+
+
+def guide_answers_x(rng):
+    """One reader's way through the Guide: a random answer to each question, applied as the page does (applyGuide)
+    on top of its starting picture. The world question is left to the run's world."""
+    t = (ROOT / "artifacts/explorer_v3/index.html").read_text()
+    start = frozen_guide_start()
+    block = t[t.index("const GUIDE = ["):t.index("\n];", t.index("const GUIDE = ["))]
+    x = np.array([start.get(k, default_x(k)) for k in KEYS], float)
+    for qid, opts in re.findall(r'id: "(\w+)".*?options: \[(.*?)\]\s*\}', block, re.S):
+        choices = re.findall(r"\{([^{}]*)\}", opts)
+        if qid == "world" or not choices:
+            continue
+        for k, v in re.findall(r"(\w+):\s*(-?[\d.]+)", choices[rng.integers(len(choices))]):
+            if k in KEYS:
+                lo, hi = next((l[3], l[4]) for l in LEVERS if l[0] == k)
+                x[KEYS.index(k)] = np.clip((float(v) - lo) / (hi - lo), 0, 1)
+    return x
 
 
 def world_design(n, rng):
@@ -830,6 +906,78 @@ def simulate(a):
         best = np.array([np.abs(nonlocal_W - Cw[i % len(C3)]).sum(1).argmin() for i in range(a.near3)])
         X[-a.near3:, wj] = nonlocal_W[best]
         world_of[-a.near3:] = best
+    # 2.1: a fourth near round, on the scenarios found on the 2.1 surface. The reform's defaults moved (earned
+    # pensions paid, the floor, the haggling round), the scenarios with them, and the near rounds' centres were
+    # 2.0's: the nearest run to eight of the nine lay 1.7-2.0 away, and the surface's 2035 budget was 50-224 ma.kr.
+    # above the model's at all nine, while the runs near the reference reform it fitted within 33 on average
+    # (2026-11-03). Each run in the world nearest its scenario's, as in --near3.
+    if a.near4 and a.near4_centers:
+        near_round(a.near4, a.near4_centers, 8)
+        C4 = json.loads(pathlib.Path(a.near4_centers).read_text())
+        Cw = np.array([[c_["x"].get(k, default_x(k)) for k in WORLD] for c_ in C4])
+        best = np.array([np.abs(W - Cw[i % len(C4)]).sum(1).argmin() for i in range(a.near4)])
+        X[-a.near4:, wj] = W[best]
+        world_of[-a.near4:] = best
+    # A spread round, after the near rounds: the Guide's readers land on combinations of its answers, and the explorer's
+    # anywhere. A reader's 375 þús. answers came out 174 ma.kr. below the surface's 2035 budget in the model, and
+    # four nearby settings 100-270 below, while the cross-validated R² of the budget was .98 (2026-10-29): the
+    # runs lay elsewhere. Half the round is random sets of Guide answers, half a fresh hypercube over every lever;
+    # the Guide's runs and half the hypercube in the page's own world, the rest in the drawn worlds.
+    if a.spread:
+        rs = np.random.default_rng(a.seed + 6)
+        page_w = len(W) - 1 if a.near3 else int(rs.integers(0, a.world_points))
+        g = a.spread // 2
+        G = np.array([guide_answers_x(rs) for _ in range(g)])
+        H, _ = design(a.spread - g, len(LEVERS), rs, candidates=50)
+        for name in BINARY:
+            j = KEYS.index(name)
+            G[:, j] = (G[:, j] >= .5).astype(float)
+            H[:, j] = (H[:, j] >= .5).astype(float)
+        of = np.concatenate([np.full(g, page_w), np.where(np.arange(len(H)) % 2 == 0, page_w,
+                                                          rs.integers(0, a.world_points, len(H)))])
+        S = np.vstack([G, H])
+        S[:, wj] = W[of]
+        X = np.vstack([X, S])
+        world_of = np.concatenate([world_of, of])
+    # A test round, last of all and never fitted (fit_all's holdout): random sets of Guide answers in the page's own
+    # world, the way readers answer. The surface's error on them is the band the page shows.
+    if a.test:
+        rs = np.random.default_rng(a.seed + 7)
+        page_w = len(W) - 1 if a.near3 else int(rs.integers(0, a.world_points))
+        T = np.array([guide_answers_x(rs) for _ in range(a.test)])
+        for name in BINARY:
+            j = KEYS.index(name)
+            T[:, j] = (T[:, j] >= .5).astype(float)
+        T[:, wj] = W[page_w]
+        X = np.vstack([X, T])
+        world_of = np.concatenate([world_of, np.full(a.test, page_w)])
+    # 2.1: each lever alone, from the Guide's start to each end of its range. Single moves are what a reader tries
+    # first, and they are where the surface missed most (taper, clawback, capital controls). Never fitted.
+    a.oneway_runs = 0
+    if a.oneway:
+        # from the start as it stood when these runs were first drawn: the Guide's start moves on this surface, and
+        # the near round that follows must find the same design to resume
+        frozen = RAW.with_name("emulator_oneway_start.json")
+        was = json.loads(frozen.read_text()) if frozen.exists() else {}
+        if was.get("model") != params_fingerprint():
+            g = json.loads((ROOT / "data/processed/scenarios_guide_page.json").read_text())[0]["x"]
+            was = {"model": params_fingerprint(), "x": [g.get(k, default_x(k)) for k in KEYS]}
+            frozen.write_text(json.dumps(was))
+        x0 = np.array(was["x"])
+        O = []
+        for j, k in enumerate(KEYS):
+            if k in WORLD or j % a.oneway_step:
+                continue
+            for end in (0.0, 1.0):
+                if abs(x0[j] - end) > .05:
+                    O.append(x0.copy())
+                    O[-1][j] = end
+        O = np.array(O)
+        page_w = len(W) - 1 if a.near3 else int(np.random.default_rng(a.seed + 8).integers(0, a.world_points))
+        O[:, wj] = W[page_w]
+        X = np.vstack([X, O])
+        world_of = np.concatenate([world_of, np.full(len(O), page_w)])
+        a.oneway_runs = len(O)
     n = len(X)
     c = np.corrcoef(X[:a.draws].T)
     np.fill_diagonal(c, 0)
@@ -869,9 +1017,20 @@ def simulate(a):
         if same and np.allclose(old["X"], X[:m]):
             Y = old["Y"][:m] + [None] * (n - m)
             print(f"resuming: {sum(y is not None for y in Y)} runs already saved", flush=True)
+        elif old["levers"] == KEYS and old["years"] == a.years and np.shape(old["X"])[1] == X.shape[1] \
+                and old.get("model") == params_fingerprint():
+            # a round inserted before the later ones (--near4 before --spread and --test): every saved run is kept
+            # where its settings recur in this design
+            saved = {tuple(np.round(x, 9)): y for x, y in zip(old["X"], old["Y"]) if y is not None}
+            Y = [saved.get(tuple(np.round(x, 9))) for x in X]
+            kept = sum(y is not None for y in Y)
+            print(f"resuming by settings: {kept} of {len(saved)} saved runs recur", flush=True)
+            if kept < len(saved):
+                raise SystemExit("saved runs under this model are missing from the design; not rerunning them")
 
     def save():
         RAW.write_text(json.dumps({"X": X.tolist(), "Y": Y, "levers": KEYS, "years": a.years, "model": params_fingerprint(),
+                                   "test": a.test, "oneway": a.oneway_runs,
                                    "status_quo": status_quo, "world": {"W": W.tolist(), "of": world_of.tolist(),
                                                                        "status_quo": sq_world},
                                    "generated": time.strftime("%Y-%m-%d")},
@@ -952,9 +1111,12 @@ def importance(A, terms, beta):
     return imp
 
 
-def fit_output(X, Y, folds):
-    """One output, every year. Y: runs × years, finite."""
+def fit_output(X, Y, folds, level=None):
+    """One output, every year. Y: runs × years, finite. Fitted to what it is given; `level` is what to add back to
+    say how well the output itself is reproduced (fit_all fits the difference from each run's status quo)."""
     n, k = X.shape
+    level = np.zeros_like(Y) if level is None else level
+    scored = lambda y, pred: r2_of(Y[:, y] + level[:, y], pred + level[:, y])
     terms = base_terms(k)
     A = columns(X, terms)
     imp = importance(A, terms, ridge(A, Y, 1e-4))
@@ -972,7 +1134,7 @@ def fit_output(X, Y, folds):
             pred[lam][f] = A[f] @ ridge(A[tr], Y[tr], lam)
     years = Y.shape[1]
     lam_y = [max(LAMBDAS, key=lambda l: r2_of(Y[:, y], pred[l][:, y])) for y in range(years)]
-    r2_poly = [r2_of(Y[:, y], pred[lam_y[y]][:, y]) for y in range(years)]
+    r2_poly = [scored(y, pred[lam_y[y]][:, y]) for y in range(years)]
     beta = np.column_stack([ridge(A, Y[:, [y]], lam_y[y])[:, 0] for y in range(years)])
     poly_cv = np.column_stack([pred[lam_y[y]][:, y] for y in range(years)])
 
@@ -1009,7 +1171,7 @@ def fit_output(X, Y, folds):
         c_tr = np.intersect1d(centres, tr)
         alpha = sor(X[c_tr], X[tr], r_tr)
         both_cv[f] = A[f] @ B + kernel(X[f], X[c_tr], dims, w, ell) @ alpha
-    r2_both = [r2_of(Y[:, y], both_cv[:, y]) for y in range(years)]
+    r2_both = [scored(y, both_cv[:, y]) for y in range(years)]
     gain = float(np.mean(np.array(r2_both) - np.array(r2_poly)))
     cut = float(np.mean([1 - (1 - b) / (1 - p) for b, p in zip(r2_both, r2_poly) if 1 - p > 1e-4] or [0.0]))
     out = {"terms": [list(t) for t in extra],
@@ -1145,6 +1307,38 @@ def fit_status_quo(world, status_quo, years):
     return {"terms": [list(t) for t in terms], "beta": out, "r2": r2s}
 
 
+def status_quo_terms_at(sq_world, s, X):
+    """The fitted status quo of output s at the settings X, one row per setting, one column per year."""
+    A = columns(X, [tuple(t) for t in sq_world["terms"]])
+    return A @ np.array(sq_world["beta"][s]).T
+
+
+def put_in_level_form(c, sq_world, s, exact, years):
+    """Add the status quo of the run's world back into a surface fitted to differences, so that the surface still
+    gives the output itself and every reader of it (the page, the search, the checks) works as before. Set to meet
+    the exact status-quo run where the page's status quo meets it, so that the page's difference between the two is
+    the fitted difference and nothing else."""
+    terms = [tuple(t) for t in base_terms(len(KEYS))] + [tuple(t) for t in c["terms"]]
+    at = {t: i for i, t in enumerate(terms)}
+    wanted = [tuple(t) for t in sq_world["terms"]]
+    new = [t for t in wanted if t not in at]
+    for t in new:
+        at[t] = len(terms)
+        terms.append(t)
+    c["terms"] = c["terms"] + [list(t) for t in new]
+    x0 = np.array([default_x(k) for k in KEYS])[None, :]
+    fit0 = status_quo_terms_at(sq_world, s, x0)[0]
+    for y in range(years):
+        if not c["beta"][y]:
+            continue
+        beta = c["beta"][y] + [0.0] * (len(terms) - len(c["beta"][y]))
+        for t, b in zip(wanted, sq_world["beta"][s][y]):
+            beta[at[t]] += b
+        if exact[y] is not None:
+            beta[0] += exact[y] - fit0[y]
+        c["beta"][y] = beta
+
+
 def year_list(years, first=2026, yearly=10, step=5):
     """The calendar years the surface carries: every year for the first ten, then every fifth year — a 35-year
     run is fitted at 2026-2035 and 2040, 2045, ... 2060, which keeps the page loadable while the year slider reaches
@@ -1165,7 +1359,60 @@ def thin(series, idx, key):
     return [series[i] if i < len(series) else None for i in idx]
 
 
-def fit_all(X, Y, status_quo, years, draws, world=None):
+# Scored on the runs kept out of the fit (--holdout): the outputs most read, in the reform's tenth year and its last.
+HOLDOUT_OUTPUTS = ("balance", "net_income", "fte", "cpi", "essential_gap", "poverty", "debt")
+
+
+def surface_at(c, terms, X, X_fit):
+    """The fitted surface for one output at the settings X, as the page computes it (termAt, kernelAt): one row per
+    setting, one column per year kept."""
+    def term(U, t):
+        if not t:
+            return np.ones(len(U))
+        if len(t) == 1:
+            return U[:, t[0]]
+        if t[0] == t[1]:
+            return U[:, t[0]] ** 2 - 1 / 12
+        return U[:, t[0]] * U[:, t[1]]
+    U = X - .5
+    T = np.stack([term(U, t) for t in list(terms) + list(c.get("terms") or [])], 1)
+    K = None
+    if c.get("kernel"):
+        k = c["kernel"]
+        R = X_fit[k["rows"]]
+        d2 = sum(k["w"][a] * (X[:, None, d] - R[None, :, d]) ** 2 for a, d in enumerate(k["dims"]))
+        K = np.exp(-d2 / (2 * k["ell"] ** 2))
+    cols = []
+    for y, beta in enumerate(c["beta"]):
+        if not len(beta):
+            cols.append(np.full(len(X), np.nan))
+            continue
+        v = T[:, :len(beta)] @ np.asarray(beta)
+        if K is not None and len(c["kernel"]["alpha"][y]):
+            v = v + K @ np.asarray(c["kernel"]["alpha"][y])
+        cols.append(v)
+    return np.stack(cols, 1)
+
+
+def score_holdout(coeffs, X_fit, X_out, Y_out, years_kept):
+    """Root mean squared error of the surface on runs it was not fitted to, per output and year kept. The runs are
+    single runs, so the error takes in the model's own noise from one seed to another as well as the surface's."""
+    terms = base_terms(len(KEYS))
+    err = {}
+    for s, c in coeffs.items():
+        P = surface_at(c, terms, X_out, X_fit)
+        T = np.array([[np.nan if v is None else v for v in (y or {}).get(s, [None] * len(years_kept))]
+                      for y in Y_out], dtype=float)
+        if s in SMOOTHED and not _PRESMOOTHED:
+            T = smooth(T)
+        e = P - T
+        ok = np.isfinite(e)
+        err[s] = [float(np.sqrt((e[ok[:, j], j] ** 2).mean())) if ok[:, j].sum() >= 20 else None
+                  for j in range(e.shape[1])]
+    return err
+
+
+def fit_all(X, Y, status_quo, years, draws, world=None, holdout=0, oneway=0):
     global _PRESMOOTHED
     t = time.time()
     years_kept = year_list(years)
@@ -1178,10 +1425,32 @@ def fit_all(X, Y, status_quo, years, draws, world=None):
             world = {**world, "status_quo": [{k: thin(v, idx, k) for k, v in sq.items()} for sq in world["status_quo"]]}
         years = len(idx)
         _PRESMOOTHED = True
+    # the last runs of the design are kept out of the fit and scored on afterwards
+    X_out, Y_out, of_out = None, None, None
+    held = holdout + oneway
+    if held:
+        X_out, Y_out = X[-held:], Y[-held:]
+        X, Y = X[:-held], Y[:-held]
+        draws = len(X)
+        of_out = np.array(world["of"][-held:]) if world else None
+        print(f"{held} runs kept out of the fit to score it on", flush=True)
     rng = np.random.default_rng(99)
-    folds = np.array_split(rng.permutation(len(X)), FOLDS)
+    # 2.1: fitted to the difference from the status quo of each run's own world, which is what the page reads, and
+    # checked with every run of a world out of the fold together: runs that share a world share its status quo
+    of = None if not world else np.array(world["of"][:len(X)])
+    sq_world = fit_status_quo(world, status_quo, years) if world else None
+    if of is not None:
+        folds = [np.flatnonzero(np.isin(of, g))
+                 for g in np.array_split(rng.permutation(np.unique(of)), FOLDS)]
+    else:
+        folds = np.array_split(rng.permutation(len(X)), FOLDS)
     exact = exact_checks(X, Y, years)
-    coeffs, r2, r2_poly = {}, {}, {}
+
+    def run_status_quo(s, which):
+        """The status quo each run was measured against: runs × years."""
+        return np.array([[np.nan if v is None else v for v in world["status_quo"][w].get(s, [None] * years)]
+                         for w in which], dtype=float)
+    coeffs, r2, r2_poly, cv_err = {}, {}, {}, {}
     kernels = 0
     for s in OUTPUTS:
         if s not in METRICS or s in exact:
@@ -1196,7 +1465,17 @@ def fit_all(X, Y, status_quo, years, draws, world=None):
             print(f"  {s}: too few finite runs, skipped", flush=True)
             continue
         sub_folds = [np.flatnonzero(np.isin(np.flatnonzero(rows), f)) for f in folds]
-        out, score, poly = fit_output(X[rows], M[rows][:, ok_years], sub_folds)
+        paired = sq_world is not None and s in sq_world["beta"]
+        if paired:
+            S = run_status_quo(s, of)
+            if s in SMOOTHED and not _PRESMOOTHED:
+                S = smooth(S)
+            paired = np.isfinite(S[rows][:, ok_years]).all()
+        if paired:
+            sq_level = S[rows][:, ok_years]
+            out, score, poly = fit_output(X[rows], M[rows][:, ok_years] - sq_level, sub_folds, sq_level)
+        else:
+            out, score, poly = fit_output(X[rows], M[rows][:, ok_years], sub_folds)
         # years that could not be fitted stay empty, as before
         full_beta, full_r2, full_poly, full_alpha, it = [], [], [], [], 0
         for y in range(years):
@@ -1211,12 +1490,17 @@ def fit_all(X, Y, status_quo, years, draws, world=None):
                 if "kernel" in out:
                     full_alpha.append([])
         out["beta"] = full_beta
+        if paired:
+            put_in_level_form(out, sq_world, s, status_quo.get(s, [None] * years), years)
         if "kernel" in out:
             out["kernel"]["alpha"] = full_alpha
             # the page reads the centres as rows of X (kernelAt): indices among all runs
             out["kernel"]["rows"] = [int(r) for r in np.flatnonzero(rows)[out["kernel"].pop("centres")]]
             kernels += 1
         coeffs[s], r2[s], r2_poly[s] = out, full_r2, full_poly
+        # the cross-validated error, from R² and the spread of the runs
+        sd = np.nanstd(M, axis=0)
+        cv_err[s] = [float(np.sqrt(max(0.0, 1 - full_r2[y])) * sd[y]) for y in range(years)]
 
     sq = {k: ([float(v) for v in smooth([s_])[0]] if k in SMOOTHED and not _PRESMOOTHED else s_)
           for k, s_ in status_quo.items()}
@@ -1235,7 +1519,36 @@ def fit_all(X, Y, status_quo, years, draws, world=None):
         "smoothed": list(SMOOTHED), "exact": exact,
         "generated": time.strftime("%Y-%m-%d"),
     }
-    sq_world = fit_status_quo(world, status_quo, years) if world else None
+    # The band shown on the page: the error on the held-out runs, drawn the way readers answer; failing those,
+    # the cross-validated error over every run.
+    err = dict(cv_err)
+    if holdout:
+        scored = score_holdout(coeffs, X, X_out[:holdout], Y_out[:holdout], years_kept)
+        for s_, v in scored.items():
+            err[s_] = [h if h is not None else c for h, c in zip(v, cv_err.get(s_, v))]
+        # 2.1: and the same error on the difference from the status quo, which is what the page's comparisons read
+        if sq_world and "balance" in coeffs:
+            x0 = np.array([default_x(k) for k in KEYS])[None, :]
+            shift = np.array(status_quo["balance"]) - status_quo_terms_at(sq_world, "balance", x0)[0]
+            P = surface_at(coeffs["balance"], base_terms(len(KEYS)), X_out, X) \
+                - status_quo_terms_at(sq_world, "balance", X_out) - shift
+            T = np.array([y["balance"] for y in Y_out], float) - run_status_quo("balance", of_out)
+            j = years_kept.index(2035)
+            e = (P[:, j] - T[:, j]) ** 2
+            meta["difference_error_2035"] = float(np.sqrt(np.nanmean(e[:holdout])))
+            print(f"error  balance against the status quo, 2035, held out: {meta['difference_error_2035']:.1f} ma.kr.",
+                  flush=True)
+            if oneway:
+                meta["one_lever_error_2035"] = float(np.sqrt(np.nanmean(e[holdout:])))
+                print(f"error  the same, each lever moved alone: {meta['one_lever_error_2035']:.1f} ma.kr.", flush=True)
+        picks = [y for y in (2035, years_kept[-1]) if y in years_kept]
+        meta["holdout"] = {"runs": int(holdout), "outputs": {
+            s_: {str(yr): {"held_out": scored[s_][years_kept.index(yr)], "cross_validated": cv_err[s_][years_kept.index(yr)]}
+                 for yr in picks} for s_ in HOLDOUT_OUTPUTS if s_ in scored and s_ in cv_err}}
+        for s_, by in meta["holdout"]["outputs"].items():
+            print("error  " + s_.ljust(14) + "  ".join(
+                f"{yr}: held out {v['held_out']:.4g}, cross-validated {v['cross_validated']:.4g}"
+                for yr, v in by.items() if v["held_out"] is not None), flush=True)
     if sq_world:
         moving = {s: v for s, v in sq_world["r2"].items()}
         print(f"status quo against world prices: {len(moving)} outputs, median cross-validated R² "
@@ -1252,6 +1565,8 @@ def fit_all(X, Y, status_quo, years, draws, world=None):
     pay = {k: v for k, v in coeffs.items() if k.startswith("pp_")}
     main = {k: v for k, v in coeffs.items() if not k.startswith("pp_")}
     payload = {"meta": meta, "coeffs": r7(main), "r2": r2, "r2_poly": r2_poly, "status_quo": sq,
+               "err": {k: [None if v is None else float(f"{v:.3g}") for v in e] for k, e in err.items()
+                       if not k.startswith("pp_")},
                "status_quo_world": r7(sq_world),
                "X": [[round(float(v), 5) for v in row] for row in X] if kernels else None}
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -1283,7 +1598,19 @@ def main():
     ap.add_argument("--near3", type=int, default=0, help="a third near round, in the page's own world (the last entry "
                     "of --near3-centers)")
     ap.add_argument("--near3-centers", default=None, help="a scenarios file whose settings the --near3 runs centre on")
+    ap.add_argument("--near4", type=int, default=0, help="a fourth near round, each run in the world nearest its "
+                    "scenario's (2.1)")
+    ap.add_argument("--near4-centers", default=None, help="a scenarios file whose settings the --near4 runs centre on")
+    ap.add_argument("--spread", type=int, default=0, help="runs after the near rounds: half random Guide answer sets, half "
+                    "a fresh hypercube over every lever (see simulate)")
     ap.add_argument("--years", type=int, default=10)
+    ap.add_argument("--test", type=int, default=0, help="a last round of this many random Guide answer sets, kept out of "
+                    "the fit and scored on (see simulate)")
+    ap.add_argument("--holdout", type=int, default=None, help="keep the last this many runs out of the fit and score "
+                    "the surface on them (meta.holdout); the --test runs by default")
+    ap.add_argument("--oneway-step", type=int, default=1, help="every nth lever only (a smoke test)")
+    ap.add_argument("--oneway", action="store_true", help="after --test, each lever moved alone from the Guide's "
+                    "start to its ends and middle, kept out of the fit with the test runs")
     ap.add_argument("--seed", type=int, default=12)
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1))
     ap.add_argument("--world-points", type=int, default=WORLD_POINTS)
@@ -1304,10 +1631,12 @@ def main():
             keep = [i for i, y in enumerate(Y) if y is not None]
             print(f"refitting the {len(keep)} of {len(Y)} runs that finished", flush=True)
             X, Y = X[keep], [Y[i] for i in keep]
-        fit_all(X, Y, raw["status_quo"], raw["years"], len(X), raw.get("world"))
+            raw["world"]["of"] = [raw["world"]["of"][i] for i in keep]
+        fit_all(X, Y, raw["status_quo"], raw["years"], len(X), raw.get("world"),
+                a.holdout if a.holdout is not None else raw.get("test", 0), raw.get("oneway", 0))
         return
     X, Y, status_quo, world = simulate(a)
-    fit_all(X, Y, status_quo, a.years, len(X), world)
+    fit_all(X, Y, status_quo, a.years, len(X), world, a.holdout if a.holdout is not None else a.test, a.oneway_runs)
 
 
 if __name__ == "__main__":

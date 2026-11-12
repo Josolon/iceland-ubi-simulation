@@ -4,8 +4,9 @@
     .venv/bin/python scripts/predictions.py --check    # set every version's against data/processed/record.json
 
 The forecasts are the exact status-quo run the explorer page carries (artifacts/explorer_v3/emulator.js): today's
-tax and benefit rules, the world as the forecasts describe it (prices near the 2.5% target, world prices for tourism,
-fish, aluminium and imports at their 2025 level) and no faster AI than today's. They are therefore conditional on
+tax and benefit rules, the world as the forecasts describe it (world prices for tourism,
+fish, aluminium and imports at their 2025 level) and no faster AI than today's. Inflation comes out at 3-4% a year, above
+the 2.5% target, from rents, non-tradable prices and a slow real fall in the króna. They are therefore conditional on
 that world. A miss that the world explains (a tourism collapse, an eruption, a war) is not a failure of the model's
 behaviour, and the margin cannot tell the two apart. The stronger test, once the years have happened, is the one
 scripts/backcast.py makes for 2016-2025: run the years with the world as it was and compare again.
@@ -31,14 +32,14 @@ YEARS = [2026, 2027, 2028, 2029, 2030]
 # output key, what it is, the margin, its unit, and how the margin was set
 FORECASTS = [
     ("unemp", "unemployment rate, 16-74 (labour force survey)", 0.010, "share",
-     "the backcast misses by 0.25 points on average with demand identified; 1 point allows for the demand shocks a "
+     "the backcast misses by 0.1 points on average with demand identified; 1 point allows for the demand shocks a "
      "forecast cannot know"),
-    ("emp", "employment rate, 16-74", 0.025, "share", "the backcast's mean miss is 1.4 points, with a bias of -1.1"),
+    ("emp", "employment rate, 16-74", 0.025, "share", "the backcast's mean miss is 1.7 points, with a bias of -1.5"),
     ("infl", "consumer price inflation, annual average", 0.020, "share",
      "a judgement: the backcast reproduces prices only through an identified exchange-rate shock, so prices are "
      "the least tested forecast here"),
     ("population", "population on 1 January of the following year", 0.015, "relative",
-     "the backcast ends 1.0% above the record in 2025"),
+     "the backcast ends 0.4% above the record in 2025"),
     ("births", "live births", 0.10, "relative",
      "a judgement: births are fixed near 4,300 a year in the base and move only through income"),
     ("poverty", "at-risk-of-poverty rate, persons (60% of the median)", 0.020, "share",

@@ -47,11 +47,13 @@ def run_one(job):
     scaled against. Leaving it out makes every scenario look better than it is, by a wide and consistent margin
     (found 2026-09-21, when a first verification showed the model beating the surface's budget four times over
     in every single scenario, which is not what a fit error looks like)."""
-    name, x, years = job
+    name, x, years, seed = job
     x = np.asarray(x)
     sq = model.scenario(_BASE, world_overrides(x))
-    sq_rows = [sq.step() for _ in range(years)]
     soc = model.scenario(_BASE, overrides_for(x))
+    if seed:
+        sq.rng, soc.rng = np.random.default_rng(seed), np.random.default_rng(seed)
+    sq_rows = [sq.step() for _ in range(years)]
     soc.reference = sq.own_history
     rows = [soc.step() for _ in range(years)]
     return name, {**{short: [r.get(METRICS.get(short, col)) for r in rows] for short, col, _ in SHOW},
@@ -64,6 +66,7 @@ def main():
     ap.add_argument("--years", type=int, default=10)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--out", default="data/processed/scenarios_verified.json")
+    ap.add_argument("--seeds", type=int, default=5, help="runs of each scenario, each with its own status quo")
     a = ap.parse_args()
     scen = json.loads((ROOT / a.file).read_text())
     if isinstance(scen, dict):
@@ -75,11 +78,19 @@ def main():
     for sc in scen:
         x = sc["x"] if isinstance(sc["x"], list) else [sc["x"].get(k, s.levers[i]["default"])
                                                        for i, k in enumerate(KEYS)]
-        jobs.append((sc["name"], x, a.years))
+        jobs += [(sc["name"], x, a.years, seed) for seed in range(a.seeds)]
+    # 2.1: what is published is the mean over seeds, with their spread: one lever's effect on the 2035 balance cannot
+    # be read below about ±15 ma.kr. from a single run
     with ProcessPoolExecutor(a.workers, initializer=load_base, initargs=(blob,)) as ex:
-        got = dict(ex.map(run_one, jobs))
+        runs = {}
+        for name, r in ex.map(run_one, jobs):
+            runs.setdefault(name, []).append(r)
+    mean = lambda v: None if any(u is None for u in v) else float(np.mean(v))
+    got = {name: {k: [mean([r[k][y] for r in rs]) for y in range(a.years)] for k in rs[0]} for name, rs in runs.items()}
     out = {}
-    for name, x, _ in jobs:
+    for name, x, _, seed in jobs:
+        if seed:
+            continue
         X = np.asarray(x, float)[None, :]
         pred = s.eval(X, [k for k, _, _ in SHOW])
         print(f"\n{name}")
@@ -95,7 +106,10 @@ def main():
             d = "" if not p else f"{100 * (m / p - 1):+.1f}%" if abs(p) > 1e-9 else ""
             q = got[name]["sq_" + short][-1]
             print(f"  {short:22s} {m:12,.3f} {p:12,.3f} {d:>12s} {q if q is not None else float('nan'):12,.3f}   {unit}")
-            rec[short] = {"model": float(m), "surface": p, "status_quo": None if q is None else float(q)}
+            diffs = [r[short][-1] - r["sq_" + short][-1] for r in runs[name]
+                     if r[short][-1] is not None and r["sq_" + short][-1] is not None]
+            rec[short] = {"model": float(m), "surface": p, "status_quo": None if q is None else float(q),
+                          "seeds": len(runs[name]), "sd_vs_status_quo": float(np.std(diffs, ddof=1)) if len(diffs) > 1 else None}
         out[name] = rec
     (ROOT / a.out).write_text(json.dumps(out, indent=1))
     print(f"\nwrote {ROOT / a.out}")

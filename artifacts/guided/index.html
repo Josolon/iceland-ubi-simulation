@@ -75,6 +75,7 @@ h1, h2, h3 { text-wrap: balance; }
 .vcard .d { font: 500 13px/1.4 var(--mono); }
 .vcard .d.up { color: var(--up); } .vcard .d.down { color: var(--down); }
 .vcard .note { font: 400 12.5px/1.45 var(--body); color: var(--ink-2); }
+.vcard .band { font: 500 11.5px/1.4 var(--mono); color: var(--muted); }
 
 /* ---------- layout ---------- */
 .shell { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 26px; align-items: start; }
@@ -108,6 +109,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); margin: 4px 0 0;
 .note-box { margin: 0; padding: 8px 10px; background: var(--panel-2); border-radius: 3px;
   font: 400 12px/1.5 var(--body); color: var(--ink-2); }
 .note-box b { color: var(--ink); font-weight: 600; }
+.lever.idle input, .lever.idle .switch, .lever.idle .val { opacity: .45; }
+.idle-why { margin: 0; font-size: .82em; color: var(--muted, inherit); }
 .group { border-top: 1px solid var(--rule); padding-top: 14px; display: flex; flex-direction: column; gap: 14px; }
 .group > h3 { margin: 0; font: 700 12px/1.2 var(--display); letter-spacing: .08em;
   text-transform: uppercase; color: var(--accent); }
@@ -134,6 +137,16 @@ input[type="range"] { width: 100%; accent-color: var(--accent); margin: 4px 0 0;
   color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 3px 5px; }
 .gtags b { font: 600 12px var(--mono); color: var(--accent); min-width: 3.2em; text-align: right; }
 .ghint { font-size: 12.5px; color: var(--muted); margin: 12px 0 0; }
+.gpc { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 10px 0 0; font-size: 14.5px; line-height: 1.4; }
+.gpc dt { font: 600 10.5px/1.9 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.gpc dd { margin: 0; }
+.gtags i { font: 600 10.5px/1 var(--body); font-style: normal; letter-spacing: .04em; white-space: nowrap;
+  color: var(--ink-2); border: 1px dashed var(--rule); border-radius: 3px; padding: 3px 5px; }
+.gtags i.b-const, .gtags i.b-eea { color: var(--crit); border-color: var(--crit); }
+.gtags i.b-agree, .gtags i.b-comp, .gtags i.b-new { color: var(--warn); border-color: var(--warn); }
+.gstart { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+.gstart .seg { min-width: min(100%, 420px); }
+@media (max-width: 560px) { .gopt { grid-template-columns: auto 1fr; } .gtags { grid-column: 2; flex-wrap: wrap; } }
 .gnav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 16px; }
 .gnav .gnext { border-color: var(--accent); color: var(--ink); font-weight: 600; }
 .reset:disabled { opacity: .45; cursor: default; }
@@ -274,7 +287,7 @@ footer p { margin: 0; }
    weights, which do not compress further without refitting it). First what every view needs, and the page
    starts; then the kernel weights, until which no fitted number is shown; then the long view. */
 window.UBI_LOAD = (() => {
-  const STEPS = [["data.js", "levers.js", "emulator.js", "births.js", "past.js"],
+  const STEPS = [["data.js", "emulator.js", "births.js", "past.js"],
                  ["emulator_k.js", "emulator_k2.js", "emulator_k3.js"], ["timeline.js", "past_grid.js"]];
   const st = { step: 0, done: 0, failed: [] };
   const add = src => new Promise(ok => {
@@ -320,17 +333,15 @@ window.UBI_START = () => {
 /* One page, two builds: the explorer, and the guided version, where people answer questions that set the levers.
    scripts/build_guided.py writes the guided build from this file. */
 const MODE = "guided";
-const D = window.UBI_DATA, L = window.UBI_LEVERS, E = window.UBI_EMU, B = window.UBI_BIRTHS;
+const D = window.UBI_DATA, E = window.UBI_EMU, B = window.UBI_BIRTHS;
 const PAST = window.UBI_PAST;
 const main = document.getElementById("main"), board = document.getElementById("board");
-if (!D || !L) {
-  main.innerHTML = '<p class="loading">Model data did not load. Re-run scripts/build_explorer_data.py and ' +
-    'scripts/build_lever_data.py, then republish.</p>';
+if (!D || !E) {
+  main.innerHTML = '<p class="loading">The model data did not load. Reload the page to try again.</p>';
   return;
 }
-const UBI = L.meta.ubi, LEV = L.meta.levers, BASE_YEAR = 2025;
-// the two datasets must agree on the horizon; take the shorter if they ever differ
-const YEARS = E ? E.meta.years : Math.min(L.meta.years, D.meta.years || L.meta.years);
+const UBI = D.meta.ubi, BASE_YEAR = 2025;
+const YEARS = E.meta.years;
 /* The calendar years the page shows. From v7 the surface reaches 2060: every year to 2035, then every fifth year.
    `yearOf(i)` takes the 1-based index the year slider holds. */
 const YEAR_LIST = (E && E.meta.year_list) || Array.from({ length: YEARS }, (_, i) => BASE_YEAR + 1 + i);
@@ -339,8 +350,7 @@ const yearOf = i => YEAR_LIST[Math.max(1, Math.min(i, YEAR_LIST.length)) - 1];
 const onYears = a => Array.isArray(a) ? YEAR_LIST.map(y => a[y - BASE_YEAR - 1] ?? null) : a;
 /* The surrogate carries its own status quo, run from the same calibration as the runs it was fitted to, and
    averaged the same way where an output is shown as an average. Where it has one, that is the comparison. */
-const SQ0 = E ? { ...Object.fromEntries(Object.entries(D.status_quo).map(([k, v]) => [k, onYears(v)])), ...E.status_quo }
-             : D.status_quo;
+const SQ0 = { ...Object.fromEntries(Object.entries(D.status_quo).map(([k, v]) => [k, onYears(v)])), ...E.status_quo };
 /* The status quo lives in the same world as the reform: when fish, tourism, aluminium or import prices move,
    it moves too. The exact status-quo run is at 2025 prices; a surface fitted to status-quo runs under several
    dozen world prices adds the change from there. */
@@ -413,7 +423,7 @@ function sqWorld() {
 
 const state = {
   ubi: Math.max(0, UBI.indexOf(450)), year: Math.min(10, YEARS), tab: "summary", vopen: null,
-  set: Object.fromEntries(Object.keys(LEV).map(k => [k, 0])), open: null,
+  open: null,
   x: {},   // filled once the levers are known, below
   view: MODE === "guided" ? "guide" : "explorer",
   guide: { i: 0, answers: {} },
@@ -432,43 +442,17 @@ function derive(out) {
   return out;
 }
 function scenario() {
-  if (E) {
-    const x = EL.map(l => state.x[l.key] ?? 0);
-    const u = x.map(v => v - .5), base = E.meta.terms.map(t => termAt(u, t));
-    const out = {};
-    for (const key of E.meta.outputs) {
-      const s = emuSeries(key, x, base);
-      if (s) out[key] = s;
-    }
-    derive(out);
-    return { series: out, moved: EL.filter(l => Math.abs((state.x[l.key] ?? 0) - defaultX(l)) > .01).length };
-  }
-  const u = UBI[state.ubi];
-  const core = L.core[`core|${u}`] || {};
-  const moved = Object.entries(state.set).filter(([, i]) => i > 0);
+  const x = EL.map(l => state.x[l.key] ?? 0);
+  const u = x.map(v => v - .5), base = E.meta.terms.map(t => termAt(u, t));
   const out = {};
-  for (const k in core) out[k] = core[k].slice();
-  for (const [name, i] of moved) {
-    const d = deltaAt(name, i, u);
-    if (!d) continue;
-    for (const k in d) {
-      if (!out[k]) continue;
-      for (let y = 0; y < out[k].length; y++) {
-        if (out[k][y] != null && d[k][y] != null) out[k][y] += d[k][y];
-      }
-    }
+  for (const key of E.meta.outputs) {
+    const s = emuSeries(key, x, base);
+    if (s) out[key] = s;
   }
-  return { series: out, moved: moved.length };
+  derive(out);
+  return { series: out, moved: EL.filter(l => Math.abs((state.x[l.key] ?? 0) - defaultX(l)) > .01).length };
 }
 
-/* Where each lever sits when the reform is left as specified. */
-const PLATFORM_DEFAULTS = {
-  ubi: 300, child_invested: 50, vat: 25, income_tax: 100, prop_tax: 100, corporate_tax: 20, wealth_tax: 0, minimum_wage: 0,
-  hours: 100, taper: 0, payroll_cut: 20, childcare: 0, housing: 0, retraining: 0, fund: 0, fx: 0,
-  culture: 0, ai: 0, clawback: 0, frontier: 0, infrastructure: 0, church: 100, presidency: 80,
-  governance: 100, sick_pay: 0, resi_cap: 100, comm_cap: 100, dev_exempt: 100, ownership_term: 0,
-  tourism_price: 100, marine_price: 100, aluminium_price: 100, import_price: 100,
-};
 /* Where the page opens and where the reset button returns. It differs from the reform as specified: the
    borgaralaun at 300 þús. (the reform's own level since 2026-09-18), 15 ma.kr. a year for retraining, 1,000 state-built dwellings a year,
    2,000 extra childcare places, and no cuts to governing costs, public-sector jobs, culture support or church
@@ -493,8 +477,14 @@ const START = { ubi: 300, retraining: 15, housing: 1000, childcare: 2000, govern
    public employees' take-home unchanged, housing, childcare and retraining, no cuts to governing, church or
    culture (other subsidies cut at most 64%, sparing culture's share), a tax-free inheritance of 75 m kr. so heirs
    keep the family home, forecast world prices, AI at 5% a year unless stated. Candidates, still to be checked in the model. */
-const SCENARIOS = [{"id": "yours300", "name": "300 þús., reference reform", "note": "The reference reform, as the page opens. Run in the model itself, not only on the fitted surface: in 2035 the budget is +369 ma.kr., household income 829 þús. a month, unemployment 3.7%, essential services short 4,101 posts, child poverty 13.5%.", "x": {"ubi": 0.375, "vat": 0.588235, "income_tax": 0.428571, "prop_tax": 0.25, "corporate_tax": 0.4, "wealth_tax": 0.0, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.428571, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.25, "childcare": 0.25, "housing": 0.333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "clawback": 0.0, "frontier": 0.0, "infrastructure": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 0.020619, "comm_cap": 0.052632, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 1.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 1.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.0, "sub_transport": 0.0, "sub_other": 0.0, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.6, "personal_credit": 0.0, "inherit_rate": 0.1, "gift_tax": 0.1, "exit_tax": 0.0, "enforcement": 1.0, "prison_ubi": 1.0, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 1.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.043333, "smelters": 0.0, "pension_fold": 1.0, "venture_stake": 1.0, "green_heat": 0.166667, "per_diem": 1.0, "agreements": 1.0, "s_emigration": 0.583333, "s_fertility": 0.444444, "s_labour_demand": 0.4375, "s_tourism": 0.416667, "s_avoidance": 0.333333, "governance": 1.0}}, {"id": "s250", "name": "250, moderate", "note": "Run in the model itself, not only on the fitted surface: in 2035 the budget is -71 ma.kr., household income 794 þús. a month, unemployment 3.8%, essential services short 3,452 posts, child poverty 11.2%. Over 2027-35 the fitted surface puts the budget +942 ma.kr. against the status quo. Levers moved: income_tax 122.4, personal_credit 41.9, vat 17.5, pension_fold 57.6, prop_tax 50.0, corporate_tax 28.0, wealth_tax 39.3, gift_tax 100.0, exit_tax 9.7, fish_rent 50.0.", "x": {"ubi": 0.3125, "vat": 0.14524460171788628, "income_tax": 0.7489191485604401, "prop_tax": 0.125, "corporate_tax": 0.7185339674081728, "wealth_tax": 0.19649231290852073, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.287169700773098, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.0022739819097024137, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.002431614842903586, "sub_transition": 0.0, "sub_transport": 0.11773137560789518, "sub_other": 0.08467852295193284, "fish_rent": 0.5, "vat_input": 0.7302628264361039, "pension_return": 0.762, "personal_credit": 0.5785081965967173, "inherit_rate": 0.11686438990015756, "gift_tax": 1.0, "exit_tax": 0.19388949977850434, "enforcement": 0.3203987162373952, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 0.5759294611728834, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.06671972704528432, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "std300", "name": "300, standard", "note": "Run in the model itself, not only on the fitted surface: in 2035 the budget is -28 ma.kr., household income 793 þús. a month, unemployment 3.8%, essential services short 3,913 posts, child poverty 11.5%. Over 2027-35 the fitted surface puts the budget +636 ma.kr. against the status quo. Levers moved: income_tax 121.3, personal_credit 41.6, vat 15.5, pension_fold 78.4, prop_tax 200.0, corporate_tax 28.9, wealth_tax 59.5, inherit_rate 22.3, gift_tax 100.0, exit_tax 11.2.", "x": {"ubi": 0.375, "vat": 0.029678866048771867, "income_tax": 0.7329550654804368, "prop_tax": 0.5, "corporate_tax": 0.7575707661657425, "wealth_tax": 0.29744501793781564, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.3359941197744427, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.0, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.0024579052450455687, "sub_transition": 0.0, "sub_transport": 0.11611160496652045, "sub_other": 0.021770512931474216, "fish_rent": 0.4, "vat_input": 0.7943170756760488, "pension_return": 0.762, "personal_credit": 0.5731963463796733, "inherit_rate": 0.22274309582839114, "gift_tax": 1.0, "exit_tax": 0.22291657983575897, "enforcement": 0.40193049677159615, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 0.7841136803170927, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.08062143814087251, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "fish300", "name": "300, fisheries fee as today", "note": "Run in the model itself, not only on the fitted surface: in 2035 the budget is +6 ma.kr., household income 794 þús. a month, unemployment 3.8%, essential services short 3,872 posts, child poverty 11.2%. Over 2027-35 the fitted surface puts the budget +673 ma.kr. against the status quo. Levers moved: income_tax 120.6, personal_credit 41.8, vat 15.7, pension_fold 82.2, prop_tax 200.0, corporate_tax 29.0, wealth_tax 60.2, inherit_rate 28.3, gift_tax 99.8, exit_tax 13.3.", "x": {"ubi": 0.375, "vat": 0.0416533162989993, "income_tax": 0.7234226768741623, "prop_tax": 0.5, "corporate_tax": 0.7603310625028603, "wealth_tax": 0.3010464206071703, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.3308489952852532, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.00010734055616404888, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.003153436330362724, "sub_transport": 0.12715413857426194, "sub_other": 0.04249333583713101, "fish_rent": 0.24, "vat_input": 0.7963764733487403, "pension_return": 0.762, "personal_credit": 0.5765741454130923, "inherit_rate": 0.2826689019460092, "gift_tax": 0.9981797277101152, "exit_tax": 0.2653894700995495, "enforcement": 0.3756265383356993, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 0.8224764581182026, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.0962624996846341, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "kids300", "name": "300, children paid to families", "note": "Run in the model itself, not only on the fitted surface: in 2035 the budget is -37 ma.kr., household income 806 þús. a month, unemployment 3.6%, essential services short 4,663 posts, child poverty 4.8%. Over 2027-35 the fitted surface puts the budget +755 ma.kr. against the status quo. Levers moved: income_tax 117.3, personal_credit 36.7, vat 15.0, pension_fold 100.0, prop_tax 200.0, corporate_tax 30.0, wealth_tax 76.3, inherit_rate 31.6, gift_tax 100.0, exit_tax 9.9.", "x": {"ubi": 0.375, "vat": 0.0009941891677957974, "income_tax": 0.6759187650987452, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.3814571656458421, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.0, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.0, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0018416920360609717, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.0, "sub_transport": 0.21743062149973222, "sub_other": 0.047707731335676545, "fish_rent": 0.4, "vat_input": 0.7657017913668186, "pension_return": 0.762, "personal_credit": 0.5063380802800188, "inherit_rate": 0.31564049578412867, "gift_tax": 1.0, "exit_tax": 0.1988510246787057, "enforcement": 0.0, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.18359019686973613, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "bal350", "name": "350, balanced mix", "note": "Run in the model itself, not only on the fitted surface: in 2035 the budget is +14 ma.kr., household income 804 þús. a month, unemployment 3.5%, essential services short 5,055 posts, child poverty 8.5%. Over 2027-35 the fitted surface puts the budget +478 ma.kr. against the status quo. Levers moved: income_tax 125.0, personal_credit 36.0, vat 20.1, pension_fold 100.0, prop_tax 200.0, corporate_tax 30.0, wealth_tax 90.4, inherit_rate 35.4, gift_tax 100.0, exit_tax 17.0.", "x": {"ubi": 0.4375, "vat": 0.3026667177054825, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.4519332749343396, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.373621370096716, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.35433431074617505, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0027570140204957053, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.0054439021489474815, "sub_transport": 0.24458799360368777, "sub_other": 0.33783774811612144, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.3540732602057377, "gift_tax": 0.9996284313914363, "exit_tax": 0.3391125486793119, "enforcement": 0.7086078621438839, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.5071932703887668, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "robots350", "name": "350, a robot dividend", "note": "An openly optimistic route to a larger payment, and the largest payment it carried in the search, 50 þús. at a time. Its budget was held to today's status quo — without the windfall or the robots, since they are what pays. The page compares it with a status quo that has them too, so there it shows what the payment costs against the windfall spent today's way. Run in the model itself, not only on the fitted surface: in 2035 the budget is +166 ma.kr., household income 807 þús. a month, unemployment 4.2%, essential services short 6,097 posts, child poverty 9.3%. Over 2027-35 the fitted surface puts the budget +952 ma.kr. against the status quo. Levers moved: income_tax 125.0, personal_credit 36.0, vat 20.3, pension_fold 100.0, prop_tax 200.0, corporate_tax 30.0, wealth_tax 92.6, inherit_rate 38.2, gift_tax 100.0, exit_tax 23.5.", "x": {"ubi": 0.4375, "vat": 0.3126157339910413, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.4630750361213272, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.6, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.6, "robot_stake": 0.6, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 0.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.0, "sub_transport": 0.23380071826742074, "sub_other": 0.31401342631339935, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.3822723636626602, "gift_tax": 1.0, "exit_tax": 0.4697784296763119, "enforcement": 0.6820054677817381, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.44667488023342844, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "windfall350", "name": "350, a resource windfall", "note": "An openly optimistic route to a larger payment, and the largest payment it carried in the search, 50 þús. at a time. Its budget was held to today's status quo — without the windfall or the robots, since they are what pays. The page compares it with a status quo that has them too, so there it shows what the payment costs against the windfall spent today's way. Run in the model itself, not only on the fitted surface: in 2035 the budget is +645 ma.kr., household income 829 þús. a month, unemployment 4.0%, essential services short 4,234 posts, child poverty 10.1%. Over 2027-35 the fitted surface puts the budget +3,764 ma.kr. against the status quo. Levers moved: income_tax 125.0, personal_credit 36.0, vat 20.3, pension_fold 100.0, prop_tax 200.0, corporate_tax 30.0, wealth_tax 93.5, inherit_rate 35.6, gift_tax 100.0, exit_tax 20.1.", "x": {"ubi": 0.4375, "vat": 0.31140166822709714, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.4674958915857735, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.22470762216035597, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.5, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.0, "sub_transport": 0.21616775430749527, "sub_other": 0.24827437737539004, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.3561524546444786, "gift_tax": 1.0, "exit_tax": 0.4012018481203119, "enforcement": 0.7184048627389932, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.3126811174190703, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "planned350", "name": "350, windfall and robot dividend", "note": "An openly optimistic route to a larger payment, and the largest payment it carried in the search, 50 þús. at a time. Its budget was held to today's status quo — without the windfall or the robots, since they are what pays. The page compares it with a status quo that has them too, so there it shows what the payment costs against the windfall spent today's way. Run in the model itself, not only on the fitted surface: in 2035 the budget is +962 ma.kr., household income 849 þús. a month, unemployment 4.5%, essential services short 5,497 posts, child poverty 10.9%. Over 2027-35 the fitted surface puts the budget +4,739 ma.kr. against the status quo. Levers moved: income_tax 125.0, personal_credit 36.0, vat 27.0, pension_fold 100.0, prop_tax 200.0, corporate_tax 30.0, wealth_tax 97.9, inherit_rate 37.8, gift_tax 100.0, exit_tax 23.8.", "x": {"ubi": 0.4375, "vat": 0.7058823529411765, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.4892987718482261, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.3, "fx": 0.0, "culture": 0.0, "ai": 0.6, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.6, "robot_stake": 0.6, "frontier": 1.0, "infrastructure": 1.0, "windfall": 0.5, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 0.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.07614859644512473, "sub_transition": 0.6630267063579077, "sub_transport": 0.24979771247456053, "sub_other": 0.2867461367654911, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.3777238195445129, "gift_tax": 1.0, "exit_tax": 0.47625443319648164, "enforcement": 0.9321726261331443, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 0.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.621251499424118, "agreements": 0.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}];
+const SCENARIOS = [{"id": "yours300", "name": "300 þús., reference reform", "note": "The reference reform, the setting the Explorer opens on. In the full model, in 2035: the budget −348 ma.kr. against the status quo's −207 (the difference varies by ±10 between 5 runs); household income 898 þús. a month per person against 783; unemployment 3.7% against 4.4%; essential services short of 1,403 full-time posts against 1,256; child poverty 14.0% against 19.2%.", "moved": [], "x": {"ubi": 0.375, "vat": 0.5882352941176471, "income_tax": 0.42857142857142855, "prop_tax": 0.25, "corporate_tax": 0.4, "wealth_tax": 0.0, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.25, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.0, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 0.020618556701030927, "comm_cap": 0.05263157894736842, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 1.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.0, "sub_transport": 0.0, "sub_other": 0.0, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.6, "personal_credit": 0.0, "inherit_rate": 0.1, "gift_tax": 0.1, "exit_tax": 0.0, "enforcement": 1.0, "prison_ubi": 1.0, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 1.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.0, "inherit_floor": 0.043333333333333335, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 1.0, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 1.0}}, {"id": "s250", "name": "250, moderate", "note": "In the full model, in 2035: the budget +234 ma.kr. against the status quo's −207 (the difference varies by ±11 between 5 runs); household income 815 þús. a month per person against 783; unemployment 3.8% against 4.4%; essential services short of 1,388 full-time posts against 1,256; child poverty 11.5% against 19.2%. Over 2027-35 the fitted surface puts its budget 1,986 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "fish_rent", "vat_input", "customs", "agri_cut", "sub_heating", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "clawback", "payroll_cut"], "x": {"ubi": 0.3125, "vat": 0.7058823529411765, "income_tax": 0.7857142857142857, "prop_tax": 0.125, "corporate_tax": 0.8, "wealth_tax": 0.2499904982859253, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.4, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 0.0, "agri_cut": 0.4987957303212649, "sub_innovation": 0.0, "sub_heating": 0.4773990379987355, "sub_transition": 0.9854103065216994, "sub_transport": 0.27007977883302353, "sub_other": 0.23277220632164644, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.19557424462552755, "gift_tax": 0.9965733939890884, "exit_tax": 0.5386448019678457, "enforcement": 0.6158281393224734, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.4497660575135754, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "std300", "name": "300, standard", "note": "In the full model, in 2035: the budget +148 ma.kr. against the status quo's −207 (the difference varies by ±3 between 5 runs); household income 821 þús. a month per person against 783; unemployment 3.8% against 4.4%; essential services short of 1,390 full-time posts against 1,256; child poverty 11.4% against 19.2%. Over 2027-35 the fitted surface puts its budget 1,059 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "clawback", "payroll_cut"], "x": {"ubi": 0.375, "vat": 0.7058823529411765, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.5, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.4, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.01102339194804676, "sub_transition": 0.8693505688375092, "sub_transport": 0.48786722772083563, "sub_other": 0.6330732378290699, "fish_rent": 0.4, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.36362516659886296, "gift_tax": 1.0, "exit_tax": 0.3664442014623404, "enforcement": 0.6070529478382263, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.14759751079507222, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "fish300", "name": "300, fisheries fee as today", "note": "In the full model, in 2035: the budget +113 ma.kr. against the status quo's −207 (the difference varies by ±10 between 5 runs); household income 822 þús. a month per person against 783; unemployment 3.8% against 4.4%; essential services short of 1,418 full-time posts against 1,256; child poverty 11.5% against 19.2%. Over 2027-35 the fitted surface puts its budget 569 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "sub_heating", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "clawback", "payroll_cut"], "x": {"ubi": 0.375, "vat": 0.7058823529411765, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.4967789937609668, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.3699025506487201, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.3977327745121045, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.006467314202039397, "sub_innovation": 0.0, "sub_heating": 0.3314370913618077, "sub_transition": 0.8984732809334286, "sub_transport": 0.4956112826561332, "sub_other": 0.23537572620800204, "fish_rent": 0.24, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.29047119107654157, "gift_tax": 0.0, "exit_tax": 0.4591359054185113, "enforcement": 0.7112403370751555, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.6383627799240748, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "kids300", "name": "300, children paid to families", "note": "In the full model, in 2035: the budget +73 ma.kr. against the status quo's −207 (the difference varies by ±11 between 5 runs); household income 835 þús. a month per person against 783; unemployment 3.8% against 4.4%; essential services short of 1,575 full-time posts against 1,256; child poverty 4.7% against 19.2%. Over 2027-35 the fitted surface puts its budget 735 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "agri_cut", "sub_heating", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "clawback", "payroll_cut"], "x": {"ubi": 0.375, "vat": 0.7058823529411765, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.5, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.0, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.4, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.5, "sub_innovation": 0.0, "sub_heating": 0.16906961277689975, "sub_transition": 0.9956739329490543, "sub_transport": 0.3576788960447034, "sub_other": 0.4743445916655996, "fish_rent": 0.4, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.39549560094141406, "gift_tax": 1.0, "exit_tax": 0.3672130658724964, "enforcement": 0.6575682076312798, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.48291943462497716, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "bal350", "name": "350, balanced mix", "note": "In the full model, in 2035: the budget −350 ma.kr. against the status quo's −207 (the difference varies by ±11 between 5 runs); household income 864 þús. a month per person against 783; unemployment 3.7% against 4.4%; essential services short of 1,494 full-time posts against 1,256; child poverty 10.3% against 19.2%. Over 2027-35 the fitted surface puts its budget 2,555 ma.kr. worse than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "agri_cut", "sub_heating", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "clawback", "payroll_cut"], "x": {"ubi": 0.4375, "vat": 0.7058823529411765, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.4792172417808721, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.3735804187299095, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.4, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.4913107192506456, "sub_innovation": 0.0, "sub_heating": 0.2143503566453254, "sub_transition": 1.0, "sub_transport": 0.48676010884048787, "sub_other": 0.14803465117376383, "fish_rent": 0.5, "vat_input": 1.0, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.4, "gift_tax": 0.9992993052519799, "exit_tax": 0.34517487307790556, "enforcement": 0.6965062019171169, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.4883561946093175, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "robots250", "name": "250, a robot dividend", "note": "An openly optimistic route to a larger payment: the largest payment, searched in steps of 50 þús., that the gain in its name (a resource windfall, a robot dividend or both) can pay for while the budget does no worse than the status quo's without that gain. The figures below compare it with a status quo that has the same gain, so they show what the payment costs against that gain spent under today's rules. In the full model, in 2035: the budget +441 ma.kr. against the status quo's −173 (the difference varies by ±10 between 5 runs); household income 782 þús. a month per person against 787; unemployment 4.0% against 5.2%; essential services short of 1,255 full-time posts against 1,954; child poverty 11.2% against 19.5%. Over 2027-35 the fitted surface puts its budget 3,092 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "customs", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "payroll_cut"], "x": {"ubi": 0.3125, "vat": 0.5227764242238554, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.5, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.6, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.6, "robot_stake": 0.6, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 0.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.004930668360172756, "sub_transition": 0.13635056375538745, "sub_transport": 0.3399843580703129, "sub_other": 0.5864511058389331, "fish_rent": 0.5, "vat_input": 0.5719803428636965, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.34757677354762107, "gift_tax": 0.0010988723862290289, "exit_tax": 0.3835465903642049, "enforcement": 0.5322553170030707, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.36728183237860806, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "windfall250", "name": "250, a resource windfall", "note": "An openly optimistic route to a larger payment: the largest payment, searched in steps of 50 þús., that the gain in its name (a resource windfall, a robot dividend or both) can pay for while the budget does no worse than the status quo's without that gain. The figures below compare it with a status quo that has the same gain, so they show what the payment costs against that gain spent under today's rules. In the full model, in 2035: the budget +838 ma.kr. against the status quo's +266 (the difference varies by ±15 between 5 runs); household income 790 þús. a month per person against 812; unemployment 3.9% against 4.6%; essential services short of 1,270 full-time posts against 921; child poverty 11.1% against 19.3%. Over 2027-35 the fitted surface puts its budget 6,171 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "sub_transition", "sub_transport", "sub_other", "enforcement", "clawback", "payroll_cut"], "x": {"ubi": 0.3125, "vat": 0.3274147076634231, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.79980904920845, "wealth_tax": 0.5, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.37476674711876456, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.3993707425299457, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.5, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.14027671480150242, "sub_transport": 0.2759375358471034, "sub_other": 0.5590987411798527, "fish_rent": 0.5, "vat_input": 0.625120121242824, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.3912711776645564, "gift_tax": 1.0, "exit_tax": 0.4891062204323735, "enforcement": 0.5972610353527598, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.0, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}, {"id": "planned250", "name": "250, windfall and robot dividend", "note": "An openly optimistic route to a larger payment: the largest payment, searched in steps of 50 þús., that the gain in its name (a resource windfall, a robot dividend or both) can pay for while the budget does no worse than the status quo's without that gain. The figures below compare it with a status quo that has the same gain, so they show what the payment costs against that gain spent under today's rules. In the full model, in 2035: the budget +1,117 ma.kr. against the status quo's +289 (the difference varies by ±12 between 5 runs); household income 818 þús. a month per person against 813; unemployment 4.3% against 5.5%; essential services short of 1,513 full-time posts against 1,585; child poverty 11.6% against 19.8%. Over 2027-35 the fitted surface puts its budget 6,815 ma.kr. better than the status quo's in total.", "moved": ["income_tax", "personal_credit", "vat", "pension_fold", "prop_tax", "corporate_tax", "wealth_tax", "inherit_rate", "gift_tax", "exit_tax", "vat_input", "sub_transition", "sub_transport", "sub_other", "per_diem", "enforcement", "payroll_cut"], "x": {"ubi": 0.3125, "vat": 0.5523069956568563, "income_tax": 0.7857142857142857, "prop_tax": 0.5, "corporate_tax": 0.8, "wealth_tax": 0.5, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.42857142857142855, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.3333333333333333, "retraining": 0.375, "fund": 0.3, "fx": 0.0, "culture": 0.0, "ai": 0.6, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.6, "robot_stake": 0.6, "frontier": 1.0, "infrastructure": 1.0, "windfall": 0.5, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.0, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.3333333333333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.0, "sub_innovation": 0.0, "sub_heating": 0.0, "sub_transition": 0.04657816970385951, "sub_transport": 0.37138793092960787, "sub_other": 0.593826940211796, "fish_rent": 0.5, "vat_input": 0.8101289420936797, "pension_return": 0.762, "personal_credit": 0.496551724137931, "inherit_rate": 0.36249456258273083, "gift_tax": 0.0, "exit_tax": 0.5072215308558072, "enforcement": 0.5813145205190734, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.16666666666666666, "per_diem": 0.0738522423943724, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.02083333333333326, "s_fertility": 0.4444444444444445, "s_labour_demand": 0.08874999999999995, "s_tourism": 0.4166666666666667, "s_avoidance": 0.3333333333333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0}}];
 const SCEN = Object.fromEntries(SCENARIOS.map(s => [s.id, s]));
+/* A scenario's note, then the levers it sets away from today's rules, in the page's own labels and units. */
+const scenText = s => {
+  const by = Object.fromEntries(EL.map(l => [l.key, l]));
+  const moved = (s.moved || []).filter(k => by[k] && s.x[k] != null);
+  return s.note + (moved.length ? ` Set away from today's rules: ${moved.map(k => `${by[k].label}: ${fmtAt(by[k], s.x[k])}`).join("; ")}.` : "");
+};
 /* The starting points. "Today" moves only levers that have a today: the payment itself, the world outside
    and the pace of AI are left where they are. */
 const presetX = (name, l) => SCEN[name] ? (SCEN[name].x[l.key] ?? startX(l))
@@ -509,8 +499,7 @@ function presetNow() {
     if (EL.every(l => Math.abs((state.x[l.key] ?? 0) - presetX(name, l)) < .002)) return name;
   return null;
 }
-/* The page opens on the moderate 300 þús. scenario: START's own choices, with the financing the
-   search found — property tax +1 point, fisheries rent 65%, income tax rates 25% higher, VAT 27%, corporate 30%. */
+/* The page opens on the reference reform, with its status quo in the same world. */
 const startX = l => SCEN.yours300 && SCEN.yours300.x[l.key] != null ? SCEN.yours300.x[l.key] : startBase(l);
 const startBase = l => {
   const v = START[l.key];
@@ -521,9 +510,7 @@ const startBase = l => {
 const PLATFORM_OVERRIDE = { ubi: 300 };
 const defaultX = l => {
   if (PLATFORM_OVERRIDE[l.key] != null) return Math.min(1, Math.max(0, (PLATFORM_OVERRIDE[l.key] - l.lo) / (l.hi - l.lo)));
-  if (l.default != null) return l.default;
-  const v = PLATFORM_DEFAULTS[l.key];
-  return v == null ? 0 : Math.min(1, Math.max(0, (v - l.lo) / (l.hi - l.lo)));
+  return l.default ?? 0;
 };
 /* The ownership term moves evenly in what a finite claim is worth, from a 30-year term to for ever; this turns a
    slider position back into years, 0 meaning for ever, exactly as build_emulator.term_years does. */
@@ -635,7 +622,10 @@ const NONNEG = new Set(["emp", "fte", "unemp", "part", "poverty", "poverty_ancho
   "income_fell_20", "income_fell_40", "income_volatility", "no_buffer", "no_emergency", "forced_idle",
   "involuntary_part", "ownership_under35", "crowded", "spare_room", "claims", "teens_moved_out", "essential_gap",
   "students", "students_full_time", "ventures", "weekly_hours", "standard_weeks", "neet", "junior_hire", "auto_ai",
-  "auto_robot", "ai_exposed", "family_care_posts", "heirs_moved_in", "tech_subsidy", "junior_subsidy"]);
+  "auto_robot", "ai_exposed", "family_care_posts", "heirs_moved_in", "tech_subsidy", "junior_subsidy",
+  "self_employed", "self_employed_share", "owner_run", "child_poverty_anchored", "poverty_after_housing", "lost_over_5",
+  "lost_over_10", "gained_over_5", "poverty_women", "poverty_men", "poverty_foreign", "poverty_native",
+  ...["pensioners", "disabled", "students", "out_of_work", "in_work"].flatMap(g => [`poverty_start_${g}`, `anchored_start_${g}`])]);
 function emuSeries(key, x, base) {
   const s = emuSeriesRaw(key, x, base);
   return s && NONNEG.has(key) ? s.map(v => v == null ? v : Math.max(0, v)) : s;
@@ -671,6 +661,15 @@ function emuSeriesRaw(key, x, base) {
     return s;
   });
 }
+/* How far the surface may be from the model here: its error on runs held out of the fit, drawn the way readers
+   answer (or failing those, its cross-validated error). Each run is one seed, so the model's own noise is in it. */
+const emuErr = key => (E && E.err && E.err[key] && !(E.meta.exact || {})[key]) ? E.err[key][Math.min(state.year - 1, E.err[key].length - 1)] : null;
+/* The standard normal distribution function (Abramowitz and Stegun 7.1.26, error under 1.5e-7). */
+const normCdf = z => { const t = 1 / (1 + .3275911 * Math.abs(z) / Math.SQRT2);
+  const e = 1 - t * (.254829592 + t * (-.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-z * z / 2);
+  return z >= 0 ? (1 + e) / 2 : (1 - e) / 2; };
+const BAND = 1.645;   // nine in ten, for errors roughly normal
+const bandTitle = "The fitted surface is not the model itself. This is how far it typically misses the model's own run at settings like these, times 1.64: about nine runs in ten would fall within it. It is measured on runs left out of the fit and drawn the way readers answer, and it takes in the model's noise from one run to the next.";
 const emuR2 = key => (E && E.r2[key] && !(E.meta.exact || {})[key]) ? E.r2[key][Math.min(state.year - 1, E.r2[key].length - 1)] : null;
 /* Some outputs the surrogate simply cannot reproduce — births and the income spread are noisy year to year,
    and a polynomial fitted to them does worse than their own average. Those are not shown as numbers. The rule
@@ -695,26 +694,6 @@ const diffPts = (k, a, b) => !fitted(k) ? "<td>\u2013</td>" : (a == null || b ==
   : `<td class="${unsignedZero(100 * (a - b), 1) === 0 ? "" : a > b ? "pos" : "neg"}">${signed(100 * (a - b), 1, " points")}</td>`;
 const diff = (k, r) => fitted(k) ? `<td class="${r == null || unsignedZero(100 * r, 1) === 0 ? "" : r > 0 ? "pos" : "neg"}">${r == null ? "\u2013" : signed(100 * r, 1, "%")}</td>` : "<td>\u2013</td>";
 
-/* A lever's effect is measured at a few UBI levels and interpolated between them — the deltas move smoothly with
-   the amount, unlike the levels. Exact at an anchor, straight-line between two. */
-const ANCHORS = L.meta.anchors || L.meta.ubi;
-function deltaAt(name, i, u) {
-  const exact = L.deltas[`${name}|${i}|${u}`];
-  if (exact) return exact;
-  const below = [...ANCHORS].filter(a => a <= u).pop();
-  const above = ANCHORS.find(a => a >= u);
-  const lo = below != null ? L.deltas[`${name}|${i}|${below}`] : null;
-  const hi = above != null ? L.deltas[`${name}|${i}|${above}`] : null;
-  if (!lo) return hi || null;
-  if (!hi || above === below) return lo;
-  const w = (u - below) / (above - below);
-  const out = {};
-  for (const k in lo) {
-    out[k] = lo[k].map((v, y) => (v == null || hi[k] == null || hi[k][y] == null) ? v : v + w * (hi[k][y] - v));
-  }
-  return out;
-}
-
 /* ---------------- formatting ---------------- */
 /* A value that rounds to zero is shown as zero, never "-0" or "-0.0". */
 { const toFixed = Number.prototype.toFixed;
@@ -724,7 +703,7 @@ const nf = (v, d = 0) => v == null ? "–" : unsignedZero(v, d).toLocaleString("
 const pct = (v, d = 1) => v == null ? "–" : `${(100 * v).toFixed(d)}%`;
 const fx2 = v => v == null ? "–" : v.toFixed(2);
 const signed = (v, d = 1, suffix = "") =>
-  v == null ? "–" : `${unsignedZero(v, d) === 0 ? "" : v > 0 ? "+" : "−"}${Math.abs(v).toFixed(d)}${suffix}`;
+  v == null ? "–" : `${unsignedZero(v, d) === 0 ? "" : v > 0 ? "+" : "−"}${nf(Math.abs(v), d)}${suffix}`;
 /* Net debt below zero is net assets, and is said so. */
 const debtText = v => v == null ? "–" : unsignedZero(v, 0) < 0 ? `net public assets ${nf(-v)}% of GDP` : `net public debt ${nf(v)}% of GDP`;
 const rel = (a, b) => (a == null || b == null || !b) ? null : a / b - 1;
@@ -742,23 +721,29 @@ function verdict() {
   // currency at its króna, against the same for the status quo
   const inFx = (s, i) => { const c = at(s, "cpi", y), f = at(s, "fx", y); return i == null || c == null || !f ? null : i * c / f; };
   const abroad = rel(inFx(series, inc), inFx(sq, sqInc));
+  const eBal = emuErr("balance"), eInc = emuErr("net_income"), eFte = emuErr("fte"), eCpi = emuErr("cpi");
+  const beats = (eBal && bal != null && sqBal != null) ? normCdf((bal - sqBal) / eBal) : null;
+  const surplus = (eBal && bal != null) ? normCdf(bal / eBal) : null;
+  const odds = p => p > .99 ? "over 99%" : p < .01 ? "under 1%" : `${Math.round(100 * p)}%`;
   const cards = [
     { id: "balance", q: "Does the budget balance?", n: nf(bal), u: "ma.kr. a year",
       explain: `The government's budget for the year shown: everything it takes in, less everything it spends,
         interest on the debt included. Negative is a deficit. In 2025 krónur, so years can be compared. Part of
         the interest only makes up for inflation wearing down the debt; the Public money tab shows the balance
-        with that taken out as well. Debt below is as a share of the economy's output.`,
+        with that taken out as well. The debt figure below is a share of GDP.`,
       d: (bal == null || sqBal == null) ? "" : `${signed(bal - sqBal, 0)} vs status quo`,
       ok: bal != null && bal >= 0,
+      band: eBal ? `likely within ±${nf(BAND * eBal)} ma.kr. · chance of a surplus ${odds(surplus)}, of beating the status quo ${odds(beats)}` : "",
       note: (t => t[0].toUpperCase() + t.slice(1) + ".")(debtText(at(series, "debt", y))) },
     { id: "income", q: "Are people better off?", n: inc == null ? "–" : nf(inc / 1000), u: "þús. kr. a month, after tax and transfers",
       explain: `What a household has to live on, per person, in 2025 krónur a month: pay, pensions, benefits,
         the borgaralaun and child payments, less income tax, property tax and any wealth tax. A household's
         total is divided by its size — the first adult counts as 1, a partner 0.5, each child 0.3 — so a family
-        and a single person can be compared. This is the average over all adults; the Who gains tab has the
+        and a single person can be compared. The figure is the average over all adults; the Who gains tab has the
         median and the spread. Compared with the status quo in the same year, because wages fall under a basic
         income while transfers rise, and only the two together say whether people are better off.`,
       d: dInc == null ? "" : `${signed(100 * dInc, 1, "%")} vs status quo`, ok: dInc != null && dInc > 0,
+      band: eInc ? `likely within ±${nf(BAND * eInc / 1000)} þús.` : "",
       note: abroad == null ? "In 2025 krónur: Icelandic price rises are already taken out."
         : `In 2025 krónur, so Icelandic price rises are taken out. In foreign currency, at this year's exchange rate — what it buys abroad or in imports: ${signed(100 * abroad, 1, "%")} vs status quo.` },
     { id: "work", q: "How much do people work?", n: fte == null ? "–" : fte.toFixed(2), u: "full-time equivalents per adult",
@@ -767,13 +752,32 @@ function verdict() {
         the week it is. A shorter standard week lowers this by design, even if everyone keeps their job — the
         Work tab has hours per adult and employment for that reason.`,
       d: dFte == null ? "" : `${signed(100 * dFte, 1, "%")} vs status quo`, ok: dFte != null && dFte > -.12,
+      band: eFte ? `likely within ±${(BAND * eFte).toFixed(2)}` : "",
       note: `Unemployment ${pct(at(series, "unemp", y))}.` },
     { id: "prices", q: "What happens to prices?", n: infl == null ? "–" : signed(100 * infl, 1, "%"), u: "inflation this year",
       explain: `How much consumer prices rose in the year shown, against the year before — the CPI, housing
-        included. Seðlabanki aims at 2.5%, and the status quo runs near it; anything under 5% is shown as holding.
-        The króna is against 2025 (1.00 = as in 2025; above 1 is weaker), and rents against 2025.`,
+        included. Seðlabanki's target is 2.5%; on today's rules the model has prices rising 2.6-3.6% a year to 2030.
+        A rate under 5% is shown in the normal colour, 5% or more in red. The króna figure is an index against 2025:
+        1.00 is 2025's rate, and above 1 is weaker. Rents are shown as the change since 2025.`,
       d: `króna ${fx2(at(series, "fx", y))} — 1.00 is today`, ok: infl != null && infl < .05,
-      note: `Rents ${signed(100 * ((at(series, "rent", y) ?? 1) - 1), 0, "%")} against today.` },
+      band: (eCpi && cpiNow) ? `price level likely within ±${(100 * BAND * eCpi / cpiNow).toFixed(0)}%` : "",
+      note: `Rents ${signed(100 * ((at(series, "rent", y) ?? 1) - 1), 0, "%")} since 2025.` },
+    /* 2.1: work for oneself, against the status quo: the owner-run trades, firms, self-directed work */
+    (() => {
+      const se = at(series, "self_employed", y), sqSe = at(sq, "self_employed", y);
+      const sh = at(series, "self_employed_share", y), sqSh = at(sq, "self_employed_share", y);
+      const own = at(series, "owner_run", y), sqOwn = at(sq, "owner_run", y);
+      return { id: "selfemp", q: "Who works for themselves?", n: nf(se), u: "people self-employed",
+        explain: `People working on their own account, as the labour survey counts them: running a firm, in
+          self-directed work, or in a trade for themselves rather than for an employer, such as an owner-run inn,
+          shop, cleaning or driving business. Today about 28,000, one in eight of those in work (Eurostat). When a
+          guaranteed income raises the pay it takes to get people to work for an employer, some of the work employers
+          can no longer staff is done instead by people running the business themselves, who keep the margin an
+          absentee owner would have taken.`,
+        d: (se == null || sqSe == null) ? "" : `${signed(se - sqSe, 0)} vs status quo`, ok: true,
+        note: `${pct(sh)} of those working (status quo ${pct(sqSh)}).${own == null || sqOwn == null ? ""
+          : ` ${nf(own - sqOwn)} of the difference in owner-run trades.`}` };
+    })(),
     /* the guide opens on a picture chosen for what it does for people, so it shows that too */
     ...(MODE === "guided" ? [(() => {
       const cp = at(series, "child_poverty", y), sqCp = at(sq, "child_poverty", y);
@@ -781,7 +785,8 @@ function verdict() {
       const hard = at(series, "hardship", y), sqHard = at(sq, "hardship", y);
       return { id: "poverty", q: "Does it reach those with least?", n: pct(cp), u: "of children in poverty",
         explain: `Children in households below 60% of the typical (median) income, after tax and transfers, measured
-          the same way in both runs. Poverty is the same line for everyone; hardship is going without necessities.`,
+          the same way in both runs. The poverty rate below applies the same line to everyone; hardship counts
+          people who go without necessities.`,
         d: `${pct(sqCp)} in the status quo`, ok: cp != null && sqCp != null && cp <= sqCp,
         note: `Poverty ${pct(pov)} (status quo ${pct(sqPov)}); hardship ${pct(hard)} (${pct(sqHard)}).` };
     })()] : []),
@@ -794,6 +799,7 @@ function verdict() {
       <div class="n" style="color:${c.ok ? "var(--ink)" : "var(--crit)"}">${c.n}</div>
       <div class="u">${c.u}</div>
       ${c.d ? `<div class="d ${c.d.startsWith("+") ? "up" : c.d.startsWith("−") ? "down" : ""}">${c.d}</div>` : ""}
+      ${c.band ? `<div class="band" title="${bandTitle}">${c.band}</div>` : ""}
       <div class="note">${c.note}</div>
       ${state.vopen === c.id ? `<p class="note-box">${c.explain}</p>` : ""}
     </div>`).join("");
@@ -804,13 +810,6 @@ function verdict() {
 }
 
 /* ---------------- lever board ---------------- */
-const GROUPS = [
-  ["Taxes", ["vat", "income_tax", "prop_tax", "corporate_tax", "wealth_tax"]],
-  ["Work", ["minimum_wage", "hours", "taper", "retraining", "payroll_cut", "transition"]],
-  ["Housing and family", ["housing", "childcare"]],
-  ["Money and the state", ["fund", "fx", "culture"]],
-  ["Technology", ["frontier", "ai", "clawback"]],
-];
 /* Levers in the order an economic model presents them: the policy instruments, grouped the way public finance
    classifies them — taxes by what they fall on, spending by what it buys, then the rules of the markets — and
    after them what policy does not choose: conditions outside the country, and how strongly people and markets
@@ -830,7 +829,7 @@ const EGROUPS = [
   ["Subsidies", ["agri_cut", "sub_innovation", "sub_other", "agri_startups", "venture_stake", "teen_moveout"]],
   ["Machines and first jobs", ["ai_subsidy", "robot_subsidy", "junior_subsidy"]],
   ["Public investment", ["housing", "infrastructure", "frontier", "fund"]],
-  ["The labour market", ["agreements", "net_indexation", "minimum_wage", "hours"]],
+  ["The labour market", ["agreements", "haggle", "net_indexation", "minimum_wage", "hours"]],
   ["Property rights and competition", ["resi_cap", "comm_cap", "dev_exempt"]],
   ["Money, credit and the border", ["indexation", "capital_controls", "fx", "residence"]],
   ["Energy", ["smelters"]],
@@ -905,7 +904,7 @@ const DISPLAY = {
   robot_subsidy: v => v < .5 ? "none" : `${v.toFixed(0)}% of the cost`,
   junior_subsidy: v => v < .5 ? "none" : `${v.toFixed(0)}% of a junior's wage`,
   fish_rent: v => `${v.toFixed(0)}% of the rent, ≈ ${(72.8 * v / 100).toFixed(0)} ma.kr.`,
-  vat_input: v => v < .5 ? "as today" : `${v.toFixed(0)} ma.kr./yr`,
+  vat_input: v => v < .5 ? "as today" : `${v.toFixed(0)}% of the rule, about ${(v * 4.595 * .6).toFixed(0)}-${(v * 4.595 * .8).toFixed(0)} ma.kr. a year`,
   pension_return: v => `${v.toFixed(1)}% real a year`,
   personal_credit: v => v < .5 ? "abolished" : `${v.toFixed(1)} þús. kr./mán.`,
   inherit_rate: v => `${v.toFixed(0)}%`,
@@ -916,6 +915,7 @@ const DISPLAY = {
   venture_support: v => v < .5 ? "none" : `${v.toFixed(0)}% of 3 m kr. and 30%`,
   per_diem: v => v < .5 ? "as today" : `${v.toFixed(0)}% abolished`,
   agreements: v => v >= .5 ? "voided" : "kept",
+  haggle: v => v >= .5 ? "all at once" : "one by one",
 };
 function fmtAt(l, x) {
   if (l.binary) return x >= .5 ? "on" : "off";
@@ -968,13 +968,24 @@ const NOTE = {
     building is excluded: it continues either way.`,
 };
 const fmtLevel = l => fmtAt(l, state.x[l.key] ?? 0);
+/* Levers that do nothing at the settings shown, and why. The model ignores them there, so the page says so. */
+const IDLE = {
+  agreements: () => (state.x.haggle ?? 0) >= .5 && "The haggling round ends the agreements, so this does nothing while the round is on.",
+  net_indexation: () => ((state.x.haggle ?? 0) >= .5 || (state.x.agreements ?? 0) >= .5)
+    && "With pay set contract by contract there are no agreements to compensate prices.",
+  dev_exempt: () => (state.x.resi_cap ?? 1) >= .999 && (state.x.comm_cap ?? 1) >= .999 && "There is no ownership cap to be exempt from.",
+  staked_tax: () => (state.x.deemed_stake ?? 0) < .5 && "This applies only where the state holds a deemed stake, and that is off.",
+  venture_stake: () => "The state's stake has a floor, what one start-of-life fund buys, and over this lever's range the floor sets it.",
+  sick_pay: () => (state.x.leave_scheme ?? 0) > .5 && "The leave scheme already takes sick pay off the state, so this adds nothing.",
+};
 function drawEmuBoard() {
   const byKey = Object.fromEntries(EL.map(l => [l.key, l]));
   const slider = key => {
     const l = byKey[key];
     if (!l) return "";
     const open = state.open === key, def = MODE === "guided" ? presetX("guide", l) : defaultX(l), moved = Math.abs((state.x[key] ?? 0) - def) > .01;
-    return `<div class="lever">
+    const idle = IDLE[key] ? IDLE[key]() : false;
+    return `<div class="lever${idle ? " idle" : ""}">
       <div class="lever-label"><span id="lb-${key}">${l.label}</span>
         <span style="display:flex;gap:6px;align-items:baseline">
           <span class="val"${moved ? ' style="color:var(--accent)"' : ""}>${fmtLevel(l)}</span>
@@ -985,6 +996,7 @@ function drawEmuBoard() {
         : `<input type="range" id="lev-${key}" data-lev="${key}" min="0" max="1000" step="1"
              value="${Math.round((state.x[key] ?? 0) * 1000)}"
              aria-label="${l.label}" aria-valuetext="${fmtLevel(l)}">`}
+      ${idle ? `<p class="idle-why">${idle}</p>` : ""}
       ${open ? `<p class="note-box"><b>${MODE === "guided" ? "Where the guide starts" : "Reference reform"}: ${fmtAt(l, def)}.${l.today != null ? ` Today: ${fmtAt(l, l.today)}.` : ""}</b>
         ${NOTE[key] ? NOTE[key]() : l.note}</p>` : ""}
     </div>`;
@@ -1003,14 +1015,17 @@ function drawEmuBoard() {
       ${MODE === "guided" ? `<button type="button" class="reset" data-preset="guide" aria-pressed="${presetNow() === "guide"}">Where the guide starts</button>`
       : `<button type="button" class="reset" data-preset="platform" aria-pressed="${presetNow() === "platform"}">The reform as specified</button>
       <button type="button" class="reset" data-preset="start" aria-pressed="${presetNow() === "start"}">The standard picture: 300 þús., standard</button>`}
-      <p>"Nothing else" keeps the borgaralaun and the child payment where they are and puts every other policy lever
-        where it is today; the world outside stays as set. Then add the rest one piece at a time.</p></div>
-    <div class="group presets"><h3>Scenarios that keep up with the status quo's budget</h3>
-      ${SCENARIOS.map(s => `<button type="button" class="reset" data-preset="${s.id}" aria-pressed="${presetNow() === s.id}" title="${s.note}">${s.name}</button>`).join("")}
-      <p>${presetNow() && SCEN[presetNow()] ? SCEN[presetNow()].note + " " : ""}Each is the least disruptive financing a
-        search of this page's model found that keeps the budget at least as good as the status quo's over 2027-35, and
-        never more than 25 ma.kr. behind it in a year — except the moderate 300, shown for comparison. Each has then been
-        run in the full model, and its note gives the model's own numbers.</p></div>
+      <p>"The borgaralaun and nothing else" keeps the payment and the child payment at their current settings and
+        sets every other policy lever to today's rules; the levers for the world outside keep their settings. Add the
+        other policies one at a time from there.</p></div>
+    <div class="group presets"><h3>Example scenarios</h3>
+      ${SCENARIOS.map(s => `<button type="button" class="reset" data-preset="${s.id}" aria-pressed="${presetNow() === s.id}" title="${scenText(s)}">${s.name}</button>`).join("")}
+      <p>${presetNow() && SCEN[presetNow()] ? scenText(SCEN[presetNow()]) + " " : ""}The reference reform is the setting
+        the Explorer opens on. Each of the other examples is the least disruptive way of paying for its payment that a
+        search on the fitted surface found, aiming to keep the budget no worse than the status quo's over 2027-35 in
+        total and never more than 25 ma.kr. behind it in any year; the 350 balanced mix misses that aim, and the three
+        optimistic 250 routes are held to a different test, explained in their notes. Each example was then run in the
+        full model, and its note gives the model's own figures for 2035.</p></div>
     ${EGROUPS.map(([title, keys]) => {
       if (title === "§") return `<h2 class="sec">${keys}</h2>`;
       const have = keys.filter(k => byKey[k]);
@@ -1049,67 +1064,7 @@ function drawEmuBoard() {
   }));
 }
 
-function drawBoard() {
-  if (E) return drawEmuBoard();
-  const u = UBI[state.ubi];
-  const stops = UBI.map((v, i) => `<span class="${i === state.ubi ? "on" : ""}">${v}</span>`).join("");
-  const NOTES = L.meta.notes || {};
-  const seg = name => {
-    const l = LEV[name], open = state.open === name, now = l.settings[state.set[name]];
-    return `<div class="lever">
-      <div class="lever-label"><span id="lb-${name}">${l.label}</span>
-        <span style="display:flex;gap:6px;align-items:baseline">
-          ${l.unit ? `<span class="val">${l.unit}</span>` : ""}
-          ${NOTES[name] ? `<button type="button" class="info" data-info="${name}" aria-expanded="${open}"
-            aria-label="What ${l.label} does">?</button>` : ""}
-        </span></div>
-      <div class="seg" role="group" aria-labelledby="lb-${name}" data-lever="${name}">
-        ${l.settings.map((s, i) =>
-          `<button type="button" data-i="${i}" aria-pressed="${state.set[name] === i}">${s}</button>`).join("")}
-      </div>
-      ${open ? `<p class="note-box"><b>Now: ${now}${l.unit ? " " + l.unit : ""}.</b> ${NOTES[name]}</p>` : ""}
-    </div>`;
-  };
-  board.innerHTML = `
-    <div class="lever">
-      <div class="lever-label"><label for="ubi">Borgaralaun per adult</label></div>
-      <div class="big">${u}<small>þús. kr./mán.</small></div>
-      <input type="range" id="ubi" min="0" max="${UBI.length - 1}" step="1" value="${state.ubi}"
-             aria-valuetext="${u} thousand krónur a month">
-      <div class="stops" style="grid-template-columns:repeat(${UBI.length},1fr)">${stops}</div>
-      <p class="hint">The model was run at these six amounts. The same goes to each child, most of it into their fund.</p>
-    </div>
-    <div class="lever">
-      <div class="lever-label"><label for="year">Year shown</label><span class="val">${yearOf(state.year)}</span></div>
-      <input type="range" id="year" min="1" max="${YEARS}" step="1" value="${state.year}">
-      <div class="stops" style="grid-template-columns:repeat(3,1fr)">
-        <span style="text-align:left">${YEAR_LIST[0]}</span>
-        <span>${yearOf(Math.round(YEARS / 2))}</span>
-        <span style="text-align:right">${YEAR_LIST[YEARS - 1]}</span></div>
-    </div>
-    ${GROUPS.map(([title, names]) => {
-      const have = names.filter(n => LEV[n]);
-      return have.length ? `<div class="group"><h3>${title}</h3>${have.map(seg).join("")}</div>` : "";
-    }).join("")}
-    <button type="button" class="reset" id="reset">Put every lever back to the reform default</button>`;
-
-  document.getElementById("ubi").addEventListener("input", e => { state.ubi = +e.target.value; render(); });
-  document.getElementById("year").addEventListener("input", e => { state.year = +e.target.value; render(); });
-  document.getElementById("reset").addEventListener("click", () => {
-    for (const k in state.set) state.set[k] = 0;
-    render();
-  });
-  board.querySelectorAll("[data-info]").forEach(b => b.addEventListener("click", () => {
-    state.open = state.open === b.dataset.info ? null : b.dataset.info;
-    render();
-  }));
-  board.querySelectorAll(".seg[data-lever]").forEach(g => g.addEventListener("click", e => {
-    const b = e.target.closest("button");
-    if (!b) return;
-    state.set[g.dataset.lever] = +b.dataset.i;
-    render();
-  }));
-}
+function drawBoard() { drawEmuBoard(); }
 
 /* ---------------- charts, drawn to one scale ---------------- */
 function lineChart(lines, opts = {}) {
@@ -1223,7 +1178,9 @@ function income(s) {
     their own average. The status-quo column is an exact run and stands; the scenario column is left blank rather
     than filled with a number that would not survive a rerun. Means and medians fit well, and those are shown.</p>` : "";
   const rows = [["Poverty, fixed 2025 line", "poverty_anchored", pct],
-    ["Poverty, relative line (moves with the median)", "poverty", pct], ["Child poverty", "child_poverty", pct],
+    ["Poverty, relative line (moves with the median)", "poverty", pct],
+    ["Poverty after housing costs", "poverty_after_housing", pct], ["Child poverty", "child_poverty", pct],
+    ["Child poverty, fixed 2025 line", "child_poverty_anchored", pct],
     ["Income inequality (Gini)", "gini", v => v == null ? "–" : v.toFixed(3)],
     ["90th percentile over the 10th (P90/P10)", "p90_p10_net", fx2],
     ["Poorest tenth, on average", "net_d1", v => v == null ? "–" : nf(v / 1000) + " þús."],
@@ -1239,7 +1196,25 @@ function income(s) {
     const a = at(s, k, y), b = at(sq, k, y), r = rel(a, b), g = v => v == null ? "–" : nf(v / 1000) + " þús.";
     return `<tr><td>${named(lab, k)}</td><td>${cell(k, a, g)}</td><td>${g(b)}</td>${diff(k, r)}</tr>`;
   }).join(""))}` : "";
-  return `${statTable}${caveat}${groupTable}
+  const shareTable = (title, sub, lines) => lines.some(([, k]) => at(sq, k, y) != null) ? `<h3 style="margin-top:22px">${title}</h3>
+  <p class="sub">${sub}</p>
+  ${table(["", "This scenario", "Status quo", "Difference"], lines.map(([lab, k]) => {
+    const a = at(s, k, y), b = at(sq, k, y);
+    return `<tr><td>${named(lab, k)}</td><td>${cell(k, a, pct)}</td><td>${pct(b)}</td>${diffPts(k, a, b)}</tr>`;
+  }).join(""))}` : "";
+  const started = [["Were pensioners", "pensioners"], ["Were on a disability pension", "disabled"], ["Were studying", "students"],
+    ["Were out of work", "out_of_work"], ["Were in work", "in_work"]];
+  const panel = `${shareTable("Better and worse off than in 2025",
+    "Adults of 2025 still here, by their household's income after prices against their own in 2025. People retire and fall ill in either column, so read the difference.",
+    [["Lost more than 5%", "lost_over_5"], ["Lost more than 10%", "lost_over_10"], ["Gained more than 5%", "gained_over_5"]])}
+  ${shareTable("Poverty by what people were in 2025",
+    "The same people followed, so that someone who leaves work under the reform stays in the group they started in. Against the relative line.",
+    started.map(([lab, g]) => [lab, `poverty_start_${g}`]))}
+  ${shareTable("The same, against a fixed 2025 line", "This line stays where it was in 2025 after prices.",
+    started.map(([lab, g]) => [lab, `anchored_start_${g}`]))}
+  ${shareTable("Poverty by sex and origin", "Adults, against the relative line.",
+    [["Women", "poverty_women"], ["Men", "poverty_men"], ["People who moved to Iceland", "poverty_foreign"], ["Everyone else", "poverty_native"]])}`;
+  return `${statTable}${caveat}${groupTable}${panel}
   <div class="charts" style="margin-top:18px">
     <figure>${decileBars(s)}<figcaption>Change in income by tenth of the population
       <em>1 = poorest, 10 = richest, against the status quo</em></figcaption></figure>
@@ -1319,7 +1294,9 @@ function money(s) {
     ["Schooling", "schooling_cost"], ["Income tax", "income_tax"], ["VAT", "vat"],
     ["Property tax", "property_tax"], ["Inheritance tax", "inheritance_tax"],
     ["Fisheries resource rent", "fisheries_fee"], ["Social security contributions", "social_security"],
-    ["Pension top-ups", "pension_topup"], ["Public payroll", "public_payroll"],
+    ["Pension top-ups", "pension_topup"],
+    ["Paid abroad: the payment for children of EEA workers, and pensions to people who left", "exported_payments"],
+    ["Public payroll", "public_payroll"],
     ["Tax on pay taken as dividends", "shifted_tax"],
     ["Pay above the second threshold no longer reported (not public revenue)", "top_income_lost"],
     ["Subsidies to adopting AI and robots", "tech_subsidy"], ["Juniors' wages paid by the state", "junior_subsidy"],
@@ -1443,7 +1420,7 @@ function professions() {
   return `<p class="sub">Numbers and real pay by profession at ${u} þús., against the status quo in the same year.
     Numbers and pay come from the exact scenario grid, where the other levers sit at the reform default; take-home
     applies the income tax, personal credit, pension setting and price level of the scenario you have set to that
-    pay. It is an approximation: pay itself would also differ between scenarios, which the grid does not show.
+    pay. Take-home is therefore an approximation: pay itself would also differ between scenarios, which the grid does not show.
     A dot marks work the model treats as unpleasant and below-median paid.</p>
   <p class="sub">The counts are jobs with an employer. Work people set themselves — art, writing, research, care of
     others, starting something — is counted apart as self-directed work and not assigned to a profession:
@@ -1662,19 +1639,24 @@ function summary(s) {
   const lower = t => /^[A-Z][a-z]/.test(t) ? t[0].toLowerCase() + t.slice(1) : t;
   const name = c => `${lower(c.l.label)} (${signed(c.d, 0)})`;
   const list = a => a.length ? a.map(name).join(", ") : "none of note";
+  const vatInput = levelOf(EL.find(e => e.key === "vat_input"));
+  const vatRange = vatInput > .5 ? ` Input VAT is the least certain line: it is counted here with 30% of the yield lost to
+    relabelling and avoidance. With 20% lost the balance would be about ${nf(vatInput * 4.595 * .1)} ma.kr. a year better, and with 40% lost that much worse.` : "";
   const est = [["vat_input", "input VAT"], ["custodianship", "custodianship"], ["public_offset", "the public pay offset"],
                ["enforcement", "tax enforcement"], ["comm_cap", "the variety a commercial cap brings"],
                ["pension_return", "the return on the pension funds"], ["free_health", "free health care"]]
     .filter(([k]) => { const l = EL.find(e => e.key === k); return l && Math.abs((state.x[k] ?? 0) - (l.today ?? -1)) > .01; })
     .map(([, t]) => t);
-  const weak = ["balance", "net_income", "fte", "cpi", "child_poverty", "unemp"].filter(k => { const r = emuR2(k); return r != null && r < .85; });
+  const HEAD = { balance: "the budget balance", net_income: "household income", fte: "work per adult", cpi: "the price level",
+                 child_poverty: "child poverty", unemp: "unemployment" };
+  const weak = Object.keys(HEAD).filter(k => { const r = emuR2(k); return r != null && r < .85; }).map(k => HEAD[k]);
   const para = (t, body) => `<h3>${t}</h3><p>${body}</p>`;
   return `<div class="exec">
-    <p class="lead">A borgaralaun of <b>${nf(ubi)} þús. kr. a month</b>, with ${moved.length} of the reform's policy levers
-      moved from where they are today, seen in ${yr} against the status quo in the same year.</p>
+    <p class="lead">A borgaralaun of <b>${nf(ubi)} þús. kr. a month</b>, with ${moved.length} policy levers set away from
+      today's rules, seen in ${yr} against the status quo in the same year.</p>
     ${para("The budget", `The public balance is <b>${signed(bal, 0)} ma.kr.</b> a year (${signed(bal - b("balance"), 0)} against
       the status quo), and ${debtText(debt)}, against ${debtText(sqDebt).replace(/^net public /, "")} in the status quo. ${bal == null ? "" : bal >= 0
-        ? "The budget is in surplus in that year." : debt > sqDebt + 20 ? "The budget is in deficit and the debt rises year on year." : "The budget is in deficit, with the debt within 20 points of the status quo's."}`)}
+        ? "The budget is in surplus in that year." : debt > sqDebt + 20 ? "The budget is in deficit, and the debt is more than 20 points of GDP above the status quo's." : "The budget is in deficit, with the debt within 20 points of GDP of the status quo's."}${vatRange}`)}
     ${para("What pays for it, and what costs most", `Measured one at a time against today, the levers adding most to the
       balance are ${list(pays)}; those taking most from it are ${list(costs)}. Figures are ma.kr. a year in ${yr}.`)}
     ${para("Households", `Income after tax and transfers is <b>${signed(100 * inc, 1, "%")}</b> against the status quo on
@@ -1725,11 +1707,13 @@ const intro = () => `<div class="exec">
   <p>The reform's own sources, each a slider: the pension funds' contributions and returns; one VAT rate of 25% and
     input VAT reclaimable only on what goes into a product; a higher property tax; fishing quotas leased at a price
     near the resource rent; no subsidies and no customs duties; no personal tax allowance; fewer public jobs and lower
-    running costs of the state; and a share in every company. Whoever founds or funds a firm has had schooling,
-    health care and the payment, so the state is deemed to have put one start-of-life fund into every company each
-    time it raises capital — the premise of a corporate tax, held as ownership; whether staked firms still pay
-    corporate tax is a slider. What is not covered is borrowed, and the Public money tab shows what that does to the
-    debt.</p>
+    running costs of the state. The reform as written also takes a share in every company: whoever founds or funds a
+    firm has had schooling, health care and the payment, so the state is deemed to have put one start-of-life fund
+    into every company each time it raises capital, the premise of a corporate tax held as ownership. Taking shares
+    in companies that exist today without paying for them would be an expropriation (Constitution article 72), so
+    the page leaves that stake out and keeps the corporate tax; the stake in firms founded on the borgaralaun, agreed
+    when each firm is founded, stays in. What is not covered is borrowed, and the Public money tab shows what that
+    does to the debt.</p>
   <h3>Sick leave and parental leave</h3>
   <p>The borgaralaun is already the floor, so the state's sick pay and the parental leave fund end. What is paid
     above the payment becomes the employer's: the period law and agreements already give, which rises with
@@ -1744,10 +1728,12 @@ const intro = () => `<div class="exec">
     so a reform that lifts people out of poverty needs fewer of them; care and teaching follow the population they
     serve and cannot be cut by that arithmetic.</p>
   <h3>Which world the comparison happens in</h3>
-  <p>By default, the world the forecasts describe: prices near the 2.5% target, a steady króna, rents roughly flat
-    in real terms. A slider runs everything again in the world the last decade actually was — prices rising 4% a
-    year, a weaker króna, rents outrunning incomes. It applies to the reform and to today's system alike, so that
-    neither is judged against a calmer world than the other.</p>
+  <p>By default, the world the forecasts describe: inflation returning to the 2.5% target, a króna that holds its
+    real value, and no rise in rents beyond what the model's housing market produces. On today's rules the model
+    still has prices rising 2.6-3.6% a year to 2030. A slider runs everything again in the world of 2016-25: prices
+    rising 4% a year, the króna about a point a year weaker, and real rents outrunning incomes by about 1.5 points a
+    year. The setting applies to the reform and to today's system alike, so that neither is judged against a calmer
+    world than the other.</p>
   <h3>What the page shows</h3>
   <p>An agent-based model of Iceland — every resident, their work, pay, household and choices — run year by year
     under the reform and under the status quo, and compared year by year. The page answers instantly from a surface
@@ -1904,10 +1890,10 @@ function pastGrid() {
     const ff = (data, cap, fmt) => `<figure>${lineChart([{ data, color: "var(--scn)" }], { fmt, first: hy[0], noMark: true, label: cap })}
       <figcaption>${cap}</figcaption></figure>`;
     fund = `<h3 style="margin-top:22px">The fund, 1984-2025</h3>
-      <p class="sub">It takes ${p.cap === "1" ? "all" : p.cap === "0.5" ? "half" : "a third"} of the fishery's rent, less the fee the state
+      <p class="sub">The fund takes ${p.cap === "1" ? "all" : p.cap === "0.5" ? "half" : "a third"} of the fishery's rent, less the fee the state
       already takes, holds it abroad and pays 3% of its value a year equally to every adult. Until about 1990 the
       industry made losses, so there was nothing to take; the rent became large after 2008. Before 2016 the fund is
-      accounting (scripts/fisheries_history.py); from 2016 it is in the model, where the króna moves its value.</p>
+      calculated from the record (scripts/fisheries_history.py); from 2016 it is in the model, where the króna moves its value.</p>
       <div class="charts">${ff(value, "The fund, ma.kr. of 2025", v => nf(v))}
       ${ff(hy.map(y => H[y].dividend_per_adult_month_2025), "Paid to each adult to 2015, kr. a month of 2025", v => nf(v))}</div>`;
   }
@@ -1980,8 +1966,8 @@ function past() {
   </div>
   ${shockRows}
   <h3 style="margin-top:22px">The start-of-life fund's first decade</h3>
-  <p class="sub">It saves while a child is under 18 and pays out at 25, so within 2016-25 it pays almost no one: only
-    those who were 16 or 17 in 2016 reach 25, with a year or two saved. Its effect comes in the 2040s.</p>
+  <p class="sub">The fund saves while a child is under 18 and pays out at 25, so within 2016-25 it pays almost no one:
+    only those who were 16 or 17 in 2016 reach 25, with a year or two saved. Most of its effect comes in the 2040s.</p>
   ${table(["", ...P.years], [fundRow("Assets, ma.kr. of 2015", "assets", v => nf(v)),
     fundRow("Home ownership under 35", "home ownership <35", v => (100 * v).toFixed(0) + "%"),
     fundRow("New firms a year", "new firms", v => nf(v))].join(""))}`;
@@ -2081,7 +2067,7 @@ function timeline() {
   const marks = [];
   if (t.mode === "past") (M.events || []).forEach(e => marks.push({ kind: "band", from: e.from, to: e.to, name: e.name }));
   if (t.mode === "past") marks.push({ kind: "line", at: 2025.5, color: "var(--ink-2)", dash: "2 3", name: "Today" });
-  const lasting = ["ai_shock", "amoc"].includes(t.shock);
+  const lasting = ["ai_shock", "amoc", "amoc_mild"].includes(t.shock);
   if (showShock) marks.push({ kind: "band", future: true, from: onset, to: lasting ? years[years.length - 1] : onset + 2,
                               name: TL.shocks[t.shock].name });
   const pay = tlSeries(pfRun, "payout", t.mode);
@@ -2109,27 +2095,38 @@ function timeline() {
   const seg = (name, opts, cur) => `<div class="seg tl-seg" role="group" aria-label="${name}">${opts.map(([v, lab]) =>
     `<button type="button" data-tl="${name}" data-v="${v}" aria-pressed="${cur === v}">${lab}</button>`).join("")}</div>`;
   const sh = TL.shocks[t.shock];
-  // how each system takes the shock: the worst year after onset against the year before
+  // How each system takes the shock: each system with the shock against the same system without it, at the worst of
+  // the six years from the onset. Until 2.1 the table set the year before the onset against the worst year after it,
+  // so trend growth hid most of a slow shock: the AMOC collapse showed as a gain in income.
   let shockTable = "";
   if (showShock) {
-    const i0 = years.indexOf(onset) - 1, span = years.map((y, i) => i).filter(i => years[i] >= onset && years[i] <= onset + 6);
-    const worst = (run, key, dir) => {
-      const s = sl(tlSeries(run, key, t.mode)), b = s[i0];
-      if (b == null) return null;
-      const v = span.map(i => s[i]).filter(v => v != null);
-      return dir > 0 ? Math.max(...v) - b : Math.min(...v) - b;
+    const R0 = M.runs.none;
+    const pick = (runs, sys) => {
+      if (!runs) return null;
+      if (sys === "status_quo") return Array.isArray(runs.status_quo) ? runs.status_quo : runs.status_quo[t.scen];
+      return hasPay && t.follow === "pay" ? runs.platform[t.scen + "~pay"]
+        : hasShield && t.covid === "shield" ? runs.platform[t.scen + "~shield"] : runs.platform[t.scen];
     };
-    const rows = [["Unemployment, worst year", "unemployment_rate", 1, v => signed(100 * v, 1, " pts")],
-                  ["Median income, worst year", "income", -1, v => signed(v / 1000, 0, " þús.")],
-                  ["Poverty (fixed line), worst year", "poverty_rate_anchored", 1, v => signed(100 * v, 1, " pts")],
-                  ["Output, worst year", "gdp", -1, v => signed(100 * v, 1, " pts")],
-                  ["Public balance, worst year", "balance", -1, v => signed(v, 1, " % of GDP")]]
-      .map(([lab, key, dir, f]) => {
-        const a = worst(sqRun, key, dir), b = worst(pfRun, key, dir);
+    const span = years.map((y, i) => i).filter(i => years[i] >= onset && years[i] <= onset + 6);
+    const worst = (sys, key, dir, rel) => {
+      const s = sl(tlSeries(pick(R, sys), key, t.mode)), b = sl(tlSeries(pick(R0, sys), key, t.mode));
+      const d = span.map(i => s[i] == null || b[i] == null ? null : rel ? s[i] / b[i] - 1 : s[i] - b[i])
+        .filter(v => v != null);
+      if (!d.length) return null;
+      return dir > 0 ? Math.max(...d) : Math.min(...d);
+    };
+    const rows = [["Unemployment", "unemployment_rate", 1, false, v => signed(100 * v, 1, " pts")],
+                  ["Median income", "income", -1, false, v => signed(v / 1000, 0, " þús.")],
+                  ["Poverty (fixed line)", "poverty_rate_anchored", 1, false, v => signed(100 * v, 1, " pts")],
+                  ["Output", "gdp", -1, true, v => signed(100 * v, 1, "%")],
+                  ["Public balance", "balance", -1, false, v => signed(v, 1, " % of GDP")]]
+      .map(([lab, key, dir, rel, f]) => {
+        const a = worst("status_quo", key, dir, rel), b = worst("platform", key, dir, rel);
         return `<tr><td>${lab}</td><td>${a == null ? "–" : f(a)}</td><td>${b == null ? "–" : f(b)}</td></tr>`;
       }).join("");
     shockTable = `<h3 style="margin-top:22px">How each system takes the shock</h3>
-      <p class="sub">The change from ${onset - 1} to the worst of the next six years.</p>
+      <p class="sub">Each system with the shock against the same system without it: the largest gap in the
+        six years from ${onset}.</p>
       ${table(["", "Status quo", "This scenario"], rows)}`;
   }
   const scName = TL.scenarios.find(s => s.id === t.scen).name;
@@ -2296,21 +2293,13 @@ function renderPage() {
         each other, so its figures are an extrapolation of the fitted surface and can be far off. Move some levers
         back from the ends of their ranges`;
     }
-  } else {
-    const onAnchor = ANCHORS.includes(UBI[state.ubi]);
-    approx = moved > 1;
-    label = moved === 0 ? "Exact model run"
-      : moved === 1 ? (onAnchor ? "Exact model run for this lever"
-          : "This lever's effect is interpolated between the amounts it was measured at")
-      : `${moved} levers moved — their effects are added together, which is an approximation`;
   }
   main.innerHTML = `
     <div class="tabs" role="tablist">${TABS.map(([k, lab]) =>
       `<button type="button" role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${lab}</button>`).join("")}</div>
     <div class="panel">
       <h2>${TABS.find(t => t[0] === state.tab)[1]}${["timeline", "past"].includes(state.tab) ? "" : `, ${yearOf(state.year)}`}</h2>
-      <p class="sub">${E ? `Borgaralaun ${levelOf(EL[0]).toFixed(0)} þús. kr. a month`
-                              : `Borgaralaun ${UBI[state.ubi]} þús. kr. a month`}.
+      <p class="sub">Borgaralaun ${levelOf(EL[0]).toFixed(0)} þús. kr. a month.
         <span class="accuracy ${approx ? "approx" : ""}"><span class="dot"></span>${label}</span></p>
       ${state.tab === "timeline" ? "" : `<div class="legend"><span><i style="background:var(--scn)"></i>This scenario</span>
         <span><i style="background:var(--ref)"></i>Status quo</span></div>`}
@@ -2326,169 +2315,250 @@ function renderPage() {
 }
 
 /* ---------------- the guided setup ----------------
-   A sequence of decisions, each in plain words, each setting one or several levers. It starts from today — the
-   borgaralaun and nothing else — and every answer adds a piece; the four cards above show what the choices so far
-   add up to. Levers no question touches stay as they are today; the world outside stays at the forecasts and the
-   sensitivities at their central values. Only in the guided build (MODE = "guided"). */
+   A sequence of decisions, each in plain words, each setting one or several levers, each with one sentence for and
+   one against, and each option with a badge for what it would need in law. The reader chooses where unanswered
+   questions stay: today's rules (the default; only the payment comes from GUIDE_START) or GUIDE_START, the preset
+   package. Each answer replaces the start's setting for the levers it names, and the summary says which start applies. The cards above show what
+   the settings add up to. The world outside stays at the forecasts and the sensitivities at their central values.
+   Only in the guided build (MODE = "guided"). */
 const GUIDE = [
   { id: "pay", q: "How much should every adult receive each month?",
-    why: "Everything else is weighed against this. More does more for people, and makes the rest harder to pay for.",
-    options: [["150 þús.", { ubi: 150 }], ["225 þús.", { ubi: 225 }], ["275 þús.", { ubi: 275 }], ["300 þús.", { ubi: 300 }],
-              ["375 þús.", { ubi: 375 }], ["450 þús.", { ubi: 450 }], ["600 þús.", { ubi: 600 }],
-              ["800 þús.", { ubi: 800 }]] },
-  { id: "pay_wages", q: "Should the payment rise with pay, not only with prices?",
-    why: "Pensions and benefits today rise with about four fifths of the growth in real wages. A payment that follows prices alone keeps what it buys but falls behind what others earn, and poverty measured against the typical income rises with it.",
-    options: [["Prices only", { ubi_wage: 0 }], ["Half of real-wage growth as well", { ubi_wage: 50 }],
+    why: "The payment is the reform's largest cost and its main benefit, and every other question decides how it is paid for or what it replaces. Each child receives the same amount; a later question decides how much of a child's payment is kept for them.",
+    pro: "A larger payment lifts more people above the poverty line and lets more of them turn down work they would not otherwise choose.",
+    con: "Each 25 þús. a month added to every adult's payment costs about 90 ma.kr. a year before taxes and savings, and a larger payment reduces paid work further.",
+    options: [["150 þús.", { ubi: 150 }, "law"], ["225 þús.", { ubi: 225 }, "law"], ["275 þús.", { ubi: 275 }, "law"], ["300 þús.", { ubi: 300 }, "law"],
+              ["375 þús.", { ubi: 375 }, "law"], ["450 þús.", { ubi: 450 }, "law"], ["600 þús.", { ubi: 600 }, "law"],
+              ["800 þús.", { ubi: 800 }, "law"]] },
+  { id: "pay_wages", q: "Should the payment rise with real wages as well as with prices?",
+    why: "Every option raises the payment with prices each year. Today's pensions and benefits also rise with about four fifths of the growth in real wages.",
+    pro: "A payment that also follows real wages keeps the same distance from what others earn, so poverty, measured against 60% of the median income, does not return as pay grows.",
+    con: "Following wages costs more in every year that real wages grow: a payment that follows prices alone falls about a third behind pay over thirty-five years of ordinary growth, and that gap is money the state does not have for lower taxes or savings.",
+    options: [["Prices only", { ubi_wage: 0 }, "law"], ["Half of real-wage growth as well", { ubi_wage: 50 }, "law"],
               ["Four fifths of it, as benefits today", { ubi_wage: 80 }]] },
-  { id: "kids", q: "How much of each child's payment is kept for them until they grow up?",
-    why: "What is kept becomes a start in life at 25. What is paid out helps the family now; a low held share puts more in the family's hands.",
-    options: [["A fifth", { child_invested: 20 }], ["Half", { child_invested: 50 }], ["Nine tenths", { child_invested: 90 }]] },
-  { id: "pensions", q: "What happens to the pension funds?",
-    why: "Merged into the payment, the funds' contributions and returns pay for it and occupational pensions stop, with a top-up for anyone whose pension was worth more. Kept apart, pensions go on and the payment comes on top, which costs far more.",
+  { id: "kids", q: "How much of each child's payment should be kept in a fund until they are 25?",
+    why: "The kept share is invested in the child's start-of-life fund, which they receive at 25. The rest is paid to the family each month.",
+    pro: "A larger kept share gives every 25-year-old capital of their own, whatever their parents did with the money.",
+    con: "A larger kept share leaves families less to live on while their children are young, and child poverty is measured on that income.",
+    options: [["A fifth", { child_invested: 20 }, "law"], ["Half", { child_invested: 50 }, "law"], ["Nine tenths", { child_invested: 90 }, "law"]] },
+  { id: "pensions", q: "What should happen to the occupational pension funds?",
+    why: "The funds hold pension rights already earned worth about 9,090 ma.kr., nearly twice a year's GDP, and take in contributions of 15.5% of pay.",
+    pro: "Paying the 15.5% contributions to the state instead covers much of the payment's cost, and replaces a system that pays the largest pensions to those who earned most.",
+    con: "Ending pensions already earned takes property the Constitution protects (article 72): in Kjartan Ásmundsson v. Iceland (2004) the European Court of Human Rights found against Iceland for ending one seaman's earned disability pension.",
     options: [["Kept as they are", { pension_fold: 0, pension_keep: 0 }],
-              ["Contributions go to the payment; pensions already earned are still paid", { pension_fold: 100, pension_keep: 1 }],
-              ["Merged into the payment", { pension_fold: 100, pension_keep: 0 }]] },
-  { id: "income_tax", q: "Where should income tax rates go?",
-    why: "Rates set against what the payment costs and what work pays after tax.",
-    options: [["Down by 15%", { income_tax: 85 }], ["As they are", { income_tax: 100 }], ["Up by 15%", { income_tax: 115 }],
-              ["Up by 35%", { income_tax: 135 }]] },
-  { id: "credit", q: "Should everyone keep their personal tax allowance?",
-    why: "Persónuafsláttur is worth up to 72.5 þús. a month to every earner. The payment could replace it; removing it raises a great deal and falls hardest on low earners.",
-    options: [["Keep it", { personal_credit: 72.5 }], ["Halve it", { personal_credit: 36 }], ["Remove it", { personal_credit: 0 }]] },
+              ["Contributions go to the payment; pensions already earned are still paid", { pension_fold: 100, pension_keep: 1 }, "law"],
+              ["Merged into the payment: pensions already earned end", { pension_fold: 100, pension_keep: 0 }, "const"]] },
+  { id: "income_tax", q: "Should income tax rates rise or fall?",
+    why: "Today's three rates are 31.49%, 37.99% and 46.29%, municipal tax included. Each option moves all three in proportion: up 15% takes them to 36.2%, 43.7% and 53.2%.",
+    pro: "Higher rates raise money for a larger payment, and the extra tax falls most heavily on the highest incomes.",
+    con: "Higher rates leave people less of each extra króna they earn, which adds to the payment's own effect on work; lower rates do the opposite and lose revenue.",
+    options: [["Down by 15%", { income_tax: 85 }, "law"], ["As they are", { income_tax: 100 }], ["Up by 15%", { income_tax: 115 }, "law"],
+              ["Up by 35%", { income_tax: 135 }, "law"]] },
+  { id: "credit", q: "Should earners keep the personal tax allowance?",
+    why: "Persónuafsláttur reduces every earner's income tax by up to 72.5 þús. a month.",
+    pro: "The payment gives every adult an untaxed sum each month, which is the allowance's purpose; keeping both pays the same support twice.",
+    con: "Removing the allowance raises every earner's tax by up to 72.5 þús. a month, and the lowest earners lose the largest share of their pay.",
+    options: [["Keep it", { personal_credit: 72.5 }], ["Halve it", { personal_credit: 36 }, "law"], ["Remove it", { personal_credit: 0 }, "law"]] },
   { id: "vat", q: "What should VAT be?",
-    why: "One rate on everything is simpler and raises more. It also makes food, and stays for tourists, dearer.",
-    options: [["Today's two rates (about 18% in effect)", { vat: 18 }], ["One rate of 22%", { vat: 22 }], ["One rate of 25%", { vat: 25 }],
-              ["One rate of 28%", { vat: 28 }]] },
-  { id: "vat_input", q: "Should firms reclaim VAT only on what goes into what they sell?",
-    why: "The carpenter reclaims the lumber, not the saw. In full it raises about 460 ma.kr. a year (range 385-574), and part of it ends up in prices.",
-    options: [["No, as today", { vat_input: 0 }], ["Half of it", { vat_input: 50 }], ["Yes", { vat_input: 100 }]] },
+    why: "Today's standard rate of 24%, reduced rate of 11% and exemptions come to about 18% of spending on average. Each single-rate option applies one rate to everything, including what tourists buy.",
+    pro: "A single rate is simpler to collect and harder to avoid, because no sale can be relabelled into a lower rate, and 25% on everything raises more than today's mix.",
+    con: "Food and the other goods taxed at 11% today get dearer, which weighs most on poorer households, and the switch raises the price level once for everyone.",
+    options: [["Today's two rates (about 18% in effect)", { vat: 18 }], ["One rate of 22%", { vat: 22 }, "law"], ["One rate of 25%", { vat: 25 }, "law"],
+              ["One rate of 28%", { vat: 28 }, "law"]] },
+  { id: "vat_input", q: "Should firms reclaim VAT only on what goes into the products they sell?",
+    why: "A carpenter would reclaim the VAT on the lumber but not on the saw. Firms reclaimed 997 ma.kr. of VAT in 2025.",
+    pro: "VAT would reach what firms use up themselves, such as cars, equipment and offices, which bears no VAT today once it is reclaimed. In full the rule brings in about 460 ma.kr. a year (an estimate, between 385 and 574), of which 275-370 remains after avoidance.",
+    con: "No country restricts input VAT this way, and the yield is an estimate. Firms will relabel purchases as inputs, and the rest falls on prices, pay, profits and investment; exporters bear about 135 ma.kr. a year of it.",
+    options: [["No, as today", { vat_input: 0 }], ["Half the restriction", { vat_input: 50 }, "new"], ["Yes, in full", { vat_input: 100 }, "new"]] },
   { id: "property", q: "How much should property and wealth be taxed?",
-    why: "Property cannot move abroad, and a heavier property tax lowers house prices. Wealth can move, and part of it does.",
-    options: [["As today", { prop_tax: 0, wealth_tax: 0 }], ["Property tax up by 1 point of value", { prop_tax: 100, wealth_tax: 0 }],
-              ["Property tax up by 2 points of value", { prop_tax: 200, wealth_tax: 0 }],
-              ["That, and 1% a year on wealth above 100 m kr.", { prop_tax: 100, wealth_tax: 100 }]] },
-  { id: "prop_defer", q: "Should pensioners pay the extra property tax now, or when the home is sold or inherited?",
-    why: "Many older people own their home but live on a modest pension; a tax on the home's value is paid out of income. Deferred, it is collected from the estate. About 29 ma.kr. less in the first year.",
-    options: [["Now, like everyone", { prop_defer: 0 }], ["When the home is sold or inherited", { prop_defer: 1 }]] },
-  { id: "inheritance", q: "What should pass on untaxed when someone dies?",
-    why: "A higher tax on large estates raises money and spreads wealth; set too high, estates leave or are given away early. Gifts and leaving the country are taxed alike in the higher options, so that neither is a way round it.",
+    why: "Property tax today is about 0.59% of a property's assessed value a year and raises 102.8 ma.kr. Iceland has no wealth tax.",
+    pro: "Property cannot be moved abroad; a heavier tax lowers house prices as buyers allow for it, and it reaches wealth that income tax misses.",
+    con: "Owners pay property tax out of income, which squeezes those with valuable homes and small incomes, many of them pensioners; a wealth tax drives some wealth abroad, so it raises less than a static estimate.",
+    options: [["As today", { prop_tax: 0, wealth_tax: 0 }], ["Property tax up by 1 point, to about 1.6% of value", { prop_tax: 100, wealth_tax: 0 }, "law"],
+              ["Property tax up by 2 points, to about 2.6% of value", { prop_tax: 200, wealth_tax: 0 }, "law"],
+              ["Property tax up by 1 point, and 1% a year on net wealth above 100 m kr.", { prop_tax: 100, wealth_tax: 100 }, "law"]] },
+  { id: "prop_defer", q: "Should households with someone aged 67 or over pay the extra property tax now, or when the home is sold or inherited?",
+    why: "Many older people own a valuable home but live on a modest pension, and property tax is paid out of income.",
+    pro: "No pensioner has to sell their home to pay the tax, and the state still collects the full amount from the sale or the estate.",
+    con: "The state receives about 29 ma.kr. less cash in the first year, and heirs inherit less.",
+    options: [["Now, like everyone", { prop_defer: 0 }], ["When the home is sold or inherited", { prop_defer: 1 }, "law"]] },
+  { id: "inheritance", q: "How much of an estate should pass untaxed when someone dies?",
+    why: "Today 10% is taxed on what passes above 6.5 m kr., and a surviving spouse pays nothing. The higher options also tax gifts and the gains of people who move their assets abroad, so that neither can be used to avoid the inheritance tax.",
+    pro: "A heavier tax on large estates spreads wealth more evenly and taxes wealth the heir did not earn.",
+    con: "At high rates estates are given away early, moved abroad or hidden. Under EEA law a tax on moving assets abroad must let the payment be deferred, and taking everything above a family home is likely to be found confiscatory.",
     options: [["As today: 10% above 6.5 m kr.", { inherit_rate: 10, inherit_floor: 6.5, gift_tax: 10, exit_tax: 0 }],
-              ["30% above 30 m kr.", { inherit_rate: 30, inherit_floor: 30, gift_tax: 30, exit_tax: 30 }],
-              ["Half of what is above a family home (80 m kr.)", { inherit_rate: 50, inherit_floor: 80, gift_tax: 50, exit_tax: 40 }],
-              ["Nothing above a family home", { inherit_rate: 100, inherit_floor: 80, gift_tax: 100, exit_tax: 50 }]] },
-  { id: "enforcement", q: "What becomes of the staff who check benefit claims today?",
-    why: "The payment needs no one to check who is entitled to it. They could go, or turn to the tax that is evaded, about 4% of GDP.",
-    options: [["They move on to other work", { enforcement: 0 }], ["100 move to tax enforcement", { enforcement: 100 }],
-              ["300 move to tax enforcement", { enforcement: 300 }]] },
+              ["30% above 30 m kr.", { inherit_rate: 30, inherit_floor: 30, gift_tax: 30, exit_tax: 30 }, "cond"],
+              ["50% above 80 m kr., the value of a family home", { inherit_rate: 50, inherit_floor: 80, gift_tax: 50, exit_tax: 40 }, "cond"],
+              ["100% above 80 m kr.: nothing passes beyond a family home", { inherit_rate: 100, inherit_floor: 80, gift_tax: 100, exit_tax: 50 }, "const"]] },
+  { id: "enforcement", q: "What should become of the staff who check benefit claims today?",
+    why: "The payment goes to every resident, so nobody has to check who is entitled to unemployment or other benefits.",
+    pro: "Tax evasion was put at 80-100 ma.kr. a year in 2014, about 4% of GDP. Investigators also close the ways round the inheritance tax.",
+    con: "The staff must be retrained as investigators, and each additional investigator recovers less than the one before.",
+    options: [["They move on to other work", { enforcement: 0 }], ["100 move to tax enforcement", { enforcement: 100 }, "law"],
+              ["300 move to tax enforcement", { enforcement: 300 }, "law"]] },
   { id: "public_jobs", q: "Should the state employ fewer people?",
-    why: "Fewer public jobs save money and free people for private work. Services depend on some of them, and the model shows where shortages appear.",
-    options: [["No", { payroll_cut: 0 }], ["A tenth fewer", { payroll_cut: 10 }], ["A fifth fewer", { payroll_cut: 20 }]] },
-  { id: "public_pay", q: "Should public employees' pay fall so that pay plus the payment is what they took home before?",
-    why: "Take-home pay stays as it was: a professor who took home 700 þús. gets 400 from the job and 300 as the payment. The state saves a great deal. The same job in the private sector would pay its full wage on top of the payment, so where public and private work compete, some move.",
-    options: [["No", { public_offset: 0 }], ["Halfway", { public_offset: 50 }], ["Fully", { public_offset: 100 }]] },
+    why: "The public wage bill was 709.6 ma.kr. in 2025. The cut is made over the reform's transition years through the staff who leave each year; those who stay are paid as before. A fifth fewer jobs takes about three years.",
+    pro: "Each tenth fewer public jobs saves about 71 ma.kr. a year of the wage bill before tax, and frees workers for private employers who are short of staff.",
+    con: "Schools, hospitals and care depend on many of these posts; the Work tab shows how many posts in essential services go unfilled.",
+    options: [["No", { payroll_cut: 0 }], ["A tenth fewer", { payroll_cut: 10 }, "law"], ["A fifth fewer", { payroll_cut: 20 }, "law"]] },
+  { id: "public_pay", q: "Should public employees' pay be cut by the payment, so that pay plus the payment equals what they took home before?",
+    why: "Pay is cut by the payment, grossed up at each employee's tax rate. A professor who took home 700 þús. is paid 400 þús. and receives the 300 þús. payment: the same 700.",
+    pro: "The state saves on its wage bill, and lower public pay holds down the wage costs that set prices.",
+    con: "The job now adds 400 þús. to what not working pays, not 700, so public posts become harder to fill than private ones paying full wages. Public pay is set by agreements that run to about 2028 and can change only by negotiation.",
+    options: [["No", { public_offset: 0 }], ["By half the payment", { public_offset: 50 }, "agree"], ["By the whole payment", { public_offset: 100 }, "agree"]] },
   { id: "agreements", q: "Should collective wage agreements stay?",
-    why: "Agreements protect pay against prices. Without them, pay is set contract by contract by what each job commands; with a guaranteed income, anyone can decline an offer.",
-    options: [["They stay", { agreements: 0 }], ["They go", { agreements: 1 }]] },
+    why: "Collective agreements set most pay today, and Act 55/1980 extends each agreement's terms to everyone working in its sector.",
+    pro: "Pay set contract by contract follows what each job commands, and a guaranteed income lets anyone turn down an offer. In the haggling round, held before the first year, every contract is renegotiated at once: each profession's pay is reset to the level at which its posts fill, and people may change profession as far as their education allows. The state leaves some posts unfilled rather than pay any price, and where posts fill, the work gets lighter.",
+    con: "The right to bargain collectively is protected by the Constitution (article 75) and the European Convention on Human Rights (article 11), and without agreements nothing compensates pay for price rises. Resetting all pay at once is a large shock concentrated in a single year.",
+    options: [["They stay", { agreements: 0, haggle: 0 }], ["They go, contract by contract", { agreements: 1, haggle: 0 }, "const"], ["They go at once, in a haggling round", { agreements: 1, haggle: 1 }, "const"]] },
   { id: "min_wage", q: "Should there be a statutory minimum wage?",
-    why: "Iceland has none; agreements set the floor. Without agreements, a floor is the only one.",
-    options: [["None", { minimum_wage: 0 }], ["425 þús. a month", { minimum_wage: 425 }], ["550 þús. a month", { minimum_wage: 550 }]] },
-  { id: "subsidies", q: "Should farm support, heating support and transport support go?",
-    why: "Farm support is 19.7 ma.kr., rural heating 4.5, the energy transition 7.2 and buses and ferries 6.0. For cutting them: the payment already supports the incomes of everyone working in these industries. Against: cheap heating in cold places and some farm jobs go with them. Research and the arts are asked about separately.",
-    options: [["None", { agri_cut: 0, sub_heating: 0, sub_transition: 0, sub_transport: 0 }],
-              ["Farm support only", { agri_cut: 100, sub_heating: 0, sub_transition: 0, sub_transport: 0 }],
-              ["Farm support, and transport", { agri_cut: 100, sub_heating: 0, sub_transition: 0, sub_transport: 100 }],
-              ["All of them, heating included", { agri_cut: 100, sub_heating: 100, sub_transition: 100, sub_transport: 100 }]] },
-  { id: "research", q: "What should happen to research funding?",
-    why: "Research credits and Rannís grants are 21.7 ma.kr. a year. For keeping it: research, including money for farm start-ups that can stand without subsidy, is one route by which an industry modernises. For cutting it: the saving.",
-    options: [["Kept as it is", { sub_innovation: 0 }], ["Half of it cut", { sub_innovation: 50 }],
-              ["Ended", { sub_innovation: 100 }]] },
+    why: "Iceland has no statutory minimum wage; collective agreements set a floor of about 425 þús. a month.",
+    pro: "A legal floor protects those with least bargaining power, which matters most if collective agreements end.",
+    con: "A high floor prices the least productive work out of the market, and the payment already guarantees everyone an income.",
+    options: [["None", { minimum_wage: 0 }], ["425 þús. a month", { minimum_wage: 425 }, "law"], ["550 þús. a month", { minimum_wage: 550 }, "law"]] },
+  { id: "subsidies", q: "Which support for farming, transport and rural heating should end?",
+    why: "Farm support costs 19.7 ma.kr. a year, rural heating support 4.5, energy-transition grants 7.2, and bus and ferry routes 6.0. Research and the arts are separate questions.",
+    pro: "The payment already supports the income of everyone working in these industries, and the money saved goes towards the payment for everyone.",
+    con: "Ending heating support adds about 25 þús. a month to the heating bill of each home without geothermal heat, about 9% of people. Ending farm support costs farm jobs and makes domestic food a little dearer, and that support is set by agreements with farmers (búvörusamningar).",
+    options: [["None of them", { agri_cut: 0, sub_heating: 0, sub_transition: 0, sub_transport: 0 }],
+              ["Farm support only", { agri_cut: 100, sub_heating: 0, sub_transition: 0, sub_transport: 0 }, "agree"],
+              ["Farm support and transport", { agri_cut: 100, sub_heating: 0, sub_transition: 0, sub_transport: 100 }, "agree"],
+              ["All of them, heating and the energy transition included", { agri_cut: 100, sub_heating: 100, sub_transition: 100, sub_transport: 100 }, "agree"]] },
+  { id: "research", q: "What should happen to state funding for research and innovation?",
+    why: "R&D tax credits, film reimbursements and research grants cost 21.7 ma.kr. a year.",
+    pro: "Ending them saves up to 21.7 ma.kr. a year, and the state no longer chooses which projects and firms receive money.",
+    con: "Firms on their own fund less research than would pay off for the economy as a whole, and research is one way industries modernise, farm start-ups among them. The model counts only the saving, not the research and films that would be lost.",
+    options: [["Kept as it is", { sub_innovation: 0 }], ["Half of it cut", { sub_innovation: 50 }, "law"],
+              ["Ended", { sub_innovation: 100 }, "law"]] },
   { id: "arts", q: "What should happen to state support for the arts?",
-    why: "Film reimbursements, artists' salaries and the rest come to about 5.7 ma.kr. The argument for ending it is that the payment is itself an artist's salary, paid to everyone and decided by nobody; the argument against is that it pays for the work that needs a producer, not only a living.",
-    options: [["Kept as it is", { culture: 0 }], ["Half of it cut", { culture: 50 }], ["Ended", { culture: 100 }]] },
-  { id: "customs", q: "Should customs duties go?",
-    why: "They raise 7.7 ma.kr. and mostly protect farm products. Without them imported goods are cheaper, and farms face the competition.",
-    options: [["They stay", { customs: 100 }], ["They go", { customs: 0 }]] },
-  { id: "fish", q: "How much of the fishing industry's profit above a normal return should the state take?",
-    why: "The fee is a share of the resource rent — the profit above a normal return on the boats and the work — not of what the catch sells for. It takes about a quarter of that rent today.",
-    options: [["About a quarter, as today", { fish_rent: 24 }], ["Half", { fish_rent: 50 }], ["Four fifths", { fish_rent: 80 }]] },
+    why: "Artists' salaries and other state support pay for about 45% of the work artists are paid for today; ticket sales and other buyers pay the rest.",
+    pro: "The payment works like an artist's salary paid to everyone, with no committee deciding who receives it.",
+    con: "The payment covers an artist's living but not the cost of work that needs a producer, a crew or a stage, which state support pays for today.",
+    options: [["Kept as it is", { culture: 0 }], ["Half of it cut", { culture: 50 }, "law"], ["Ended", { culture: 100 }, "law"]] },
+  { id: "customs", q: "Should customs duties be abolished?",
+    why: "Customs duties raised 7.7 ma.kr. in 2025, mostly on imported farm products, which they shield from competition.",
+    pro: "Imported food and goods get cheaper in the shops.",
+    con: "The treasury loses 7.7 ma.kr. a year, and Icelandic farms face the import competition, so some close.",
+    options: [["They stay", { customs: 100 }], ["They go", { customs: 0 }, "law"]] },
+  { id: "fish", q: "How much of the fishing industry's resource rent should the state take?",
+    why: "The resource rent is the profit fishing makes above a normal return on its capital: 72.8 ma.kr. in 2023. The fishing fee (veiðigjald) takes about a quarter of it today, 17.3 ma.kr. in 2026.",
+    pro: "By law the fish stocks are the nation's common property (Act 116/2006), and a tax on the rent alone does not change how much is caught.",
+    con: "A higher fee lowers what the fishing companies invest and what they are worth, and the towns that depend on them see less investment.",
+    options: [["About a quarter, as today", { fish_rent: 24 }], ["Half, about 36 ma.kr. on 2023's rent", { fish_rent: 50 }, "law"], ["Four fifths, about 58 ma.kr. on 2023's rent", { fish_rent: 80 }, "law"]] },
   { id: "own_costs", q: "Should the state cut its own running costs?",
-    why: "Alþingi, þingfararkaup, ministers' pay, party funding, rural travel support and the foreign service: about 6.5 ma.kr. a year together. Real money, though small against the payment.",
+    why: "Alþingi, þingfararkaup, ministers' pay, party funding, rural travel support and the foreign service cost about 6.5 ma.kr. a year.",
+    pro: "The state asks of itself the restraint the reform asks of everyone else.",
+    con: "The saving, about 6.5 ma.kr. a year, is under 1% of what the payment costs, and a thinner parliament and foreign service do their work less well.",
     options: [["Keep them", { governance: 0 }],
-              ["Cut them (Alþingi, þingfararkaup, ministers, the foreign service)", { governance: 100 }]] },
+              ["Cut them (Alþingi, þingfararkaup, ministers, the foreign service)", { governance: 100 }, "law"]] },
   { id: "church", q: "Should the state stop funding the church and other religious bodies?",
-    why: "Sóknargjöld for every registered religious body, about 3.6 ma.kr., are collected through income tax and passed on; the National Church also receives about 3.7 ma.kr. under the 2019 agreement, and a further 0.45 ma.kr. goes to its funds. About 7.75 ma.kr. a year in all. Ending the funding would not by itself change the National Church's place in the constitution (article 62); what the members paid stays with the state.",
-    options: [["Keep the funding", { church: 0 }], ["End it", { church: 100 }]] },
-  { id: "per_diem", q: "Should per diems end, in the public sector and the private?",
-    why: "Dagpeningar are paid tax-free against no receipts. Ending them and paying documented travel instead is worth about 13 ma.kr. a year, part saved by the state and part collected as tax.",
-    options: [["They stay", { per_diem: 0 }], ["They end", { per_diem: 100 }]] },
-  { id: "ownership", q: "How far should property be held by many rather than a few?",
-    why: "A cap on how much any group may own of homes to rent or of shop space is meant to lower rents through competition and make room for small owners; in the model it works through the number of landlords competing.",
-    options: [["No caps", { resi_cap: 100, comm_cap: 100 }], ["Caps of 5% for homes and 10% for shop space", { resi_cap: 5, comm_cap: 10 }]] },
-  { id: "invest", q: "What should the state build and fund?",
-    why: "Homes, childcare places and retraining cost money now and pay back in rents, parents' work and people moving to where they are needed.",
+    why: "Sóknargjöld for every registered religious body, about 3.6 ma.kr., pass through income tax; the National Church also receives about 3.7 ma.kr. under the 2019 agreement and 0.45 ma.kr. for its funds.",
+    pro: "The state stops funding religious belief through the tax system, a saving of about 7.75 ma.kr. a year.",
+    con: "Article 62 of the Constitution says the state shall support the National Church, so changing that needs a referendum, and the church-land agreements of 1997 and 2019 may require compensation.",
+    options: [["Keep the funding", { church: 0 }], ["End it", { church: 100 }, "const"]] },
+  { id: "per_diem", q: "Should per diems end, in both the public and the private sector?",
+    why: "Dagpeningar are paid tax-free with no receipts. Paying documented travel costs instead is worth about 13 ma.kr. a year: saved where the state pays per diems, and taxed where private employers pay them.",
+    pro: "Tax-free pay without receipts benefits only jobs that involve travel; ending it treats all pay alike and raises money.",
+    con: "Travel costs are real, and documenting each one takes employees' and employers' time.",
+    options: [["They stay", { per_diem: 0 }], ["They end", { per_diem: 100 }, "law"]] },
+  { id: "ownership", q: "Should any one owner be limited in how much rental housing or commercial space it holds?",
+    why: "A cap limits any one company or affiliated group to a share of the total floor space. A cap below what the largest owners hold today forces them to sell, which adds competing landlords.",
+    pro: "More landlords compete for tenants, which takes the concentration premium out of rents over about four years: 2.6-3.6% lower in the model, depending on whether new building is exempt. Lower commercial rents let more small businesses start.",
+    con: "The largest owners include non-profit and municipal landlords; the caps need a phase-in and exemptions, and they may slow building.",
+    options: [["No caps", { resi_cap: 100, comm_cap: 100 }], ["Caps of 5% for homes and 10% for commercial space", { resi_cap: 5, comm_cap: 10 }, "cond"]] },
+  { id: "invest", q: "Should the state build homes, add childcare places and fund retraining?",
+    why: "About 165,000 dwellings exist, and the market adds about 1.1% a year. Today's 19,000 or so full-day childcare places leave a waiting list in Reykjavík.",
+    pro: "State-built homes lower rents, extra childcare places let parents work more, and retraining speeds people's moves into professions short of staff.",
+    con: "All three are paid for now while the returns come later, and the state competes with private builders and employers for the same workers.",
     options: [["Nothing extra", { housing: 0, childcare: 0, retraining: 0 }],
-              ["1,000 homes and 2,000 childcare places a year, 15 ma.kr. for retraining", { housing: 1000, childcare: 2000, retraining: 15 }],
-              ["2,500 homes and 6,000 places, 30 ma.kr. for retraining", { housing: 2500, childcare: 6000, retraining: 30 }]] },
-  { id: "firms", q: "Where the state holds a stake in a company, should the company still pay corporate tax?",
-    why: "Everyone who founds or funds a company has had schooling, health care and the payment, so the state is deemed to have put one start-of-life fund — about 32 m kr. — into every company each time it raises capital, old companies as well as new. A firm started on the payment alone is half the state's; one started mostly on outside money, less, but never less than one fund's worth. That is the premise of a corporate tax, held as ownership: the state's share of the corporate sector grows as companies raise capital, and its dividends are public revenue. Firms answer by raising less equity, so there is a cost in investment. The fund itself, paid out at 25, is the person's own money to use as they like.",
-    options: [["No — the stake instead of the tax", { staked_tax: 0 }], ["Half the tax", { staked_tax: 50 }],
-              ["Yes — both", { staked_tax: 100 }]] },
-  { id: "closed", q: "How strictly should residence be tested, within what EEA law allows?",
-    why: "Freedom of movement is not a lever: an EEA citizen may come, and one who works 10-12 hours a week has equal treatment and the payment with it. What a country may still do is require registration, test that someone has the means to support themselves, and enforce both. Stricter testing keeps the payment from drawing people who would not work; it also costs some investment and output. Capital controls are a separate setting; they damp the risk premium on a large debt.",
-    options: [["Open, as today", { residence: 0, capital_controls: 0 }], ["Middling", { residence: 50, capital_controls: 50 }],
-              ["Strict", { residence: 100, capital_controls: 100 }]] },
+              ["1,000 homes and 2,000 childcare places a year, 15 ma.kr. for retraining", { housing: 1000, childcare: 2000, retraining: 15 }, "law"],
+              ["2,500 homes and 6,000 places, 30 ma.kr. for retraining", { housing: 2500, childcare: 6000, retraining: 30 }, "law"]] },
+  { id: "closed", q: "How strictly should new arrivals' residence be tested, and should capital controls stay in place?",
+    why: "Free movement itself is not a choice here: an EEA citizen may come, and one who works is treated equally and receives the payment. EEA law lets Iceland require arrivals who do not work to show they can support themselves, assessed case by case and never as a fixed sum. Everyone is eligible after five years.",
+    pro: "A stricter test keeps the payment from drawing arrivals who would not work, and capital controls damp the risk premium a large public debt would otherwise carry.",
+    con: "EEA law allows capital controls only as a temporary crisis measure (EEA article 43), so controls kept in place breach it; they also cost foreign investment and output, as Iceland's did in 2008-2017.",
+    options: [["Open, as today", { residence: 0, capital_controls: 0 }], ["Halfway on both", { residence: 50, capital_controls: 50 }, "eea"],
+              ["Strict on both", { residence: 100, capital_controls: 100 }, "eea"]] },
   { id: "prison", q: "Should the payment stop while someone is in prison?",
-    why: "Benefits stop after four months today. A prison day costs the state 56,750 kr. The evidence is that the certainty of being caught deters more than the severity of the sentence (Nagin 2013).",
-    options: [["After four months, as benefits do today", { prison_ubi: 60 }], ["From the first day", { prison_ubi: 100 }],
-              ["Never", { prison_ubi: 0 }]] },
-  { id: "credit_risk", q: "How should the payment be kept from lenders and gambling sites?",
-    why: "If a lender can lend against next month's payment, people at risk borrow against it. About 20 ma.kr. a year goes to foreign betting sites that pay no tax here.",
-    options: [["Protected from lenders, gambling payments blocked", { ubi_protected: 100, gambling_block: 100 }],
+    why: "Today benefits stop after four months in prison, which covers about 60% of all prison time. A prison day costs the state 56,750 kr.",
+    pro: "The state already houses and feeds prisoners, so paying them the payment as well pays twice for their keep.",
+    con: "Prisoners' families lose income, people held on remand have not been convicted, and the saving is small. The evidence is that the certainty of being caught deters more than the severity of the sentence (Nagin 2013).",
+    options: [["After four months, as benefits do today", { prison_ubi: 60 }], ["From the first day", { prison_ubi: 100 }, "cond"],
+              ["Never", { prison_ubi: 0 }, "law"]] },
+  { id: "credit_risk", q: "Should the payment be protected from lenders, and should payments to foreign gambling sites be blocked?",
+    why: "If lenders can take the payment as security, people in debt trouble can borrow against next month's payment. About 20 ma.kr. a year goes to foreign betting sites that pay no tax in Iceland.",
+    pro: "A payment that cannot be pledged or seized cannot be borrowed against. Norway blocks payments to foreign betting sites, which stops much of that spending, and part of it moves to licensed domestic games that are taxed.",
+    con: "Blocking payments limits what adults may do with their own money, and blocks can be routed around.",
+    options: [["Protected from lenders, gambling payments blocked", { ubi_protected: 100, gambling_block: 100 }, "law"],
               ["Protected from lenders only, as benefits are today", { ubi_protected: 100, gambling_block: 0 }],
-              ["Neither", { ubi_protected: 0, gambling_block: 0 }]] },
-  { id: "free", q: "Should health care and internet be free?",
-    why: "Households pay about 65 ma.kr. a year for health care out of pocket, mostly the sick and the old, and about 13 for the connection.",
-    options: [["Neither", { free_health: 0, free_internet: 0 }], ["Health care", { free_health: 100, free_internet: 0 }],
-              ["Both", { free_health: 100, free_internet: 100 }]] },
-  { id: "leave", q: "Who pays someone on sick leave or parental leave?",
-    why: "With the payment as a floor, the state's sick pay and the parental leave fund are no longer what stands between a household and no income. What is paid above the payment could stay with the state, or become the employer's — the period law and agreements already give, then compulsory insurance. Nobody may be dismissed for taking leave either way, and a parent also has half the newborn's own payment.",
+              ["Neither", { ubi_protected: 0, gambling_block: 0 }, "law"]] },
+  { id: "free", q: "Should health care visits and the internet connection be free?",
+    why: "Households pay about 65 ma.kr. a year for health care out of their own pockets, and about 13 for the internet connection. Free care follows the Danish model: no charge for GPs, specialists, outpatient care, tests or physiotherapy (about 15 of the 65), and a GP referral before a specialist. Medicines and adult dental care are still paid for.",
+    pro: "Charges for care fall most on the sick and the old, who are least able to pay. A free connection saves households the line part of their bill, about 8 ma.kr. a year.",
+    con: "The state takes on the 15 ma.kr. households pay for visits today, plus the extra care used once visits are free, and about 5 ma.kr. a year for the network and Farice's cables.",
+    options: [["Neither", { free_health: 0, free_internet: 0 }], ["Health care", { free_health: 100, free_internet: 0 }, "law"],
+              ["Both", { free_health: 100, free_internet: 100 }, "law"]] },
+  { id: "leave", q: "Who should pay someone on sick leave or parental leave?",
+    why: "With the payment as a floor, ending the state's sick pay and the parental leave fund no longer leaves a household with no income. Either way, nobody may be dismissed for taking leave.",
+    pro: "Employers pay for a first period set by law and agreements, rising with seniority, and insure the rest, so the cost falls where the risk arises and the state stops paying.",
+    con: "Employers pay more per employee, which the model counts against hiring, and some may avoid hiring people likely to take leave; the law forbids that but cannot fully prevent it.",
     options: [["The state keeps paying, as now", { leave_scheme: 0 }],
-              ["Employers for a first period, insurers after", { leave_scheme: 100 }]] },
-  { id: "floor", q: "Should people on a disability or old-age pension be topped up to what today's system pays?",
-    why: "Today's disability pension is about 430 þús. before tax, some 370 net, and a full Tryggingastofnun pension a little over 320 net. A 300 þús. payment is less than either, so without a top-up the people least able to work are the ones a payment alone leaves worse off. About seven in eight pensioners own their home, three in four outright; for them the top-up can be a loan against it, repaid when the home is sold or from the estate, so they keep both the home and the income and the state gets most of it back.",
-    options: [["No top-up: the payment is the floor for everyone", { benefit_floor: 0, floor_loan: 0 }],
-              ["Top them up to what today's system pays", { benefit_floor: 100, floor_loan: 0 }],
+              ["Employers for a first period, insurers after", { leave_scheme: 100 }, "cond"]] },
+  { id: "floor", q: "Should people on a disability or old-age pension be topped up to what today's system pays them?",
+    why: "Today's disability pension is about 430 þús. a month before tax, some 370 after it, and a full Tryggingastofnun old-age pension a little over 320 after tax: both more than a 300 þús. payment. About seven in eight pensioners own their home.",
+    pro: "No one on a disability or old-age pension ends up with less than today's system pays them. As a loan against the home, the top-up is lent rather than spent, and the state bears only what an estate cannot repay.",
+    con: "The top-up keeps a means-tested benefit, withdrawn as earnings rise, which the payment was meant to replace, and without the loan the state pays the full difference every year.",
+    options: [["No top-up: the payment is the floor for everyone", { benefit_floor: 0, floor_loan: 0 }, "cond"],
+              ["Top them up to what today's system pays", { benefit_floor: 100, floor_loan: 0 }, "law"],
               ["Top them up; for those who own their home, as a loan repaid when it is sold or from the estate",
-               { benefit_floor: 100, floor_loan: 1 }]] },
-  { id: "indexation", q: "Where pay agreements remain, should they compensate the price rise the tax switch causes?",
-    why: "The VAT that pays for the payment lifts prices once. If agreements compensate that too, pay chases prices and they rise again. Denmark's agreements index to a price measure net of taxes; the micro-macro study of a basic income for Scotland (Connolly et al.) found this choice decides more than any other whether the tax rise feeds inflation.",
+               { benefit_floor: 100, floor_loan: 1 }, "law"]] },
+  { id: "indexation", q: "Where collective agreements remain, should they compensate pay for the one-time price rise the higher VAT causes?",
+    why: "The VAT that pays for the payment raises prices once. If agreements compensate that rise, pay chases it and prices rise again. Danish agreements compensate prices net of taxes (nettoprisindeks), and the study of a basic income for Scotland (Connolly et al. 2021) found that this choice, more than any other single response, decides whether the tax rise turns into a wage-price spiral.",
+    pro: "Pay does not chase a one-time price rise, so the tax switch does not turn into lasting inflation.",
+    con: "Workers bear the VAT's price rise in their real pay, and the choice belongs to the parties to the agreements, not to the state.",
     options: [["Yes, the full price index, as today", { net_indexation: 0 }],
-              ["No, prices net of the tax switch", { net_indexation: 100 }]] },
-  { id: "world", q: "Which world should the comparison be made in?",
-    why: "The forecasts have prices near the 2.5% target, a stable króna and rents roughly flat. The last decade had prices rising 4.3% a year, a weakening króna and housing outrunning incomes. Whichever is chosen applies to the reform and to today's system alike, so the two are always judged on the same terms.",
+              ["No, prices net of the tax switch", { net_indexation: 100 }, "agree"]] },
+  { id: "world", q: "In which outside world should the reform and today's system be compared?",
+    why: "The forecasts assume inflation returns to the 2.5% target, the króna holds its real value and rents rise no faster than the model's housing market makes them; on today's rules the model still has prices rising 2.6-3.6% a year to 2030. Over 2016-25 prices rose 4.3% a year, the króna weakened by about a point a year, and real rents outran incomes by about 1.5 points a year. The choice applies to the reform and to today's system alike.",
     options: [["The forecasts", { history_world: 0 }],
               ["As the last decade actually went", { history_world: 1 }]] },
   { id: "smelters", q: "Should the aluminium smelters' power contracts end?",
-    why: "The power could fetch more elsewhere. The smelters are exports and jobs in the East and at Hvalfjörður, and ending the contracts costs compensation.",
-    options: [["They continue", { smelters: 0 }], ["They end", { smelters: 100 }]] },
+    why: "The aluminium smelters use most of Iceland's electricity under long-term contracts.",
+    pro: "Sold to data centres, e-fuel plants, fish farms and greenhouses, the power fetches a higher price than the smelter contracts pay.",
+    con: "The smelters' exports and jobs, in the East and at Hvalfjörður, are lost, and ending the contracts early means compensating the owners.",
+    options: [["They continue", { smelters: 0 }], ["They end", { smelters: 100 }, "comp"]] },
 ];
 const GKEY = "ubi-guide-answers-v1";
 let surveyDb = null, surveyUser = null, surveyUid = null, survey = { n: 0, counts: {} }, surveySent = false;
 const leverBy = () => Object.fromEntries(EL.map(l => [l.key, l]));
 const toX = (l, v) => Math.min(1, Math.max(0, (v - l.lo) / (l.hi - l.lo)));
-/* Where the guide starts (no reform defaults; a combination that balances the budget and does
-   visibly more for people than today's system). Chosen on the surface and checked in the model itself
+/* Where the guide starts (no reform defaults; a combination that does no worse for the budget than today's path
+   and visibly more for people than today's system). Chosen on the surface and checked in the model itself
    (scripts/verify_scenarios.py, data/processed/scenarios_guide_start_verified.json): 275 þús. rising with prices and
    four fifths of real-wage growth, most of the child payment paid to families, pensions and disability topped up to
-   today's level, VAT 22% with refunds restricted to value-chain inputs by half, income-tax rates up 35% with half
-   the personal allowance, property tax up 2 points, 15% fewer public jobs. Checked again on v9's model and surface
-   (2026-10-13). v9 values the full restriction at 459.5 ma.kr., and with it in full the start ran a
-   surplus of 424 in the model, so it starts at half, one of the guide's own answers. Checked again on v10's model
-   and surface (2026-10-16). In 2035, in the model against its own status quo: budget +40 ma.kr. (-148), child
-   poverty 3.1% (20.9%), poverty 7.2% (13.2%), hardship 2.2% (3.4%); household income 0.4% lower, unemployment 5.0%
-   (4.9%), essential services short about 5,400 posts (2,000). The surface puts the budget at +24. */
-const GUIDE_START = {"ubi": 0.34375, "vat": 0.411765, "income_tax": 0.928571, "prop_tax": 0.5, "corporate_tax": 0.788981, "wealth_tax": 6.5e-05, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.0, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "childcare": 0.25, "housing": 0.333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "clawback": 0.2869, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.8, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.333333, "staked_tax": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.223716, "sub_innovation": 0.0, "sub_heating": 0.093957, "sub_transition": 0.0, "sub_transport": 0.031715, "sub_other": 0.011393, "fish_rent": 0.4, "vat_input": 0.5, "pension_return": 0.6, "personal_credit": 0.496552, "inherit_rate": 0.272454, "gift_tax": 0.543614, "exit_tax": 0.200692, "enforcement": 0.441458, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 0.5, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "venture_stake": 1.0, "green_heat": 0.166667, "per_diem": 0.100095, "agreements": 0.0, "s_emigration": 0.020833, "s_fertility": 0.444444, "s_labour_demand": 0.08875, "s_tourism": 0.416667, "s_avoidance": 0.333333, "governance": 0.0};
-function guideBase(l) { return GUIDE_START[l.key] ?? (l.today != null ? l.today : startX(l)); }
+   today's level, VAT 25% with refunds restricted to value-chain inputs, income-tax rates up 35% with half
+   the personal allowance, property tax up 2 points, 15% fewer public jobs, 80% of the fisheries rent, a 40% levy on
+   machine income, and residence rules at their strictest. Every lever is named, so the guide, the explorer's preset
+   and the checks all read the same package. 2.1: set on the rebuilt surface (scripts/guide_start.py); the first
+   stage of the rebuild put it at -345 in 2035 against the status quo's -207, so VAT, the fisheries rent, the levy
+   and residence rules were raised to come in under the status quo's deficit. The verified figures are in the file
+   above. */
+const GUIDE_START = {"ubi": 0.34375, "vat": 0.588235, "income_tax": 0.928571, "prop_tax": 0.5, "corporate_tax": 0.788981, "wealth_tax": 6.5e-05, "minimum_wage": 0.0, "hours": 1.0, "child_invested": 0.0, "indexation": 0.0, "taper": 0.0, "payroll_cut": 0.375, "transition": 0.4, "childcare": 0.25, "housing": 0.333333, "retraining": 0.375, "fund": 0.0, "fx": 0.0, "culture": 0.0, "ai": 0.2, "robotics": 0.0, "ai_subsidy": 0.0, "robot_subsidy": 0.0, "junior_subsidy": 0.0, "clawback": 0.8, "robot_stake": 0.0, "frontier": 0.0, "infrastructure": 0.0, "windfall": 0.0, "tourism_price": 0.4625, "marine_price": 0.5, "aluminium_price": 0.6, "import_price": 0.42, "resi_cap": 1.0, "comm_cap": 1.0, "dev_exempt": 1.0, "custodianship": 0.0, "sick_pay": 0.0, "ubi_index": 1.0, "ubi_wage": 0.8, "security_spend": 0.4, "prof_moves": 0.4, "match_gain": 0.4, "benefit_floor": 1.0, "net_indexation": 0.0, "birth_timing": 0.333333, "staked_tax": 0.0, "deemed_stake": 0.0, "leave_scheme": 1.0, "leave_top_up": 0.0, "history_world": 0.0, "church": 0.0, "public_offset": 1.0, "customs": 1.0, "agri_cut": 0.223716, "sub_innovation": 0.0, "sub_heating": 0.093957, "sub_transition": 0.0, "sub_transport": 0.031715, "sub_other": 0.011393, "fish_rent": 0.8, "vat_input": 1.0, "pension_return": 0.6, "personal_credit": 0.496552, "inherit_rate": 0.272454, "gift_tax": 0.543614, "exit_tax": 0.200692, "enforcement": 0.441458, "prison_ubi": 0.6, "ubi_protected": 1.0, "gambling_block": 1.0, "free_health": 0.0, "free_internet": 0.0, "teen_moveout": 0.25, "agri_startups": 0.3, "residence": 1.0, "capital_controls": 0.5, "inherit_floor": 0.5, "smelters": 0.0, "pension_fold": 1.0, "pension_keep": 1.0, "prop_defer": 0.0, "floor_loan": 0.0, "inherit_home": 0.0, "venture_stake": 1.0, "green_heat": 0.166667, "per_diem": 0.100095, "agreements": 1.0, "haggle": 1.0, "s_emigration": 0.020833, "s_fertility": 0.444444, "s_labour_demand": 0.08875, "s_tourism": 0.416667, "s_avoidance": 0.333333, "s_downsizing": 0.5, "s_top_income": 0.5, "s_family_care": 0.5, "governance": 0.0};
+/* What an unanswered question is set to. The reader picks the start: today's rules, with only the payment itself
+   taken from the preset (the default), or the preset package the model finds does no worse for the budget than today's path. */
+function guideBase(l) {
+  if (state.guide.start !== "preset" && l.key !== "ubi" && l.today != null) return l.today;
+  return GUIDE_START[l.key] ?? (l.today != null ? l.today : startX(l));
+}
+/* What an option would need in law, as the legal review of the model judged it (docs/REVIEW.md). Not legal advice. */
+const BADGE = {
+  law: ["Ordinary law", "Can be done by an act of Alþingi"],
+  cond: ["Law, with conditions", "Lawful if designed with the conditions the review names: a phase-in, exemptions, or deferral"],
+  agree: ["By agreement", "Can change only by negotiation, or as the agreements in force expire"],
+  comp: ["Compensation owed", "Lawful, but those who lose contracted rights must be compensated"],
+  const: ["Constitution", "Needs a constitutional change, or full compensation"],
+  eea: ["EEA risk", "Likely contrary to EEA law as it stands"],
+  new: ["No precedent", "No country does this; lawful in principle, untested"],
+};
 function applyGuide() {
   const byKey = leverBy();
   EL.forEach(l => { state.x[l.key] = guideBase(l); });
@@ -2503,11 +2573,15 @@ function optionTags(g) {
   const byKey = leverBy();
   return g.options.map(([, sets]) => {
     const match = f => Object.entries(sets).every(([k, v]) => byKey[k] && Math.abs(toX(byKey[k], v) - f(byKey[k])) < .01);
-    return [match(l => l.today ?? -1) && "today", match(l => GUIDE_START[l.key] ?? -1) && "where it starts"].filter(Boolean);
+    const today = match(l => l.today ?? -1);
+    return [today && "today", !today && match(l => guideBase(l)) && "where it starts"].filter(Boolean);
   });
 }
 function saveAnswers() {
-  try { localStorage.setItem(GKEY, JSON.stringify(state.guide.answers)); } catch (e) { /* a convenience only */ }
+  try {
+    localStorage.setItem(GKEY, JSON.stringify(state.guide.answers));
+    localStorage.setItem(GKEY + "-start", state.guide.start || "today");
+  } catch (e) { /* a convenience only */ }
 }
 function loadAnswers() {
   try { return JSON.parse(localStorage.getItem(GKEY) || "{}") || {}; } catch (e) { return {}; }
@@ -2521,19 +2595,29 @@ function guideHTML() {
   return `<section class="panel guide" aria-labelledby="gq">
     <div class="gprog"><span>Question ${i + 1} of ${GUIDE.length}</span>
       <span class="gbar"><i style="width:${(100 * i / GUIDE.length).toFixed(1)}%"></i></span></div>
+    <div class="gstart"><span id="gs-lb">Unanswered questions stay at</span>
+      <div class="seg" role="group" aria-labelledby="gs-lb">
+        <button type="button" data-gs="today" aria-pressed="${state.guide.start !== "preset"}">Today's rules</button>
+        <button type="button" data-gs="preset" aria-pressed="${state.guide.start === "preset"}">A preset package</button>
+      </div></div>
     <h2 id="gq">${g.q}</h2>
     <p class="sub">${g.why}</p>
+    ${g.pro ? `<dl class="gpc"><dt>For</dt><dd>${g.pro}</dd><dt>Against</dt><dd>${g.con}</dd></dl>` : ""}
     <fieldset class="gopts"><legend class="sr">${g.q}</legend>
-      ${g.options.map(([label], k) => `<label class="gopt${a === k ? " on" : ""}">
+      ${g.options.map(([label, , badge], k) => `<label class="gopt${a === k ? " on" : ""}">
         <input type="radio" name="g-${g.id}" id="g-${g.id}-${k}" value="${k}" ${a === k ? "checked" : ""}>
         <span class="glab">${label}</span>
-        <span class="gtags">${tags[k].map(t => `<em>${t}</em>`).join("")}${survey.n
-          ? `<b title="Share of everyone who answered">${pct((share[k] || 0) / survey.n, 0)}</b>` : ""}</span>
+        <span class="gtags">${tags[k].map(t => `<em>${t}</em>`).join("")}${badge && badge !== "law" && BADGE[badge]
+          ? `<i class="b-${badge}" title="${BADGE[badge][1]}">${BADGE[badge][0]}</i>` : ""}${survey.n && a != null
+          ? `<b title="Share of earlier readers who chose it: a self-selected sample, not a poll">${pct((share[k] || 0) / survey.n, 0)}</b>` : ""}</span>
       </label>`).join("")}
     </fieldset>
     <p class="ghint">The cards above show where your answers so far lead, in ${yearOf(state.year)}, against the
-      status quo. Anything not yet asked stays where the guide starts: a combination the model finds balances the
-      budget and lowers poverty, one starting point among many, to be changed answer by answer.</p>
+      status quo. ${state.guide.start === "preset"
+        ? "Anything not yet asked stays where the preset package puts it: one combination the model finds does no worse for the budget than today's path, a starting point to change answer by answer."
+        : "Anything not yet asked stays as it is today; only the payment itself starts from the preset's 275 þús. until you answer."}
+      A badge says what an option would need beyond an ordinary act of Alþingi, as a legal review of the model judged
+      it; options without one need only that. The badges are not legal advice. Earlier readers' choices appear once you have answered, and they are a self-selected sample, not a poll.</p>
     <div class="gnav">
       <button type="button" class="reset" data-g="back" ${i === 0 ? "disabled" : ""}>Back</button>
       <button type="button" class="reset gnext" data-g="next">${a == null ? "Skip this one" : "Next"}</button>
@@ -2545,7 +2629,7 @@ function guideHTML() {
 function summaryHTML() {
   const rows = GUIDE.map(g => {
     const a = state.guide.answers[g.id];
-    return `<tr><td>${g.q}</td><td>${a == null ? '<span class="muted">as today</span>' : g.options[a][0]}</td></tr>`;
+    return `<tr><td>${g.q}</td><td>${a == null ? `<span class="muted">not answered: ${state.guide.start === "preset" ? "the preset's setting" : "as today"}</span>` : g.options[a][0]}</td></tr>`;
   }).join("");
   // only answers to questions still asked: an answer saved for one since removed counted too ("34 of 33")
   const done = GUIDE.filter(g => state.guide.answers[g.id] != null).length;
@@ -2568,7 +2652,7 @@ function summaryHTML() {
         : `<p class="muted">Answers are not collected on this copy of the page: they stay in your browser and are
           sent nowhere.</p>`}
       <p class="muted" id="survey-n">${survey.n ? `${survey.n} ${survey.n === 1 ? "person has" : "people have"} answered so far.
-        Their shares appear beside each answer as you go back through the questions.` : "No one has answered yet."}</p>
+        Their shares appear beside each answer once you have given your own: a self-selected sample, not a poll.` : "No one has answered yet."}</p>
     </div>
   </section>`;
 }
@@ -2581,6 +2665,12 @@ function wireGuide() {
     applyGuide();
     render();
     document.getElementById(`g-${g.id}-${e.target.value}`)?.focus();
+  }));
+  main.querySelectorAll("[data-gs]").forEach(b => b.addEventListener("click", () => {
+    state.guide.start = b.dataset.gs;
+    saveAnswers();
+    applyGuide();
+    render();
   }));
   main.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => {
     const act = b.dataset.g;
@@ -2640,12 +2730,13 @@ async function connectSurvey() {
 
 if (MODE === "guided") {
   state.guide.answers = loadAnswers();
+  try { state.guide.start = localStorage.getItem(GKEY + "-start") || "today"; } catch (e) { state.guide.start = "today"; }
   applyGuide();
   connectSurvey();
 }
 
 document.getElementById("stamp").textContent =
-  `${(D.meta.professions || []).length} professions · ${YEARS} years\n${E ? E.meta.generated : L.meta.generated}`;
+  `${(D.meta.professions || []).length} professions · ${YEARS} years\n${E.meta.generated}`;
 render();
 window.UBI_LOAD.on(() => { TL = window.UBI_TIMELINE; render(); });
 };

@@ -1,0 +1,99 @@
+{
+ "version": "2.1",
+ "made": "2026-11-10",
+ "conditional_on": "today's rules; the forecast world; AI at today's pace",
+ "rule": "a forecast outside its margin in two or more of the five years has failed",
+ "forecasts": {
+  "unemp": {
+   "what": "unemployment rate, 16-74 (labour force survey)",
+   "margin": 0.01,
+   "unit": "share",
+   "why": "the backcast misses by 0.1 points on average with demand identified; 1 point allows for the demand shocks a forecast cannot know",
+   "forecast": {
+    "2026": 0.038173990878479176,
+    "2027": 0.04331375553285666,
+    "2028": 0.04463017240275947,
+    "2029": 0.044381888894550026,
+    "2030": 0.042670572542928054
+   }
+  },
+  "emp": {
+   "what": "employment rate, 16-74",
+   "margin": 0.025,
+   "unit": "share",
+   "why": "the backcast's mean miss is 1.7 points, with a bias of -1.5",
+   "forecast": {
+    "2026": 0.7609666279979497,
+    "2027": 0.7507406108578395,
+    "2028": 0.7446280716922156,
+    "2029": 0.7434489775020727,
+    "2030": 0.7437544681213886
+   }
+  },
+  "infl": {
+   "what": "consumer price inflation, annual average",
+   "margin": 0.02,
+   "unit": "share",
+   "why": "a judgement: the backcast reproduces prices only through an identified exchange-rate shock, so prices are the least tested forecast here",
+   "forecast": {
+    "2026": 0.03130755899063087,
+    "2027": 0.027636147030173808,
+    "2028": 0.025735771771018046,
+    "2029": 0.03596859347046322,
+    "2030": 0.03382861052208286
+   }
+  },
+  "population": {
+   "what": "population on 1 January of the following year",
+   "margin": 0.015,
+   "unit": "relative",
+   "why": "the backcast ends 0.4% above the record in 2025",
+   "forecast": {
+    "2026": 399376.0,
+    "2027": 403275.0,
+    "2028": 405588.0,
+    "2029": 408852.0,
+    "2030": 412140.0
+   }
+  },
+  "births": {
+   "what": "live births",
+   "margin": 0.1,
+   "unit": "relative",
+   "why": "a judgement: births are fixed near 4,300 a year in the base and move only through income",
+   "forecast": {
+    "2026": 4348.0,
+    "2027": 4294.0,
+    "2028": 4304.0,
+    "2029": 4299.0,
+    "2030": 4314.666666666667
+   }
+  },
+  "poverty": {
+   "what": "at-risk-of-poverty rate, persons (60% of the median)",
+   "margin": 0.02,
+   "unit": "share",
+   "why": "the model matches EU-SILC's 9.0% in 2025; the margin allows for the survey's sampling error",
+   "forecast": {
+    "2026": 0.08013343885555144,
+    "2027": 0.08972806969671411,
+    "2028": 0.09738720269593512,
+    "2029": 0.10150482680295286,
+    "2030": 0.10459892372848428
+   }
+  },
+  "child_poverty": {
+   "what": "at-risk-of-poverty rate, children under 18",
+   "margin": 0.03,
+   "unit": "share",
+   "why": "wider than for persons, since the survey samples fewer children",
+   "forecast": {
+    "2026": 0.13819704911437936,
+    "2027": 0.1510741593405938,
+    "2028": 0.16472353965299874,
+    "2029": 0.17082034681524447,
+    "2030": 0.1768926035074158
+   }
+  }
+ }
+}

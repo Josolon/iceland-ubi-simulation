@@ -8,7 +8,7 @@ the bottom rate over --bottom, the top over --top, the middle rate kept where to
 picture (today's rates x 1.35: 42.5 / 51.3 / 62.5%) is run beside them for reference.
 
 Every point is a run of the model itself (not the fitted surface, which only reaches 70% of today's rates). The
-guide's starting picture (data/processed/scenarios_guide_start.json, B) with only the income tax rates moved: the
+guide's starting picture (data/processed/scenarios_guide_page.json, B) with only the income tax rates moved: the
 three bracket rates scaled together (policy.platform_income_tax_scale; 1.0 = today's 31.49 / 37.99 / 46.29%). Each
 run is measured against the status quo of the same world, as the page's runs are.
 
@@ -75,7 +75,7 @@ def main():
     ap.add_argument("--years", type=int, default=10)
     ap.add_argument("--workers", type=int, default=2)
     a = ap.parse_args()
-    B = next(s for s in json.loads((ROOT / "data/processed/scenarios_guide_start.json").read_text()) if s["id"] == "B")
+    B = next(s for s in json.loads((ROOT / "data/processed/scenarios_guide_page.json").read_text()) if s["id"] == "B")
     x = [B["x"].get(k, default_x(k)) for k in KEYS]
     base = calibrated(1.0, recalibrate=False)
     blob = pickle.dumps(base)

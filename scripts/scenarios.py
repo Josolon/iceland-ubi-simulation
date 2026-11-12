@@ -27,7 +27,7 @@ WORLD = {"tourism_price": 97, "marine_price": 100, "aluminium_price": 108, "impo
 STANDARD_FIXED = {
     **WORLD, "ai": 5, "child_invested": 50, "public_offset": 100, "retraining": 15, "housing": 1000,
     "childcare": 2000, "governance": 0, "church": 0, "culture": 0, "custodianship": 0, "smelters": 0,
-    "free_health": 0, "free_internet": 0, "ubi_protected": 100, "gambling_block": 100, "agreements": 0,
+    "free_health": 0, "free_internet": 0, "ubi_protected": 100, "gambling_block": 100, "agreements": 1,
 "sub_innovation": 0, "minimum_wage": 0, "hours": 100, "taper": 0, "indexation": 0,
     "fund": 0, "fx": 0, "frontier": 0, "infrastructure": 0, "resi_cap": 100, "comm_cap": 100,
     "sick_pay": 0, "prison_ubi": 60, "residence": 50, "capital_controls": 50,

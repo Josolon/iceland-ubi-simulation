@@ -121,7 +121,10 @@ def one_seed(base, blob, frozen, seed):
                        "pension_fold": 0.0, "public_wage_offset_ubi": 0.0, "public_payroll_cut": 0.0,
                        "platform_income_tax_scale": 1.0, "state_leave_ended": 0.0,
                        "vat_platform": pol0["vat_effective_status_quo"], "vat_platform_capture": 1.0,
-                       "platform_personal_credit": pol0["personal_credit"], "prop_tax_extra_pp": 0.0},
+                       "platform_personal_credit": pol0["personal_credit"], "prop_tax_extra_pp": 0.0,
+                       # nor the restriction of input VAT, which since 2.1 falls on prices and pay: left on, it
+                       # cut pay the frozen price level does not show, and 100 þús. read as 0.50 (found 2026-11-11)
+                       "vat_input_restriction_gain": 0.0},
             # and the reform's other behavioural channels, which move pay for reasons other than the payment
             "demography": {"birth_timing_shift": 0.0},
             "labour": {"occupation_mobility_security": 0.0},

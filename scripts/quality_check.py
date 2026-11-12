@@ -34,7 +34,7 @@ PLATFORM = {"regime": "platform", "wage_setting": "free_market"}
 RESULTS = []
 
 # keys a worker sends back: everything the checks below read, plus every profession wage
-KEEP = ["year", "capital_area_share", "moves_to_capital", "moves_from_capital", "capital_area_price_factor", "capital_area_pay_ratio", "gain_leaving_capital", "bank_capital_ratio", "fund_share_of_household_loans", "bank_spread", "bond_premium", "acc_fin_bank_losses", "hours_within_job", "capital_factor", "capital_q", "acc_capital_per_labour", "acc_business_investment_bn", "acc_output", "acc_informal_tax_change", "acc_hidden_earnings", "acc_hidden_earnings_sq", "wealth_gini", "pension_position", "pension_position_accrued", "pension_rights_factor", "pension_rights_bn",
+KEEP = ["year", "childcare_places_short", "round_pay_unsettled", "capital_area_share", "moves_to_capital", "moves_from_capital", "capital_area_price_factor", "capital_area_pay_ratio", "gain_leaving_capital", "bank_capital_ratio", "fund_share_of_household_loans", "bank_spread", "bond_premium", "acc_fin_bank_losses", "hours_within_job", "capital_factor", "capital_q", "acc_capital_per_labour", "acc_business_investment_bn", "acc_output", "acc_informal_tax_change", "acc_hidden_earnings", "acc_hidden_earnings_sq", "wealth_gini", "pension_position", "pension_position_accrued", "pension_rights_factor", "pension_rights_bn",
         "pension_special_saved_bn", "pension_state_support_bn", "acc_benefit_old_age", "acc_benefit_disability", "acc_child_pension", "acc_capital_income_tax",
         "acc_capital_income", "acc_founder_dividends", "acc_benefit_interest_rebate", "poverty_rate_adults",
         "acc_benefit_unemployment", "acc_benefit_social_assistance", "acc_benefit_housing_benefit",
@@ -302,7 +302,7 @@ def accounting_checks(soc, rows, sq_rows=None):
     check("profession headcounts sum to employment", heads > 0 and abs(heads - last["fte"]) / heads < .35,
           f"{heads:,} people, {last['fte']:,.0f} FTE")
     check("FTE never exceeds headcount", last["fte"] <= heads * 1.02, f"{last['fte']:,.0f} vs {heads:,}")
-    check("child UBI splits into spent and saved", last["acc_child_invested"] <= last["acc_child_payments"] * 1.001,
+    check("child UBI splits into spent and saved", last["acc_child_invested"] <= last["acc_child_payments"] * (1 + 1e-9),
           f"saved {last['acc_child_invested']:,.0f} of {last['acc_child_payments']:,.0f} bn")
     check("revenue and expenditure are positive", last["acc_revenue"] > 0 and last["acc_expenditure"] > 0,
           f"revenue {last['acc_revenue']:,.0f}, spending {last['acc_expenditure']:,.0f} bn")
@@ -356,15 +356,18 @@ def behaviour_checks(blob, years, workers):
         ("mid_retrain", platform(**mid, retraining_bn_per_year=30)),
         ("mid_taper", platform(**mid, ubi_taper_start=800000, ubi_taper_rate=.30)),
         ("mid_housing", platform(**mid, public_dwellings_per_year=2000)),
-        ("mid_fund", platform(**mid, sovereign_fund_share=.50)),
+        ("surplus_fund", platform(ubi_adult=100000, ubi_child=100000, sovereign_fund_share=.50)),
         ("sq_flat_prices", {"markets": {"trend_inflation": 0.0}}),
         ("sq_dear_imports", {"trade": {"import_price": 1.10}}),
         ("mid_offset", platform(**mid, public_wage_offset_ubi=1.0)),
+        ("mid_offset_held", params.deep_merge(platform(**mid, public_wage_offset_ubi=1.0),
+                                              {"labour": {"public_offset_unwind": 0.0}})),
         ("mid_nofold", platform(**mid, pension_fold=0.0)),
         ("mid_inherit", platform(**mid, inheritance_tax_rate=.5)),
         ("mid_custodian", platform(**mid, custodianship=1.0)),
         ("mid_commcap", platform(**mid, commercial_ownership_cap=.05)),
         ("mid_agreements", {"policy": {**PLATFORM, **mid, "wage_setting": "status_quo"}}),
+        ("mid_round", platform(**mid, wage_reset=True, wage_after_reset="market")),
         ("mid_unprotected", platform(**mid, ubi_protected=0.0)),
         ("mid_block", platform(**mid, gambling_payment_block=1.0)),
         ("mid_freehealth", platform(**mid, free_health_care=1.0)),
@@ -547,26 +550,27 @@ def behaviour_checks(blob, years, workers):
     check("automation produces machine income", last["ai"]["machine_income_bn"] > 0,
           f"{last['ai']['machine_income_bn']:,.0f} bn")
     check("dearer labour automates faster",
-          last["ai_highwage"]["automated_share"] >= last["ai"]["automated_share"] * .995,
+          last["ai_highwage"]["automated_share"] > last["ai"]["automated_share"] * 1.002,
           f"{last['ai_highwage']['automated_share']:.2%} with a 700k floor vs {last['ai']['automated_share']:.2%} without")
     took = lambda d: d["acc_automation_tax"] + d["acc_automation_levy"] + d["acc_automation_dividends"]
     check("clawback takes more of the machine income", took(last["ai_clawback"]) > took(last["ai"]) * 1.2,
           f"{took(last['ai_clawback']):,.0f} vs {took(last['ai']):,.0f} bn")
     check("selling foreign assets supports the króna",
-          last["fx"]["exchange_rate"] <= last["ubi450"]["exchange_rate"] * 1.005,
+          last["fx"]["exchange_rate"] < last["ubi450"]["exchange_rate"] * .999,
           f"{last['fx']['exchange_rate']:.3f} vs {last['ubi450']['exchange_rate']:.3f}")
     real = lambda d, o: d[f"wage_{o}"] / d["price_level"]
     check("a minimum wage lifts the lowest-paid",
-          real(last["mid_minwage"], "Cleaners") >= real(last["mid"], "Cleaners") * .995,
+          real(last["mid_minwage"], "Cleaners") > real(last["mid"], "Cleaners") * 1.005,
           f"{real(last['mid_minwage'], 'Cleaners'):.3f} vs {real(last['mid'], 'Cleaners'):.3f}")
     check("more childcare places let parents work more",
-          last["mid_childcare"]["parent_hours_index"] >= last["mid"]["parent_hours_index"] * .995,
+          last["mid_childcare"]["parent_hours_index"] > last["mid"]["parent_hours_index"] * 1.001,
           f"{last['mid_childcare']['parent_hours_index']:.4f} vs {last['mid']['parent_hours_index']:.4f}")
     # Places are paid for only where parents want one and cannot get it, so the test is
     # that the lever costs money when there is a shortfall to meet — not that it spends whatever it is given.
+    # 2.1: and that there is one: the test passed for years on a count of mothers that never found a shortfall.
     check("childcare places cost money where places are short",
-          last["mid_childcare"]["acc_childcare_cost"] > last["mid"]["acc_childcare_cost"]
-          or last["mid_childcare"].get("childcare_places_short", 0) <= 0,
+          last["mid"]["childcare_places_short"] > 0
+          and last["mid_childcare"]["acc_childcare_cost"] > last["mid"]["acc_childcare_cost"],
           f"{last['mid_childcare']['acc_childcare_cost']:,.1f} vs {last['mid']['acc_childcare_cost']:,.1f} bn, "
           f"places short {last['mid_childcare'].get('childcare_places_short', 0):,.0f}")
     check("a four-day week cuts hours worked",
@@ -583,9 +587,9 @@ def behaviour_checks(blob, years, workers):
           last["mid_housing"]["rent_index"] < last["mid"]["rent_index"],
           f"{last['mid_housing']['rent_index']:.3f} vs {last['mid']['rent_index']:.3f}")
     check("a sovereign fund accumulates when there is a surplus",
-          last["mid_fund"]["sovereign_fund_bn"] > 0 or last["mid"]["balance_bn"] <= 0,
-          f"{last['mid_fund']['sovereign_fund_bn']:,.0f} bn "
-          f"(balance {last['mid']['balance_bn']:,.0f} bn)")
+          last["surplus_fund"]["sovereign_fund_bn"] > 0 and last["surplus_fund"]["balance_bn"] > 0,
+          f"{last['surplus_fund']['sovereign_fund_bn']:,.0f} bn "
+          f"(balance {last['surplus_fund']['balance_bn']:,.0f} bn)")
     check("a UBI improves health", last["ubi450"]["health_mean"] > last["sq"]["health_mean"],
           f"{last['ubi450']['health_mean']:.3f} vs {last['sq']['health_mean']:.3f}; in poor health "
           f"{last['ubi450']['poor_health_share']:.1%} vs {last['sq']['poor_health_share']:.1%}")
@@ -630,8 +634,13 @@ def behaviour_checks(blob, years, workers):
           6 < sqa["acc_inheritance_tax"] < 30, f"{sqa['acc_inheritance_tax']:.1f} ma.kr.")
     check("a higher inheritance tax raises more", last["mid_inherit"]["acc_inheritance_tax"] > mid_["acc_inheritance_tax"],
           f"{last['mid_inherit']['acc_inheritance_tax']:.1f} vs {mid_['acc_inheritance_tax']:.1f} ma.kr. at 50% vs 10%")
+    # The cut is measured where it is held: where it may come off as posts go unfilled, it comes off faster
+    # when the owner-run trades draw workers (2.1), so that run is held only to costing less.
     check("holding public take-home at its old level cuts the public payroll",
-          last["mid_offset"]["acc_public_payroll"] < mid_["acc_public_payroll"] * .95,
+          last["mid_offset_held"]["acc_public_payroll"] < mid_["acc_public_payroll"] * .95,
+          f"{last['mid_offset_held']['acc_public_payroll']:,.0f} vs {mid_['acc_public_payroll']:,.0f} ma.kr.")
+    check("the cut costs less even where it comes off as posts go unfilled",
+          last["mid_offset"]["acc_public_payroll"] < mid_["acc_public_payroll"],
           f"{last['mid_offset']['acc_public_payroll']:,.0f} vs {mid_['acc_public_payroll']:,.0f} ma.kr.")
     check("with pensions not folded in, contributions stay with the funds and the funds keep paying",
           last["mid_nofold"]["acc_social_security"] < mid_["acc_social_security"] * .2
@@ -655,6 +664,16 @@ def behaviour_checks(blob, years, workers):
           last["mid_agreements"]["balance_bn"] == last["mid_agreements"]["balance_bn"] and gap_u > 1e-4,
           f"unemployment differs by {gap_u * 100:.2f} points a year on average; last year "
           f"{last['mid_agreements']['unemployment_rate']:.1%} vs {mid_['unemployment_rate']:.1%}")
+    # 2.1: the haggling round. Its sweeps of pay and choice of profession must settle (in 2.1's first build the
+    # last sweeps still moved some professions' pay by half), and with every contract open the state's posts
+    # should fill better than under agreements that hold pay where it was.
+    rd = r["mid_round"]
+    check("the haggling round settles: its last sweep moves no profession's pay by 2% or more",
+          rd[0]["round_pay_unsettled"] < .02, f"largest move in the last sweep {rd[0]['round_pay_unsettled']:.1%}")
+    check("the haggling round fills more essential posts in its year than keeping the agreements, and stays finite",
+          rd[0]["essential_services_gap"] < r["mid_agreements"][0]["essential_services_gap"]
+          and all(v == v for v in (last["mid_round"]["balance_bn"], last["mid_round"]["real_income_median"])),
+          f"{rd[0]['essential_services_gap']:,.0f} posts unfilled vs {r['mid_agreements'][0]['essential_services_gap']:,.0f}")
     # The pledge channel touches only people at risk of gambling harm, a few thousand, so on the national hardship
     # rate it sits within run-to-run noise: reported as a warning, not asserted as a direction it cannot resolve.
     check("a payment lenders can lend against deepens hardship (national rate; the effect is confined to the "
@@ -835,6 +854,23 @@ def behaviour_checks(blob, years, workers):
 
 
 # ----------------------------------------------------------------- 4. wiring
+def page_checks():
+    """Every scenario on the page carries every lever and stands in the page's one world."""
+    import build_emulator as be
+    page = (ROOT / "artifacts/explorer_v3/index.html").read_text()
+    scenarios = json.loads(re.search(r"^const SCENARIOS = (\[.*\]);$", page, re.M).group(1))
+    guide = json.loads(re.search(r"^const GUIDE_START = (\{.*\});$", page, re.M).group(1))
+    short = [s["id"] for s in scenarios if set(be.KEYS) - set(s["x"])]
+    check("page: every scenario sets every lever", not short, f"short: {short}")
+    check("page: the Guide's start sets every lever", not set(be.KEYS) - set(guide), f"{len(set(be.KEYS) - set(guide))} missing")
+    # the two the page calls optimistic differ only in the windfall and the machines
+    off = {s["id"]: k for s in scenarios for k in be.WORLD
+           if k not in ("ai", "windfall") and abs(s["x"].get(k, be.default_x(k)) - be.default_x(k)) > 1e-4}
+    check("page: every scenario in the page's world", not off, f"off: {off}")
+    off = [k for k in be.WORLD if abs(guide.get(k, be.default_x(k)) - be.default_x(k)) > 1e-4]
+    check("page: the Guide's start in the page's world", not off, f"off: {off}")
+
+
 def wiring_checks():
     print("\n4. Parameters: defined, used, and the right shape", flush=True)
     # every model module, so a new one is read without being listed here
@@ -985,6 +1021,7 @@ def main():
     runs = behaviour_checks(blob, a.years, a.workers)
     accounting_checks(None, runs["ubi450"], runs.get("sq"))
     wiring_checks()
+    page_checks()
     corner_checks(blob)
     if a.long_years:
         long_run_checks(blob, a.long_years, a.workers)

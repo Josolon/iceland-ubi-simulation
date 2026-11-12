@@ -48,11 +48,7 @@ def vat_wedge(soc):
     """What VAT adds to the price of capital goods to firms: nothing today, when it is reclaimed; under the
     restriction of refunds to value-chain inputs, capital goods are not among them (every variant of the estimate),
     so they bear the reform's VAT as far as the lever applies the restriction."""
-    pol = soc.p["policy"]
-    if pol["regime"] != "platform":
-        return 0.0
-    share = pol["vat_input_restriction_gain"] / max(pol.get("vat_input_restriction_full_bn", 459.5), 1.0)
-    return float(pol["vat_platform"] * share)
+    return float(soc.p["policy"]["vat_platform"] * soc.macro.vat_input_share())
 
 
 def investment_against_reference(soc):
@@ -68,19 +64,39 @@ def factor(mk):
     return ensure(mk)["factor"]
 
 
-def set_factor(soc, mk):
-    """At the start of a year: this run's capital per unit of labour against the reference's (the status-quo run's,
-    a year behind as the other reference values are), raised to capital's share. Capital that falls in step with
-    the hours worked leaves output per hour where it was."""
+def set_factor(soc, mk, labour=None):
+    """At the start of a year: this run's capital per unit of labour against the reference's (the status-quo run's),
+    raised to capital's share, on the hours worked last year or, where they are known, on `labour`: the hours the
+    haggling round leaves for the first year. Capital that falls in step with the hours worked leaves output per
+    hour where it was."""
     c = soc.p.get("capital") or {}
     st = ensure(mk)
     if not c or not soc.reference:
         st["factor"] = 1.0
         return
+    if labour is not None:
+        st["factor"] = float((st["K"] / max(labour, 1e-6)) ** c["elasticity"])
+        return
     ref = soc.reference_prev()
     k_ref = ref.get("capital_per_labour") if ref else None
     own = soc.own_history[-1].get("capital_per_labour") if soc.own_history else None
     st["factor"] = float((own / k_ref) ** c["elasticity"]) if k_ref and own else 1.0
+
+
+def settle_factor(soc, mk):
+    """2.1: once the year's hours are known, the same ratio on them, so that output is the capital standing this year
+    worked by this year's hours. Read a year late, a fall in hours in the first year took output down with no gain
+    per hour (0.71 of the status quo's where 0.80 was due), and output per hour then jumped 13% in the second."""
+    c = soc.p.get("capital") or {}
+    st = ensure(mk)
+    if not c or not soc.reference or len(soc.reference) < soc.year:
+        return
+    now = soc.reference[soc.year - 1]
+    last = soc.reference[soc.year - 2] if soc.year >= 2 else {}
+    if "labour_input" not in now:
+        return
+    k_ref = last.get("capital_k", 1.0) / max(now["labour_input"], 1e-6)
+    st["factor"] = float((st["K"] / max(mk.labour_input, 1e-6) / k_ref) ** c["elasticity"])
 
 
 def _trend_growth(soc, mk, c):
@@ -119,6 +135,7 @@ def update(soc, mk, profit_index):
     st["K"] = st["K"] * (1 - d) + st["invest"]
     k0 = c["stock_to_gdp"] * mk.GDP0
     return {"capital_k": st["K"], "capital_per_labour": st["K"] / max(getattr(mk, "labour_input", 1.0), 1e-6),
+            "labour_input": float(getattr(mk, "labour_input", 1.0)),
             "capital_q": st["q"], "capital_growth": g, "output_trend": float(mk.output_trend), "capital_stock_bn": st["K"] * k0,
             "business_investment_bn": st["invest"] * k0}
 

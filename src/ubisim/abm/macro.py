@@ -104,7 +104,29 @@ class Macro:
         return max(.01, r + tau + m["housing_depreciation_and_risk"] - g_exp)
 
     def vat_factor(self, vat, vat0):
-        return (1 + vat) / (1 + vat0)
+        return (1 + vat) / (1 + vat0) * self.vat_input_price()
+
+    def vat_input_share(self):
+        """2.1: how much of the full restriction of input VAT to value-chain inputs is applied and holds, after what
+        is lost to avoidance and disputes (policy.vat_input_avoidance). No country has run this restriction."""
+        pol = self.p["policy"]
+        if pol["regime"] != "platform":
+            return 0.0
+        return pol["vat_input_restriction_gain"] / max(pol.get("vat_input_restriction_full_bn", 459.5), 1.0) \
+            * (1 - pol.get("vat_input_avoidance", 0.0))
+
+    def vat_input_price(self):
+        """2.1: what the restriction adds to what households buy. The yield is a cost to someone: exporters carry
+        their part in their competitiveness, firms the part on capital goods in the cost of capital (capital.py),
+        and what is left, on what is sold at home, comes out of households through the prices of goods and services.
+        Read through a small factor on non-tradable prices alone, about half of the yield fell on nobody."""
+        share = self.vat_input_share()
+        if not share:
+            return 1.0
+        m, pol = self.p["markets"], self.p["policy"]
+        full = pol.get("vat_input_restriction_full_bn", 459.5)
+        home = full * (1 - self.p["capital"]["vat_capital_share"]) - m["vat_input_export_burden_bn"]
+        return 1 + share * home / (m["vat_input_consumption_bn"] * (m["w_tradable"] + m["w_nontradable"]))
 
     def vat_share_factor(self, vat, vat0):
         """How much of the CPI the VAT change itself accounts for, as a multiplier on the whole index: the VAT
@@ -301,14 +323,28 @@ class Macro:
         return base * trend * infra * custodian * innovation * controls * getattr(self, "automation_factor", 1.0) \
             * shock * drag * capital.factor(self)
 
+    @staticmethod
+    def labour_index(soc, S, D):
+        """Hours worked, weighted by pay, against the base year's."""
+        prod = soc.occ_median / soc.occ_median.mean()
+        base_fte = soc.D0_pub + soc.D0_priv
+        return float((np.minimum(S, D) * prod).sum() / (base_fte * prod).sum())
+
+    def anticipate_rate(self, soc):
+        """2.1: the year after the round. The reform and the round's settlement are known before the year starts, so
+        the bank does not wait for the year's figures to answer them, and households feel its rate in that year.
+        The rate was set only at the end of each year: it left the first year's spending untouched (27% up in real
+        terms, imports 46% up) and then hit the second's at once (saving 7% of income, then 23%)."""
+        m = self.p["markets"]
+        vat, vat0 = soc.current_vat(), soc.p["policy"]["vat_effective_status_quo"]
+        old_net = getattr(self, "cpi_net", self.cpi)
+        pi = soc.price / self.vat_share_factor(vat, vat0) / max(old_net, 1e-9) - 1
+        self.r = float(np.clip(max(self.r, m["real_rate0"] + m["taylor_inflation"] * (pi - m["trend_inflation"])), -.06, .12))
+
     def nontradable_target(self, wage_cost_index, partial):
         m = self.p["markets"]
         ulc = self.relative_wage_cost(wage_cost_index) / self.productivity()
         target = ulc ** m["labour_cost_passthrough"] * max(.5, 1 + self.gap) ** m["demand_pressure_passthrough"]
-        if self.platform():
-            # input VAT firms can no longer reclaim is a cost, and part of it reaches their prices
-            target *= 1 + self.p["links"]["vat_input_price_per_100bn"] \
-                * self.p["policy"]["vat_input_restriction_gain"] / 100
         if not partial:
             return target
         return self.P_N ** (1 - m["price_adjustment"]) * target ** m["price_adjustment"]
@@ -373,7 +409,8 @@ class Macro:
         base_fte = soc.D0_pub + soc.D0_priv
         base = float((base_fte * prod).sum())
         # 1.1: and the experience of those working, against the base year's (careers.py)
-        self.labour_input = float((employed * prod).sum() / base)
+        self.labour_input = self.labour_index(soc, S, D)
+        capital.settle_factor(soc, self)     # 2.1: this year's hours on the capital standing, not last year's
         self.output_labour = self.labour_input * self.productivity() * careers.output_factor(soc)
         # 1.1: what machines do in place of the work they took over is output too: the output of the work, less the
         # part of what running them costs that is bought abroad (automation.machine_value_added). Left out, a robot that
@@ -393,19 +430,19 @@ class Macro:
         # v9: what exporters bear, 135.3 ma.kr. at the full restriction (EST, see params.vat_input),
         # as a share of exports and in proportion to how much of the restriction is applied
         pol = soc.p["policy"]
-        share = pol["vat_input_restriction_gain"] / max(pol.get("vat_input_restriction_full_bn", 459.5), 1.0)
-        vat_input_cost = m["vat_input_export_burden_bn"] * share / max(self.X0, 1.0) \
-            if (pol["regime"] == "platform") else 0.0
+        vat_input_cost = m["vat_input_export_burden_bn"] * self.vat_input_share() / max(self.X0, 1.0)
         competitiveness = self.e / (self.P_N * (1 + vat_input_cost))
         # external flows relative to the reference path (the status-quo run, or this run's own last year)
         self.export_capacity, self.competitiveness_x = export_capacity, competitiveness
-        cap_ref = ref["export_capacity"] if ref and "export_capacity" in ref else export_capacity
+        # 2.1: the first year has no reference year behind it, so it is set against the base year, where each is 1;
+        # against itself, it lost nothing of what the year's fall in hours took from exports and imports
+        cap_ref = ref["export_capacity"] if ref and "export_capacity" in ref else 1.0
         comp_ref = ref["competitiveness_x"] if ref and "competitiveness_x" in ref else 1.0
         rel_price = self.e / self.P_N
         rel_price_ref = ref["rel_price"] if ref and "rel_price" in ref else 1.0
         self.rel_price = rel_price
         cons_rel = acc["cons_pc"] / (ref["cons_pc"] if ref else 1.0)
-        out_ref = ref["output"] if ref and "output" in ref else self.output
+        out_ref = ref["output"] if ref and "output" in ref else 1.0
         fr = soc.frontier.state
         self.exports = self.X0 * (competitiveness / comp_ref) ** m["export_price_elasticity"] * (export_capacity / cap_ref) \
             * self.export_price_index() + soc.sectors.exports_change() + fr["exports_bn"]

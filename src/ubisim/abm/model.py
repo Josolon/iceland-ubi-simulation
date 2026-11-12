@@ -14,6 +14,8 @@ from ubisim.abm import capital
 from ubisim.abm import pensions
 from ubisim.abm import informal
 from ubisim.abm import hours
+from ubisim.abm import sorting
+from ubisim.abm import ownrun
 from ubisim.abm import financial
 from ubisim.abm import regions
 from ubisim.abm import sectors as sectormod
@@ -25,6 +27,10 @@ from ubisim.models import static_balance as sb
 
 EPS = .05
 N_GROUPS = 10  # (16-19, 20-24, 25-54, 55-66, 67-74) x sex
+SELF_EMPLOYED_BANDS = ((16, 24), (25, 54), (55, 74))   # the survey's age groups (self_employed_pct_2025)
+# what each adult was in 2025. Poverty by group follows these people, so that those who leave work under a reform do
+# not change what "the out of work" means from one scenario to the next
+START_GROUPS = ("pensioners", "disabled", "students", "out_of_work", "in_work")
 
 
 class Society:
@@ -57,6 +63,7 @@ class Society:
         self.own_history = []      # this run's own accounts, used as the reference path in the status quo
         self.alpha = 1.0
         self.mpc_scale = 1.0
+        self.abroad_age, self.abroad_share = None, None
         self.prof_weights = [pr["weight"] or 0 for pr in P.PROFESSIONS]
         self.disamenity = np.array(P.trait(0))
         self.min_edu = np.array(P.trait(2))
@@ -66,6 +73,7 @@ class Society:
         self.foreign_ratio = np.array(P.by_group(p["migration"]["foreign_wage_ratio"]))
         self.omega_new = np.ones(N_OCC)
         self.public_premium = np.ones(N_OCC)   # what the state pays above the going rate where posts go unfilled
+        self.public_offset_left = np.ones(N_OCC)  # the share of the reform's public pay cut still in force
         self.workload = np.ones(N_OCC)         # work per person in post where posts are unfilled
         self.service_unmet = np.zeros(N_OCC)   # the share of the work that simply does not happen
         base_len = sum(k * v for k, v in p["labour"]["contract_lengths_private"].items())
@@ -93,7 +101,13 @@ class Society:
         the trend, lowered interest rates, raised house prices and profits, all from the inflation rate alone."""
         A = self.A
         years = np.maximum(self.year - A["contract_start"][idx], 0)
-        return A["contract_omega"][idx] * (1 + self.p["markets"]["trend_inflation"]) ** years
+        rate = A["contract_omega"][idx] * (1 + self.p["markets"]["trend_inflation"]) ** years
+        clause = getattr(self, "round_clause", None)
+        if clause is not None:
+            # 2.1: contracts from the haggling round follow prices through the first year (round_real_settlement)
+            first = (A["contract_start"][idx] == self.reset_year) & (self.year > self.reset_year)
+            rate = np.where(first, rate * clause / (1 + self.p["markets"]["trend_inflation"]), rate)
+        return rate
 
     def wage_of(self, idx, omega_new):
         """What a person is paid: their contract rate while it runs, otherwise today's rate for new contracts."""
@@ -126,7 +140,8 @@ class Society:
         starts. A run measured on fixed peers (behaviour.freeze_peers) takes its reference run's, so the income
         effect check measures the individual response alone (DESIGN.md M3)."""
         A = self.A
-        ch = np.flatnonzero(A["alive"] & A["chooser"])
+        # 2.1: students are not counted: someone at university does not make not working seem more normal
+        ch = np.flatnonzero(A["alive"] & A["chooser"] & (A["studying"] <= 0))
         g = self.group(ch)
         out = np.bincount(g, weights=(A["status"][ch] == NONWORK).astype(float), minlength=10)
         share = out / np.maximum(np.bincount(g, minlength=10), 1)
@@ -299,19 +314,40 @@ class Society:
         prod_rel = mk.productivity() / max(anchor.get("productivity", 1.0), .1)
         price_rel = self.price_level(omega) / max(anchor.get("price", 1.0), .2)
         wage_rel = omega / self.reference_wage(anchor) / prod_rel / max(price_rel, .2)
-        D = scale * (self.D0_pub * (1 - cut) * self.social_need_factor()
-                     + self.D0_priv * wage_rel ** (-lab["demand_elasticity"])
+        # 2.1: where pay is set contract by contract, the state weighs what a post costs. It hires fewer of its posts
+        # the dearer each is, and lets the rest stand empty rather than meet any demand (labour.state_pay_resistance);
+        # cheaper, it hires beyond them and the work per person eases. Under agreements its posts are what it hires.
+        f = self.state_hiring_factor(wage_rel)
+        posts_pub = scale * self.D0_pub * (1 - cut) * self.social_need_factor()
+        unsought = posts_pub * (1 - f)
+        D = scale * (self.D0_pub * (1 - cut) * self.social_need_factor() * f
+                     + self.D0_priv * ownrun.demand_factor(self, wage_rel, lab["demand_elasticity"])
                         * cons_rel ** self.consumption_loading
                         * competitiveness ** (self.export_loading * lab["export_cost_elasticity"])) \
             + self.extra_venture_jobs() * self.D0_priv / self.D0_priv.sum()
-        D = self.apply_needs_driven(D, wage_rel, scale) * self.automation.demand_factor()
+        D = self.apply_needs_driven(D, wage_rel, scale, f)
+        unsought = np.where([d is not None for d in self.needs_driver], self.needs_unsought, unsought)
+        D = D * self.automation.demand_factor()
+        unsought = unsought * self.automation.demand_factor()
         D = D + self.sectors.job_change_by_occupation() + self.frontier.state["jobs_by_occ"] \
             + self.infra.state["jobs_by_occ"] + self.tourism_jobs()
         D = D * self.culture_demand_factor()
+        # posts the state has and does not seek to fill at this pay (negative: hired beyond its posts)
+        self.unsought = unsought * self.culture_demand_factor() * (1 - self.low_value_removal()) * self.demand_level
         # Demand for labour cannot be negative. At extreme corners of the lever space the terms above can drive
         # it below zero, and a negative base to a fractional power in the clearing loop gives NaN rather than an
         # error — which then casts to nonsense further down instead of failing loudly.
         return np.maximum(D * (1 - self.low_value_removal()) * self.demand_level, 0.0)
+
+    def state_hiring_factor(self, wage_rel):
+        """The share of its posts the state seeks to fill at this real pay against the reference: 1 under agreements,
+        where pay is negotiated for the posts it has; where pay is set contract by contract, it falls as the post
+        costs more, at `labour.state_pay_resistance`, and rises above 1 where it costs less."""
+        p = self.p
+        if p["policy"]["wage_setting"] != "free_market" or p["policy"]["regime"] != "platform":
+            return np.ones(N_OCC)
+        eps = p["labour"]["state_pay_resistance"]
+        return np.clip(np.asarray(wage_rel, float), .2, 5.0) ** (-eps) if eps else np.ones(N_OCC)
 
     def culture_demand_factor(self):
         """Cutting state support for the arts: what is left has to come from ticket sales, which follow spending."""
@@ -438,7 +474,7 @@ class Society:
         total = sum(w.values()) or 1.0
         self.distress = float(sum(w.get(k, 0.0) * v for k, v in parts.items()) / total)
 
-    def apply_needs_driven(self, D, wage_rel, scale):
+    def apply_needs_driven(self, D, wage_rel, scale, f=None):
         """Bins still need emptying and children still need teaching: for these professions demand follows the
         population it serves, with only a weak response to pay.
 
@@ -451,12 +487,18 @@ class Society:
                    "children_1_5": (alive & (A["age"] >= 1) & (A["age"] <= 5)).sum() / max(self.driver0["children_1_5"], 1),
                    "children_1_15": (alive & (A["age"] >= 1) & (A["age"] <= 15)).sum() / max(self.driver0["children_1_15"], 1)}
         base = self.D0_pub + self.D0_priv
+        pub_share = self.D0_pub / np.maximum(base, 1e-9)
+        f = np.ones(N_OCC) if f is None else f
         out = D.copy()
+        self.needs_unsought = np.zeros(N_OCC)
         for i, driver in enumerate(self.needs_driver):
             if driver is None:
                 continue
             eta = float(self.needs_elasticity[i])
-            out[i] = base[i] * drivers[driver] * wage_rel[i] ** (-eta) * (1 - self.low_value_removal()[i])
+            need = base[i] * drivers[driver] * wage_rel[i] ** (-eta) * (1 - self.low_value_removal()[i])
+            # the state's share of the work, at the state's resistance (state_hiring_factor)
+            out[i] = need * (1 - pub_share[i] + pub_share[i] * f[i])
+            self.needs_unsought[i] = need * pub_share[i] * (1 - f[i])
         # 1.1: care given in the family beyond the status quo's takes the place of part of care assistants' work
         # (familycare.py); never below half of the posts
         self.family_care_replaced = familycare.replaced_fte(self)
@@ -765,16 +807,26 @@ class Society:
             gained = changed[rng.random(len(changed)) < extra / (1 + extra)]
             A["base_wage"][gained] *= 1 + lab["match_quality_gain"]
 
-    def update_workload(self, D, S):
+    def update_workload(self, D, S, damp=1.0):
         """How much of a profession's work is left over for the people who stay, and how much is simply not done.
 
         Where demand exceeds the labour offered, the state cannot recruit its way out within the year. Part of the
         shortfall is absorbed by those in post working harder, part of it is service that does not happen. The
-        split is `labour.shortage_absorbed`: at .5, half of an unfilled tenth is carried and half is lost."""
+        split is `labour.shortage_absorbed`: at .5, half of an unfilled tenth is carried and half is lost.
+
+        2.1: measured against the posts, those the state leaves empty at the pay asked included (`unsought`, from
+        demand()). The other way round as well: where more people are in post than there are posts, the work is
+        shared among more, and each carries less — a profession fully staffed is easier to work in than today's
+        short-handed one, so more take it, for less. `damp` blends with the last value, for the round's sweeps."""
         lab = self.p["labour"]
-        short = np.clip(np.asarray(D) - np.asarray(S), 0, None) / np.maximum(np.asarray(D), 1e-9)
-        self.workload = 1.0 + lab["shortage_absorbed"] * short
-        self.service_unmet = (1 - lab["shortage_absorbed"]) * short
+        D, S = np.asarray(D, float), np.asarray(S, float)
+        unsought = np.asarray(getattr(self, "unsought", np.zeros(N_OCC)), float)
+        posts = np.maximum(D + unsought, 1e-9)
+        short = 1 - np.minimum(S, D) / posts
+        new = 1.0 + lab["shortage_absorbed"] * short
+        old = np.asarray(getattr(self, "workload", np.ones(N_OCC)), float)
+        self.workload = damp * new + (1 - damp) * old
+        self.service_unmet = (1 - lab["shortage_absorbed"]) * np.clip(short, 0, None)
 
     def update_public_premium(self, D, S):
         """Move the premium after a year's clearing: up by the share of the state's posts left unfilled, down when
@@ -798,7 +850,15 @@ class Society:
             return                      # no round this year: the posts stay unfilled and the work goes undone
         pressure = self.premium_pending / max(years, 1)
         self.premium_pending = np.zeros(N_OCC)
+        # the reform's pay cut is a first step, not a pay scale: where the state's posts in a profession stay
+        # unfilled, its contracts renew without it, alongside the premium the state pays where it is short anyway
+        left = np.asarray(getattr(self, "public_offset_left", np.ones(N_OCC)), float)
+        self.public_offset_left = np.clip(left - lab["public_offset_unwind"] * years * pressure, 0.0, 1.0)
         prem = np.asarray(self.public_premium, float)
+        if free:
+            # 2.1: where pay is set contract by contract the state's answer to a shortage is already in the rate it
+            # clears at (state_hiring_factor); a premium on top would pay twice
+            pressure = np.zeros(N_OCC)
         prem = np.where(pressure > 0, prem * (1 + lab["public_shortage_pay_speed"] * years * pressure),
                         1 + (prem - 1) * (1 - lab["public_shortage_pay_decay"]))
         self.public_premium = np.clip(prem, 1.0, lab["public_shortage_pay_cap"])
@@ -819,7 +879,8 @@ class Society:
         wage = self.wage_of(idx, omega)
         grid, cut = self._offset_table()
         c = np.interp(wage, grid, cut)
-        return np.where(self.A["public"][idx], pol["public_wage_offset_ubi"] * c, 0.0)
+        left = np.asarray(getattr(self, "public_offset_left", np.ones(N_OCC)), float)[self.A["occupation"][idx]]
+        return np.where(self.A["public"][idx], pol["public_wage_offset_ubi"] * left * c, 0.0)
 
     def _offset_table(self):
         """Gross monthly full-time pay, and the exact cut at each, for this year's taxes and payment (cached)."""
@@ -1090,6 +1151,35 @@ class Society:
     def probabilities(self, idx, omega, price, per_mother, wage_boost=1.0, idea=None):
         """Choice probabilities over (nonwork, part, full, venture). idea=None returns the expectation over
         idea arrival; a boolean array conditions on who has an idea."""
+        U, q = self.utilities(idx, omega, price, per_mother, wage_boost)
+        U -= U.max(1, keepdims=True)
+        E = np.exp(U)
+        P_with = E / E.sum(1, keepdims=True)
+        E[:, 3] = 0
+        P_without = E / E.sum(1, keepdims=True)
+        if idea is None:
+            return q[:, None] * P_with + (1 - q[:, None]) * P_without
+        return np.where((idea & (q > 0))[:, None], P_with, P_without)
+
+    def job_surplus(self, idx, omega, price, per_mother):
+        """What having a job in their profession adds to each person's choice, in the units of the choice: the
+        expected best of all the options less the expected best of those without an employer (not working, a
+        firm, self-directed work), over whether an idea for a firm arrives. Never negative. The haggling round's
+        choice of profession weighs it (sorting.py, 2.1)."""
+        U, q = self.utilities(idx, omega, price, per_mother)
+        top = U.max(1, keepdims=True)
+        E = np.exp(U - top)
+        out = np.zeros(len(idx))
+        for idea, w in ((True, q), (False, 1 - q)):
+            F = E.copy()
+            if not idea:
+                F[:, 3] = 0
+            alone = F[:, [0, 3, 4]].sum(1)
+            out += w * np.log1p(F[:, 1:3].sum(1) / np.maximum(alone, 1e-300))
+        return out
+
+    def utilities(self, idx, omega, price, per_mother, wage_boost=1.0):
+        """Utility of each option (nonwork, part, full, venture, independent), and the chance of an idea."""
         A, p = self.A, self.p
         b, v = p["behaviour"], p["ventures"]
         H = self.option_household_income(idx, omega, per_mother, wage_boost, price=price)
@@ -1121,8 +1211,8 @@ class Society:
         # which widens the gap again. EST: at a tenth of posts unfilled the job is as unpleasant as one step of
         # the disamenity scale, anchored on nurse burnout and intention-to-leave studies.
         load = np.asarray(getattr(self, "workload", np.ones(N_OCC)))[A["occupation"][idx]] - 1.0
-        dis = self.disamenity[A["occupation"][idx]] * (1 + 1.5 * A["disabled"][idx]) \
-            + p["labour"]["workload_disamenity"] * np.clip(load, 0, 1.0)
+        dis = (self.disamenity * ownrun.strain_factor(self))[A["occupation"][idx]] * (1 + 1.5 * A["disabled"][idx]) \
+            + p["labour"]["workload_disamenity"] * np.clip(load, -p["labour"]["workload_relief_max"], 1.0)
         nonpec = b["gamma_meaning"] * A["meaning"][idx] - b["gamma_disamenity"] * dis
         venture_meaning = b["gamma_meaning"] * np.minimum(A["enterprise"][idx], 3.0) / 2
         U[:, :3] += hours[None, :3] * nonpec[:, None]
@@ -1171,15 +1261,7 @@ class Society:
         com = getattr(self.macro, "commercial_rent", 1.0) / (1 + po["commercial_markup"])
         access = access * (1 - po["commercial_rent_share_of_costs"] * (com - 1) * 4)
         U[:, 3] += np.log(access)
-        q = self.idea_prob(idx)
-        U -= U.max(1, keepdims=True)
-        E = np.exp(U)
-        P_with = E / E.sum(1, keepdims=True)
-        E[:, 3] = 0
-        P_without = E / E.sum(1, keepdims=True)
-        if idea is None:
-            return q[:, None] * P_with + (1 - q[:, None]) * P_without
-        return np.where((idea & (q > 0))[:, None], P_with, P_without)
+        return U, self.idea_prob(idx)
 
     def choosers(self):
         A = self.A
@@ -1722,72 +1804,169 @@ class Society:
         lab, b = p["labour"], p["behaviour"]
         stay = np.setdiff1d(np.flatnonzero(A["alive"] & A["chooser"]), reopt, assume_unique=True)
         stay_fte = np.bincount(A["occupation"][stay], weights=self.hours_of(A["status"][stay], stay), minlength=N_OCC)
-        free = p["policy"]["wage_setting"] == "free_market"
+        free = p["policy"]["wage_setting"] == "free_market" or self.resetting_now()
+        # the round before the reform's first year takes no time: no inflation is expected within it
+        infl = 0.0 if getattr(self, "_timeless", False) else p["markets"]["trend_inflation"]
         # The market sets the rate for new contracts. Start from last year's, grown by the inflation expected this
         # year: started in last year's krónur, the solver began a trend's width below where it had to go and, with
         # its steps bounded, did not always get there.
-        omega = self.omega_new * (1 + p["markets"]["trend_inflation"])
+        omega = self.omega_new * (1 + infl)
         # The offer is kept within reach of what the job pays (the window below), so the search stays inside it, and
         # a profession at its edge has nowhere further to go: the search ends when every profession has either
         # cleared or reached its edge. Searching past the edge, as it did, every year ran all 80 rounds — three
         # quarters of a model-year's time — to a point the window then threw away (found 2026-10-03).
         bound = lab["safety_wage_bound"]
-        going0 = self.omega * (1 + p["markets"]["trend_inflation"])
-        w_lo, w_hi = going0 * (1 - bound), going0 * (1 + bound)
-        omega = np.clip(omega, w_lo, w_hi)
-        prev = None     # last round's (log wage, log gap) per profession, for the secant step
-        done = np.zeros(N_OCC, bool)
+        up = lab.get("safety_wage_bound_up", bound)   # how far above it, where people are scarce
+        going0 = self.omega * (1 + infl)
+        w_lo, w_hi = going0 * (1 - bound), going0 * (1 + up)
+        reset = self.resetting_now()
+        indexed = self.indexed_after_reset()
+        floor_share, ceiling = .3, 4.0
         rounds = lab["clearing_iterations"]
-        for it in range(rounds):
+        if reset:
+            # The haggling round (policy.wage_reset): the agreements end and every contract, public and private,
+            # reopens at once. Pay is searched from next to nothing: there is no window around what the job paid,
+            # no floor but a token one, and the round runs until each profession clears.
+            if lab["reset_sweeps"]:
+                sorting.begin(self, reopt, per_mother, going0, self.price)   # fitted on today's rules and pay
+            self.begin_reset()
+            w_lo, w_hi = going0 * lab["reset_low"], going0 * lab["reset_high"]
+            floor_share, ceiling, rounds = .01, 20.0, lab["reset_rounds"]
+            omega = going0 * lab["reset_start"]
+        omega = np.clip(omega, w_lo, w_hi)
+        if indexed:
+            # after the round, pay is run up in line with prices and nothing else: last year's rate, by last year's
+            # price rise. There is no search; what the round set is what the market gets.
+            # The year after the round follows the central bank's target, not the round's own one-off move in
+            # prices: indexing to that passes it on to pay, then to prices again, every year after.
+            if getattr(self, "reset_year", None) == self.year - 1:
+                rise = 1 + p["markets"]["trend_inflation"]
+            else:
+                rise = self.price / max(getattr(self, "price_before", self.price), 1e-9)
+            omega = self.omega_new * rise
+            rounds = 0
+        # 2.1: in the round people also choose which profession to work in (sorting.py). Pay is cleared with
+        # everyone where they are, then they choose at that pay, then pay is cleared again, for `reset_sweeps`.
+        # Between sweeps the work per person follows the staffing the last clearing gave (update_workload): a
+        # profession whose posts fill gets easier, so more choose it, at less pay.
+        # Supply in the professions anyone may enter answers their pay far more than demand for them does, so pay
+        # cleared with everyone where they stood swung from one sweep to the next (cleaners at 2.8, 1.6, 2.1, 1.6,
+        # 2.0 and 0.8 times today's rate, 2026-10-30). From the second sweep each clearing therefore counts the
+        # moves its own pay would bring (sorting.anticipated_moves); the next sweep makes them, and the sweeps stop
+        # once a sweep leaves every profession's pay within 2% of the last (most points settle in five to eight),
+        # after one undamped sweep that brings people to the choice that pay was set at.
+        sorting_on = reset and lab["reset_sweeps"]
+        sweeps = lab["reset_sweeps"] + 1 if sorting_on else 1
+        self.sorting_log = []
+        finishing = False
+        for sweep in range(sweeps + (1 if sorting_on else 0)):
+            if sweep:
+                self.update_workload(D, S, damp=.5)
+                # households spend as the round's choices would have them: demand for the work they buy follows
+                self.spend_rate = self.anticipated_spend_rate(reopt, P, omega)
+                moved = sorting.reallocate(self, omega, self.price_level(omega), per_mother,
+                                           damping=1.0 if finishing else None)
+                stay_fte = np.bincount(A["occupation"][stay], weights=self.hours_of(A["status"][stay], stay),
+                                       minlength=N_OCC)
+                self.sorting_log.append({"sweep": sweep, "moved": moved, "omega": np.asarray(omega).copy(),
+                                         "workload": np.asarray(self.workload).copy()})
+            if sorting_on:
+                heads = np.bincount(A["occupation"][reopt], minlength=N_OCC)
+            br_lo, br_hi = np.full(N_OCC, -np.inf), np.full(N_OCC, np.inf)
+            prev = None     # last round's (log wage, log gap) per profession, for the secant step
+            done = np.zeros(N_OCC, bool)
+            for it in range(rounds):
+                price = self.price_level(omega)
+                P = self.probabilities(reopt, omega, price, per_mother)
+                fte = (P[:, 1] * b["part_time_hours"] + P[:, 2]) * hours.factor(self, reopt)
+                S = np.bincount(A["occupation"][reopt], weights=fte, minlength=N_OCC)
+                if sorting_on and sweep:
+                    # those who would come work as those there do
+                    per_head = np.where(heads > 0, S / np.maximum(heads, 1), S.sum() / max(heads.sum(), 1))
+                    S = np.maximum(S + sorting.anticipated_moves(self, omega) * per_head, 0)
+                S = stay_fte + S
+                # firms weigh the wage they actually pay — mostly contracted — not just the new-hire rate
+                D = self.demand(self.implied_paid_index(omega, free), supply=S)
+                floor = self.minimum_wage_floor()
+                omega = np.maximum(omega, floor)
+                # Each profession's search steps towards where its gap closes. The fixed step, (D/S) ** 0.15, closed a
+                # 3% gap by about 0.35% a round and never finished in 80; from the second round, the secant — how the gap
+                # moved with the wage last round — says how far to go, damped and bounded (10% a round), with the fixed
+                # step kept wherever the slope is not a falling one (2026-10-03).
+                gap = np.log(np.maximum(D, 1e-9) / np.maximum(S, 1))
+                lw = np.log(np.maximum(omega, 1e-9))
+                fixed = np.clip(lab["clearing_step"] * gap, np.log(.8), np.log(1.25))
+                move = fixed
+                if prev is not None:
+                    dw, dg = lw - prev[0], gap - prev[1]
+                    slope = np.where(np.abs(dw) > 1e-7, dg / np.where(np.abs(dw) > 1e-7, dw, 1.0), np.nan)
+                    ok = np.isfinite(slope) & (slope < -.05)
+                    move = np.where(ok, np.clip(-.8 * gap / np.where(ok, slope, -1.0), -.1, .1), fixed)
+                    # A profession whose gap does not answer its offer at all — in a year with no renewals the offer
+                    # reaches only new hires, whom demand does not see — was pushed by the fixed step for every round
+                    # left, usually to the edge of its window. It is given that whole push at once, and is then done.
+                    deaf = np.isfinite(slope) & (np.abs(slope) < .05) & ~done
+                    if reset:
+                        deaf[:] = False      # in the round every contract is open: the bracket below finds the rate
+                    move = np.where(deaf, fixed * (rounds - it), move)
+                    move = np.where(done, 0.0, move)
+                    done |= deaf
+                if reset:
+                    # 2.1: the round searches pay from next to nothing over a wide range, where a secant step can
+                    # throw a profession from one bound to the other (lawyers went from 2.7 to 0.02 times today's
+                    # rate, 2026-10-30). Each profession keeps the highest rate found short of workers and the lowest
+                    # found with too many; a step that would leave that bracket goes to its middle instead.
+                    br_lo = np.where(gap > 0, np.maximum(br_lo, lw), br_lo)
+                    br_hi = np.where(gap <= 0, np.minimum(br_hi, lw), br_hi)
+                    # prices move with every profession's pay, so a bracket can go stale; it is then dropped
+                    stale = br_lo >= br_hi
+                    br_lo[stale], br_hi[stale] = -np.inf, np.inf
+                    to = lw + move
+                    both = np.isfinite(br_lo) & np.isfinite(br_hi)
+                    middle = (np.where(both, br_lo, 0.0) + np.where(both, br_hi, 0.0)) / 2
+                    to = np.where(both & ((to <= br_lo) | (to >= br_hi)), middle, to)
+                    move = np.where(done, 0.0, to - lw)
+                prev = (lw, gap)
+                step = np.exp(move)
+                if reset:
+                    step = np.clip(step, .5, 2.0)    # within the bracket, larger steps than the leash below
+                # small markets overshoot without a leash. The bounds are real: as fixed nominal numbers, the top one
+                # bound once prices had roughly quadrupled — from about 2050 in the status quo, sooner with more
+                # inflation — and real pay then fell year after year while vacancies climbed to a third of all posts
+                # (found 2026-10-01).
+                level = self.price * self.macro.productivity()
+                new = np.clip(np.clip(omega * np.where(done | reset, step, np.clip(step, .8, 1.25)), floor_share * self.price,
+                                      ceiling * level), w_lo, w_hi)
+                # A profession held at the statutory minimum with more people than posts is at a bound too: the search
+                # lowered it, the floor raised it back, and it never counted as done — every year at a high minimum wage
+                # ran all 80 rounds, five times a model-year's time (found 2026-10-05)
+                at_floor = (floor > 0) & (omega <= floor * (1 + 1e-6)) & (new <= omega)
+                done |= at_floor
+                new = np.where(at_floor, omega, new)
+                moving = (new > w_lo * (1 + 1e-6)) & (new < w_hi * (1 - 1e-6)) & ~done
+                # cleared: every profession that can still move has supply and demand within half a per cent
+                if not moving.any() or np.abs(new / omega - 1)[moving].max() < 1e-3 or np.abs(gap)[moving].max() < .005:
+                    omega = new
+                    break
+                omega = new
+            # settled: the moves still counted on are within 1% of every profession's headcount
+            if sorting_on and sweep:
+                left = np.abs(sorting.anticipated_moves(self, omega)) / np.maximum(heads, 100)
+                held = float(np.abs(np.log(omega / cleared)).max())
+                self.sorting_log[-1].update(left=float(left.max()), held=held)
+                # Moves are damped while pay is searched for, so people lag the choice pay is set at. Once pay
+                # holds (or the sweeps run out), a sweep moves everyone to their choice at that pay, undamped, and
+                # clears pay once more; if pay does not hold through that too, the sweeps go on.
+                if finishing and (held < .02 or sweep >= sweeps):
+                    break
+                finishing = held < .02 or sweep >= sweeps - 1
+            cleared = np.asarray(omega).copy()
+        if not rounds:
             price = self.price_level(omega)
             P = self.probabilities(reopt, omega, price, per_mother)
             fte = (P[:, 1] * b["part_time_hours"] + P[:, 2]) * hours.factor(self, reopt)
             S = stay_fte + np.bincount(A["occupation"][reopt], weights=fte, minlength=N_OCC)
-            # firms weigh the wage they actually pay — mostly contracted — not just the new-hire rate
             D = self.demand(self.implied_paid_index(omega, free), supply=S)
-            floor = self.minimum_wage_floor()
-            omega = np.maximum(omega, floor)
-            # Each profession's search steps towards where its gap closes. The fixed step, (D/S) ** 0.15, closed a
-            # 3% gap by about 0.35% a round and never finished in 80; from the second round, the secant — how the gap
-            # moved with the wage last round — says how far to go, damped and bounded (10% a round), with the fixed
-            # step kept wherever the slope is not a falling one (2026-10-03).
-            gap = np.log(np.maximum(D, 1e-9) / np.maximum(S, 1))
-            lw = np.log(np.maximum(omega, 1e-9))
-            fixed = np.clip(lab["clearing_step"] * gap, np.log(.8), np.log(1.25))
-            move = fixed
-            if prev is not None:
-                dw, dg = lw - prev[0], gap - prev[1]
-                slope = np.where(np.abs(dw) > 1e-7, dg / np.where(np.abs(dw) > 1e-7, dw, 1.0), np.nan)
-                ok = np.isfinite(slope) & (slope < -.05)
-                move = np.where(ok, np.clip(-.8 * gap / np.where(ok, slope, -1.0), -.1, .1), fixed)
-                # A profession whose gap does not answer its offer at all — in a year with no renewals the offer
-                # reaches only new hires, whom demand does not see — was pushed by the fixed step for every round
-                # left, usually to the edge of its window. It is given that whole push at once, and is then done.
-                deaf = np.isfinite(slope) & (np.abs(slope) < .05) & ~done
-                move = np.where(deaf, fixed * (rounds - it), move)
-                move = np.where(done, 0.0, move)
-                done |= deaf
-            prev = (lw, gap)
-            step = np.exp(move)
-            # small markets overshoot without a leash. The bounds are real: as fixed nominal numbers, the top one
-            # bound once prices had roughly quadrupled — from about 2050 in the status quo, sooner with more
-            # inflation — and real pay then fell year after year while vacancies climbed to a third of all posts
-            # (found 2026-10-01).
-            level = self.price * self.macro.productivity()
-            new = np.clip(np.clip(omega * np.where(done, step, np.clip(step, .8, 1.25)), .3 * self.price, 4.0 * level),
-                          w_lo, w_hi)
-            # A profession held at the statutory minimum with more people than posts is at a bound too: the search
-            # lowered it, the floor raised it back, and it never counted as done — every year at a high minimum wage
-            # ran all 80 rounds, five times a model-year's time (found 2026-10-05)
-            at_floor = (floor > 0) & (omega <= floor * (1 + 1e-6)) & (new <= omega)
-            done |= at_floor
-            new = np.where(at_floor, omega, new)
-            moving = (new > w_lo * (1 + 1e-6)) & (new < w_hi * (1 - 1e-6)) & ~done
-            # cleared: every profession that can still move has supply and demand within half a per cent
-            if not moving.any() or np.abs(new / omega - 1)[moving].max() < 1e-3 or np.abs(gap)[moving].max() < .005:
-                omega = new
-                break
-            omega = new
         # Diagnostic (markets.freeze_wages): the rate for new contracts is the reference run's of the same year, as a
         # lottery winner's pay rate is the market's, untouched by what they do. scripts/income_effect_check.py uses it
         # to measure the income effect alone; with everyone paid, the market's answer to fewer hours offered — wages
@@ -1808,8 +1987,11 @@ class Society:
         # the window sits around what the job pays now, grown by the inflation expected this year — around last
         # year's krónur it was a trend's width lower in real terms, and a large shock pressing on its ceiling cleared
         # real wages lower the higher the trend
-        going = self.omega * (1 + p["markets"]["trend_inflation"])
-        self.omega_new = np.clip(omega, going * (1 - b), going * (1 + b))
+        going = self.omega * (1 + infl)
+        if reset or indexed:
+            self.omega_new = np.asarray(omega, float)     # what the round found, or prices alone, unbounded
+        else:
+            self.omega_new = np.clip(omega, going * (1 - b), going * (1 + lab.get("safety_wage_bound_up", b)))
         tightness = D / np.maximum(S, 1)
         self.job_tightness = float(D.sum() / max(S.sum(), 1))   # jobs on offer against people offering, overall
         # jobs per person of working age: demand grows with the workforce, so counted in total, arrivals would
@@ -1820,7 +2002,8 @@ class Society:
         # to garbage rather than failing, which would quietly poison the run
         tightness = np.nan_to_num(tightness, nan=1.0, posinf=2.0, neginf=0.5)
         self.offer_years = np.clip(base_len + lab["offer_length_sensitivity"] * (tightness - 1), 1, lab["max_contract_years"])
-        self.update_public_premium(D, S)
+        if not indexed:
+            self.update_public_premium(D, S)      # indexed pay answers prices only, the state's included
         self.update_workload(D, S)
         self.tightness = np.asarray(D) / np.maximum(np.asarray(S), 1.0)
         # each year's place on the wage curve, so an agreement can be set against where it was signed
@@ -1828,9 +2011,118 @@ class Society:
             self.curve_hist = {}
         self.curve_hist[int(self.year)] = self.wage_curve()
         self.renew_contracts(free)
+        self._reset_solve = False
+        self.price_before = self.price
         self.omega = self.paid_wage_index()
         self.price = self.price_level(self.omega)
         return P, S, D
+
+    def set_reform_rules(self, year, expected):
+        """The reform's payment and its phased parts, as they stand in `year`, the payment at the price level
+        `expected`."""
+        p = self.p
+        pol = p["policy"]
+        if not hasattr(self, "ubi_real"):
+            self.ubi_real = (pol["ubi_adult"], pol["ubi_child"])
+        indexation = pol.get("ubi_indexation", 1.0 if pol.get("ubi_indexed", True) else 0.0)
+        phase = min(1.0, year / max(1, pol.get("ubi_phase_in_years", 1)))
+        # Set at the start of the year, so to the price level expected for it — as Iceland sets benefits — not to
+        # last year's, which cost the payment a year's inflation in real value, every year.
+        # Optionally, a share of real wage growth as well, the rule today's benefits follow (benefit_index).
+        # Indexed to prices alone, a payment falls behind pay by a third over thirty-five years of 1% real
+        # growth — a design choice, but one the long view must show as such, not as a budget surplus.
+        follow = pol.get("ubi_wage_indexation", 0.0)
+        real = 1.0
+        if follow and getattr(self, "real_wage0", None) is not None:
+            w = self.D0_pub + self.D0_priv
+            wage = float((self.omega * w).sum() / max(w.sum(), 1e-9))
+            real = max(wage / max(expected, .1) / max(self.real_wage0, .1), 1.0) ** follow
+        pol["ubi_adult"], pol["ubi_child"] = (u * expected ** indexation * real * phase for u in self.ubi_real)
+        # The reform's pace (v8). Taxes and the payment start on day one, as legislated; the public payroll cut and
+        # the folding-in of the pension funds advance linearly over `transition_years` (a 20% cut takes about three
+        # years at the public sector's 5-7% yearly turnover), and those on today's benefits are protected for the
+        # share not yet phased in (policy.net_income). One year is v7's switch: everything at once.
+        T = max(1, int(round(pol.get("transition_years", 1))))
+        s = min(1.0, year / T)
+        if not hasattr(self, "transition_targets"):
+            self.transition_targets = {k: pol.get(k, 0.0) for k in ("public_payroll_cut", "pension_fold")}
+        for k, v in self.transition_targets.items():
+            pol[k] = v * s
+        pol["transition_share"] = s
+
+    def anticipated_spend_rate(self, reopt, P, omega):
+        """2.1: what households would spend of what they earn if the round's choices were made (the accounts'
+        spend_rate), for the round to price labour against. Spending, not pay, is what the reform moves most in the
+        trades households buy from: at 350 þús. the first year's accounts put it 46% above today's, after a round
+        that, priced at today's spending, had cleared waiters at 413 full-time posts against the 602 then asked for
+        (2026-10-30). One draw of the choices, under a fixed seed; nothing of it is kept."""
+        A = self.A
+        kept = A["status"].copy(), self.net_now, self.omega_new, getattr(self, "_cons_parts", None), \
+            getattr(self, "guaranteed_share_now", None), getattr(self, "_household", None)
+        try:
+            u = np.random.default_rng(2101).random(len(reopt))
+            choice = np.minimum((u[:, None] > np.cumsum(P, 1)).sum(1), 4).astype(A["status"].dtype)
+            # starting a firm takes a year; in the draw it is not working yet
+            choice[(choice == VENTURE) & (A["venture"][reopt] < 0)] = NONWORK
+            A["status"][reopt] = choice
+            self.omega_new = np.asarray(omega, float)
+            idx, gross, inc = self.refresh_net_now()
+            per_mother, _, _ = self.child_transfers()
+            guaranteed = np.asarray(inc["benefits"]) + np.asarray(inc.get("ubi", 0.0))
+            return float(self.household_consumption(idx, inc["net"], per_mother, guaranteed) / max(gross.sum(), 1.0))
+        finally:
+            A["status"][:] = kept[0]
+            self.net_now, self.omega_new = kept[1], kept[2]
+            self._cons_parts, self.guaranteed_share_now, self._household = kept[3], kept[4], kept[5]
+
+    def haggle(self):
+        """The haggling round (policy.wage_reset), held before the reform's first year in a space without time.
+
+        The agreements end and every contract, public and private, reopens at once. With the reform's rules in force
+        at today's prices, everyone decides again whether to work, how much, and in which profession their education
+        allows, and each profession's pay is whatever clears it, the state's included; the state hires its posts at
+        the pay asked only as far as it judges them worth it (state_hiring_factor), and the work per person follows
+        the staffing that results (update_workload). Nobody ages, nothing is produced or spent, and prices do not
+        move but through pay. The first year then starts from the pay, professions and contracts the round set,
+        with everyone choosing again at that pay."""
+        self._timeless = True
+        try:
+            self.set_reform_rules(1, self.price)
+            self.refresh_net_now()
+            per_mother, _, _ = self.child_transfers()
+            self.solve_market(self.choosers(), per_mother)
+            self.round_log = self.sorting_log     # the year's own solve starts a new one
+            # 2.1: the hours the round leaves are known before the year starts, and capital per hour with them
+            who = self.choosers()
+            _, S, D = self.market_balance(who, self.probabilities(who, self.omega, self.price, per_mother))
+            self.round_labour = self.macro.labour_index(self, S, D)
+            self.round_price = self.price         # the price level the round's pay was agreed at
+        finally:
+            self._timeless = False
+
+    def resetting_now(self):
+        """True in the reform's first year when the haggling round is on (policy.wage_reset) and has not run."""
+        pol = self.p["policy"]
+        return bool(pol.get("wage_reset")) and pol["regime"] == "platform" and not getattr(self, "reset_done", False)
+
+    def indexed_after_reset(self):
+        """True in the years after the round when pay is to follow prices only (policy.wage_after_reset)."""
+        pol = self.p["policy"]
+        return bool(pol.get("wage_reset")) and pol["regime"] == "platform" and getattr(self, "reset_done", False) \
+            and pol.get("wage_after_reset") == "indexed"
+
+    def begin_reset(self):
+        """Open every contract and take the state's pay to the market's: no cut, no premium. The round decides."""
+        A = self.A
+        employed = A["alive"] & np.isin(A["status"], [PART, FULL])
+        A["contract_end"][employed] = self.year
+        self.p["policy"]["wage_setting"] = "free_market"   # the round is the end of the agreements
+        self.public_premium = np.ones(N_OCC)
+        self.public_offset_left = np.zeros(N_OCC)
+        self.premium_pending = np.zeros(N_OCC)
+        self._reset_solve = True
+        self.reset_done = True
+        self.reset_year = self.year
 
     def bargaining_cpi(self):
         """The price index agreements compensate. Today, the CPI. Under the reform the parties can agree to
@@ -1854,6 +2146,8 @@ class Society:
     def renewal_weight(self, free_market):
         """How far a renegotiated contract moves towards today's rate. Collective agreements move less."""
         w = self.p["labour"]["renewal_bargaining"]
+        if getattr(self, "_reset_solve", False) or self.indexed_after_reset():
+            return 1.0
         return w if free_market else w * .6
 
     def renewal_wage(self, due, omega_new, free_market):
@@ -1983,6 +2277,13 @@ class Society:
                                     p["policy"]["wage_setting"] == "free_market"), supply=S)
 
     def step(self):
+        self.young_cohort()                  # kept while they are still there
+        if not hasattr(self, "_self_employed0"):
+            self._self_employed0 = self.self_employed_shares()
+        if not getattr(self, "_panel_started", False):
+            self.start_panel()
+        if self.resetting_now():
+            self.haggle()
         # Employers carry leave above the borgaralaun, so the cost has to be on wages before the market prices
         # labour this year. It is read from last year's pay and births, as an insurer would set a premium.
         leave = self.leave_scheme()
@@ -1999,7 +2300,7 @@ class Society:
         if "demand_level" in hist:   # every run alike (v8: the same rules for reform and status quo, demand())
             self.demand_level = float(hist["demand_level"])
         self.macro.year = self.year   # trend productivity is dated
-        capital.set_factor(self, self.macro)   # 2.0: capital per worker against the reference's
+        capital.set_factor(self, self.macro, getattr(self, "round_labour", None) if self.year == 1 else None)
         b = p["behaviour"]
         platform = p["policy"]["regime"] == "platform"
         # the price level payments are set to for the year: expected at its start, for benefits and the payment alike
@@ -2008,35 +2309,7 @@ class Society:
         p["policy"]["threshold_index"] = p["policy"].get("threshold_index", 1.0) \
             * (1 + p["policy"].get("threshold_real_growth", 0.0))
         if platform:
-            pol = p["policy"]
-            if not hasattr(self, "ubi_real"):
-                self.ubi_real = (pol["ubi_adult"], pol["ubi_child"])
-            indexation = pol.get("ubi_indexation", 1.0 if pol.get("ubi_indexed", True) else 0.0)
-            phase = min(1.0, self.year / max(1, pol.get("ubi_phase_in_years", 1)))
-            # Set at the start of the year, so to the price level expected for it — as Iceland sets benefits — not to
-            # last year's, which cost the payment a year's inflation in real value, every year.
-            expected = self.price_set
-            # Optionally, a share of real wage growth as well, the rule today's benefits follow (benefit_index).
-            # Indexed to prices alone, a payment falls behind pay by a third over thirty-five years of 1% real
-            # growth — a design choice, but one the long view must show as such, not as a budget surplus.
-            follow = pol.get("ubi_wage_indexation", 0.0)
-            real = 1.0
-            if follow and getattr(self, "real_wage0", None) is not None:
-                w = self.D0_pub + self.D0_priv
-                wage = float((self.omega * w).sum() / max(w.sum(), 1e-9))
-                real = max(wage / max(expected, .1) / max(self.real_wage0, .1), 1.0) ** follow
-            pol["ubi_adult"], pol["ubi_child"] = (u * expected ** indexation * real * phase for u in self.ubi_real)
-            # The reform's pace (v8). Taxes and the payment start on day one, as legislated; the public payroll cut and
-            # the folding-in of the pension funds advance linearly over `transition_years` (a 20% cut takes about three
-            # years at the public sector's 5-7% yearly turnover), and those on today's benefits are protected for the
-            # share not yet phased in (policy.net_income). One year is v7's switch: everything at once.
-            T = max(1, int(round(pol.get("transition_years", 1))))
-            s = min(1.0, self.year / T)
-            if not hasattr(self, "transition_targets"):
-                self.transition_targets = {k: pol.get(k, 0.0) for k in ("public_payroll_cut", "pension_fold")}
-            for k, v in self.transition_targets.items():
-                pol[k] = v * s
-            pol["transition_share"] = s
+            self.set_reform_rules(self.year, self.price_set)
         self.fisheries_fund_start()
         self.step_occupation_change()
         base_fte = self.D0_pub + self.D0_priv
@@ -2055,6 +2328,8 @@ class Society:
         # --- who re-thinks this year
         cand = self.choosers()
         rate = b["reoptimise_rate_first_year"] if (self.year == 1 and platform) else b["reoptimise_rate"]
+        if getattr(self, "reset_year", None) == self.year - 1:
+            rate = 1.0                       # after the haggling round: everyone decides again, at the new pay
         # Some moments make everyone decide again: coming of working age, leaving upper-secondary school (20), the
         # pension age, arrival, and a course begun or ended last year. Until 1.1 those studying never re-chose and
         # those leaving study kept the status they had as students until a yearly draw reached them, so school
@@ -2065,7 +2340,15 @@ class Society:
             | np.isin(cand, getattr(self, "study_changed", np.zeros(0, int)))
         reopt = cand[(rng.random(len(cand)) < rate) | forced]
 
+        if getattr(self, "reset_year", None) == self.year - 1:
+            # the round's contracts pay the first year's expected price level: last year's pay a year on
+            share = p["labour"]["round_real_settlement"]
+            expected = self.price_level(self.omega * (1 + p["markets"]["trend_inflation"]))
+            self.round_clause = (1 + p["markets"]["trend_inflation"]) ** (1 - share) \
+                * (expected / max(self.round_price, 1e-9)) ** share
         self.solve_market(reopt, per_mother)
+        if getattr(self, "reset_year", None) == self.year - 1:
+            self.macro.anticipate_rate(self)
         idea = rng.random(len(reopt)) < self.idea_prob(reopt)
         P = self.probabilities(reopt, self.omega, self.price, per_mother, idea=idea)
         u = rng.random(len(reopt))
@@ -2172,6 +2455,11 @@ class Society:
         if hasattr(self, "accounts0"):
             bal = self.macro.update_end_of_year(self, acc, S, D, pre, interest_ref)
             self.price = self.macro.cpi
+            if getattr(self, "round_clause", None) is not None and self.reset_year == self.year - 1:
+                # the clause settles on the price the first year actually ended at, paid from the second year
+                share = p["labour"]["round_real_settlement"]
+                self.round_clause = (1 + p["markets"]["trend_inflation"]) ** (1 - share) \
+                    * (self.price / max(self.round_price, 1e-9)) ** share
         else:
             bal = pre
         self.accounts_cache = acc
@@ -2368,9 +2656,11 @@ class Society:
         now = A["health"][adults]
         A["health"][adults] = now + hp["recovery_rate"] * (ceiling - now)
         # ill health is also how people leave the workforce
-        working = np.isin(A["status"][adults], [PART, FULL, VENTURE])
+        # 2.1: at any working age, in work or not: most people reach the pension through rehabilitation, not straight
+        # from a job, and someone already on it cannot become a new case
+        exposed = ~A["disabled"][adults] & (A["age"][adults] <= 66) & (A["studying"][adults] <= 0)
         risk = hp["disability_onset"] * np.clip(1.5 - A["health"][adults], 0, 2)
-        struck = adults[working & (rng.random(len(adults)) < risk)]
+        struck = adults[exposed & (rng.random(len(adults)) < risk)]
         A["disabled"][struck] = True
         # v9: reduced capacity to work is what the pension is for; a full-time job becomes a part-time one
         A["status"][struck[A["status"][struck] == FULL]] = PART
@@ -2576,6 +2866,37 @@ class Society:
             A["mortgage"][w] = True
         self.first_homes = int(buy.sum())
 
+    def note_leavers(self, movers):
+        """2.1: rights to a pension go with people who leave. An adult who has lived in Iceland keeps a share of it,
+        by years of residence out of 40, payable from 67 (Reg. 883/2004, the Nordic convention, tax treaties)."""
+        if self.abroad_age is None:          # a run's own leavers only: those of 2025 and before are in its benefits
+            return
+        A, p, e = self.A, self.p, self.p["exported"]
+        better = (1 - p["demography"].get("mortality_improvement", 0.0)) ** self.year
+        q = np.minimum(1, self.gompertz_a * better * np.exp(self.gompertz_b * self.abroad_age))
+        self.abroad_share = self.abroad_share * (1 - q)
+        self.abroad_age = self.abroad_age + 1
+        who = movers[A["age"][movers] >= 18]
+        share = np.minimum(A["years_in_iceland"][who], 40) / 40 * e["stay_abroad_share"] * e["treaty_share"]
+        self.abroad_age = np.concatenate([self.abroad_age, A["age"][who].astype(float)])
+        self.abroad_share = np.concatenate([self.abroad_share, share])
+
+    def exported_payments(self):
+        """2.1: what is paid abroad, ma.kr. in today's krónur: pensions to those who left, from the first year on,
+        at the state pension or the borgaralaun; and, under a reform, the child payment to children living abroad of
+        EEA citizens working here (Reg. 883/2004 art. 67), which cannot be held down to the country's cost of
+        living (Commission v Austria, C-328/20). What was paid abroad in 2025 is in the base year's benefits."""
+        A, p, e = self.A, self.p, self.p["exported"]
+        pol = p["policy"]
+        platform = pol["regime"] == "platform"
+        full = pol["ubi_adult"] if platform else p["benefits"]["tr_old_age_full"] * self.benefit_index()
+        pensions = 0.0 if self.abroad_age is None else self.abroad_share[self.abroad_age >= 67].sum() * full * 12 / 1e9
+        if not platform:
+            return float(pensions)
+        workers = (A["alive"] & (A["citizenship"] == EEA) & np.isin(A["status"], [PART, FULL])).sum()
+        children = workers * e["children_abroad_per_eea_worker"] * (1 - e["paid_at_home_share"])
+        return float(pensions + children * pol["ubi_child"] * 12 / 1e9)
+
     def step_tenure(self):
         """A year in the same job adds a year of tenure; anyone out of work starts again from zero."""
         A = self.A
@@ -2698,7 +3019,8 @@ class Society:
         adults = np.flatnonzero(A["alive"] & (A["age"] >= 18))
         c = (A["citizenship"][adults] != IS).astype(int)
         base = self.emig_hazard[c, np.minimum(A["age"][adults], 110)] * self.recent_multiplier(adults) \
-            * np.where(A["n_kids"][adults] > 0, self.family_mobility, 1.0)
+            * np.where(A["n_kids"][adults] > 0, self.family_mobility, 1.0) \
+            * np.where(A["disabled"][adults], p["migration"]["disabled_mobility"], 1.0)
         R = self.income_ratio(adults)
         beta = p["migration"]["emigration_income_elasticity"] * p["behaviour"]["mobility_scale"] * A["mobility"][adults]
         R0 = np.nan_to_num(self.R0[adults], nan=1.0)
@@ -2719,6 +3041,7 @@ class Society:
             tax = pol["exit_tax_rate"] * self.p["inheritance"]["unrealised_gain_share"] * above
             A["wealth"][movers] -= tax
             self.exit_tax_bn = float(tax.sum() / 1e9)
+        self.note_leavers(movers)
         self._remove(movers)
         young_skilled = movers[(A["age"][movers] >= 22) & (A["age"][movers] < 40) & (A["education"][movers] == 2)]
         return {"total": len(movers), "icelandic": int((A["citizenship"][movers] == IS).sum()),
@@ -2941,6 +3264,13 @@ class Society:
         A["worker0"][new] = False
         A["origin_year"][new] = self.year
         A["self_employed"][new] = False
+        # 2.1: neither a disability nor a place at school comes with the copy. Arrivals were 8% disabled against 6-7%
+        # of residents their age, on a pension from the day they came, with their children disabled at birth
+        A["disabled"][new] = False
+        A["student"][new] = False
+        A["other_assets"][new] = 0.0
+        A["income0"][new] = np.nan
+        A["group0"][new] = -1
         A["fund"][new] = 0.0
         if "hours_scale" in A:
             A["hours_scale"][new] = 1.0
@@ -2972,10 +3302,10 @@ class Society:
         return per_child, float(self.net_now[A["alive"] & (A["age"] >= 25) & (A["age"] <= 45)].mean())
 
     def estate_values(self, idx):
-        """What each person would leave, in 2025 krónur: savings and the equity in their home."""
+        """What each person would leave, in 2025 krónur: savings, other assets and the equity in their home."""
         A = self.A
-        return np.maximum(A["wealth"][idx], 0) + np.maximum(A["home_value"][idx] * housing.price_factor(self, idx)
-                                                             - A["mortgage_debt"][idx], 0)
+        return np.maximum(A["wealth"][idx], 0) + A["other_assets"][idx] \
+            + np.maximum(A["home_value"][idx] * housing.price_factor(self, idx) - A["mortgage_debt"][idx], 0)
 
     def inheritance_rules(self):
         """(estate rate, tax-free amount, gift rate, exit tax rate), today's under the status quo."""
@@ -3173,6 +3503,44 @@ class Society:
             return
         A["base_wage"][mothers] *= (1 - pen) / (1 - ref)
 
+    def young_cohort(self):
+        """The population's teenagers as it was built, kept for the cohorts born in the run to be drawn from."""
+        if not hasattr(self, "_young_cohort"):
+            A = self.A
+            at = np.flatnonzero(A["alive"] & (A["origin_year"] == 0) & (A["age"] >= 16) & (A["age"] <= 19)
+                                & ~A["immigrant"])
+            if not len(at):
+                raise RuntimeError("no teenagers to draw coming-of-age cohorts from")
+            keep = ("occupation", "education", "public", "meaning", "creative", "export_loading", "age", "base_wage")
+            self._young_cohort = {k: A[k][at].copy() for k in keep if k in A}
+        return self._young_cohort
+
+    def keep_self_employment(self):
+        """2.1: the survey's rate of self-employment by age, held among those at work. The flag was drawn once, for the
+        population as it was built, so it left with them: 5.0% of workers in 2026, 0.5% by 2060, and with it the
+        income shifting and undeclared earnings that read it. Each year people at work in the private sector take it
+        up until their age group is back at its rate. Who runs a firm or works on own account in a reform is
+        counted separately (ownrun.py, ventures)."""
+        A, rng = self.A, self.rng
+        if not hasattr(self, "_self_employed0"):
+            self._self_employed0 = self.self_employed_shares()
+        work = A["alive"] & np.isin(A["status"], [PART, FULL])
+        for band, (lo, hi) in enumerate(SELF_EMPLOYED_BANDS):
+            group = np.flatnonzero(work & (A["age"] >= lo) & (A["age"] <= hi))
+            short = int(round(self._self_employed0[band] * len(group) - A["self_employed"][group].sum()))
+            pool = group[~A["self_employed"][group] & ~A["public"][group]]
+            if short > 0 and len(pool):
+                A["self_employed"][rng.choice(pool, min(short, len(pool)), replace=False)] = True
+
+    def self_employed_shares(self):
+        A = self.A
+        work = A["alive"] & np.isin(A["status"], [PART, FULL])
+        out = []
+        for lo, hi in SELF_EMPLOYED_BANDS:
+            group = work & (A["age"] >= lo) & (A["age"] <= hi)
+            out.append(float(A["self_employed"][group].mean()) if group.any() else 0.0)
+        return out
+
     def newborns_come_of_age(self, idx):
         """A child born in the run is made by copying its mother, so at 16 it still carries her profession,
         education and pay. Harmless within ten years; wrong beyond, where it makes pay perfectly hereditary. At 16
@@ -3184,21 +3552,21 @@ class Society:
         born = idx[(A["origin_year"][idx] > 0) & ~A["immigrant"][idx]]
         if not len(born):
             return
-        donors = np.flatnonzero(A["alive"] & (A["origin_year"] == 0) & (A["age"] >= 16) & (A["age"] <= 19)
-                                & ~A["immigrant"])
-        if not len(donors):
-            return
+        # 2.1: drawn from those teenagers as they were, kept aside at the start of the run. Looked up among the living
+        # the pool was empty from 2045 and the function quietly did nothing, so later cohorts kept their mother's
+        # profession, schooling and pay
+        donors = self.young_cohort()
         # Young people choose a line of work where the posts are and the pay has risen: donors weighted by the pull
         # of their profession, which is 1 everywhere when nothing has changed, so the mix the population was built
         # with is kept. Copied from 2025's teenagers unweighted, every cohort to 2060 entered the professions in
         # 2025's proportions, however far automation or a shortage had moved the jobs.
-        w = self.occupation_pull()[A["occupation"][donors]]
-        pick = rng.choice(donors, len(born), p=w / w.sum())
+        w = self.occupation_pull()[donors["occupation"]]
+        pick = rng.choice(len(w), len(born), p=w / w.sum())
         for k in ("occupation", "education", "public", "meaning", "creative", "export_loading"):
             if k in A:
-                A[k][born] = A[k][pick]
-        young = popmod.age_wage_factor(16) / popmod.age_wage_factor(A["age"][pick])
-        wage = A["base_wage"][pick] * young
+                A[k][born] = donors[k][pick]
+        young = popmod.age_wage_factor(16) / popmod.age_wage_factor(donors["age"][pick])
+        wage = donors["base_wage"][pick] * young
         mother = A["mother"][born]
         known = mother >= 0
         adults = A["alive"] & (A["age"] >= 25) & (A["age"] <= 60)
@@ -3342,6 +3710,7 @@ class Society:
         heirs = A["partner"][dead]
         has = heirs >= 0
         np.add.at(A["wealth"], heirs[has], A["wealth"][dead[has]])
+        np.add.at(A["other_assets"], heirs[has], A["other_assets"][dead[has]])
         np.add.at(A["home_value"], heirs[has], A["home_value"][dead[has]])
         np.add.at(A["mortgage_debt"], heirs[has], A["mortgage_debt"][dead[has]])
         housing.settle_estates(self, dead)
@@ -3360,6 +3729,13 @@ class Society:
         n_births = rng.poisson(d["births_per_year"] * max(.2, 1 + d["fertility_income_elasticity"] * rel) * tempo)
         women = np.flatnonzero(A["alive"] & (A["sex"] == 1) & (A["age"] >= 18) & (A["age"] <= 44))
         w = np.exp(-((A["age"][women] - (d["birth_age_mean"] - shift)) / 6) ** 2)
+        # 2.1: most births are to couples. Drawn by age alone, half went to single women, half of the women at those
+        # ages: children with a single parent rose from 28% to 51% by 2045, and that was most of the status quo's rise
+        # in child poverty (found 2026-11-05).
+        paired = A["partner"][women] >= 0
+        if paired.any() and (~paired).any():
+            share = d["births_to_couples_share"]
+            w = np.where(paired, share / w[paired].sum(), (1 - share) / w[~paired].sum()) * w
         mothers = rng.choice(women, n_births, p=w / w.sum())
         self.mean_birth_age = float(A["age"][mothers].mean()) if len(mothers) else float("nan")
         new = self._clone(mothers)
@@ -3396,6 +3772,7 @@ class Society:
         A["base_wage"][grown] *= popmod.age_wage_factor(A["age"][grown]) / popmod.age_wage_factor(A["age"][grown] - 1)
         turned16 = A["alive"] & (A["age"] == 16) & ~A["chooser"]
         self.newborns_come_of_age(np.flatnonzero(turned16))
+        self.keep_self_employment()
         self.leave_school(np.flatnonzero(A["alive"] & (A["age"] == 20) & ~A["immigrant"]))
         if turned16.any():
             ch_p = self.p["childhood"]
@@ -3504,8 +3881,19 @@ class Society:
         if not hasattr(self, "_household"):
             return
         idx, income, cons = self._household
-        A["wealth"][idx] = A["wealth"][idx] * (1 + self.wealth_returns(A["wealth"][idx])) \
-            + 12 * (income - cons) / max(self.price, .1)
+        saved = 12 * (income - cons) / max(self.price, .1)
+        # 2.1: what is left after spending does not all sit in the bank. The principal repaid on the mortgage comes
+        # out of it, and part goes into a home, a pension of one's own or a firm, paying the mortgage down first.
+        # With all of it held as savings, savings grew from 3.3 to 9.1 trillion by 2045, and the spending and tax
+        # that follow from them with it.
+        repaid = .03 * A["mortgage_debt"][idx]
+        # a renter's savings stay at hand: they are what buys the first home
+        into = w["illiquid_saving_share"] * np.maximum(saved, 0) * (A["home_value"][idx] > 0)
+        paid_down = np.minimum(into, A["mortgage_debt"][idx] - repaid)
+        after = A["wealth"][idx] * (1 + self.wealth_returns(A["wealth"][idx])) + saved - into
+        A["wealth"][idx] = np.maximum(after - repaid, np.minimum(after, 0))
+        A["mortgage_debt"][idx] -= paid_down
+        A["other_assets"][idx] += into - paid_down
         # Amortisation only. Inflation does wear down non-indexed debt faster, but the higher payments that do it
         # are not taken out of what households spend, so eroding the debt here built equity out of nothing — and
         # through the housing-wealth effect raised prices with the inflation rate. The reform acts through
@@ -3563,12 +3951,13 @@ class Society:
             "health_cost": float(self.health_cost()),
             "crime_cost": float(self.crime_snapshot()["crime_cost_bn"]),
             "schooling_cost": float(self.schooling_cost()),
+            "exported_payments": self.exported_payments(),
         }
         if not platform:
             out.update({"wealth_tax": 0.0, "retraining_cost": 0.0, "childcare_cost": 0.0,
                         "public_housing_cost": 0.0, "sick_pay_saved": 0.0, "leave_saved": 0.0})
             return out
-        net_worth = A["wealth"] + self.housing_equity()
+        net_worth = A["wealth"] + A["other_assets"] + self.housing_equity()
         taxable = np.maximum(net_worth[A["alive"] & (A["age"] >= 18)] - pol["net_wealth_tax_threshold"], 0)
         out.update({
             "wealth_tax": float(pol["net_wealth_tax_pct"] / 100 * taxable.sum() / 1e9 * self.wealth_tax_shrink()),
@@ -3728,21 +4117,29 @@ class Society:
     def apply_childcare_constraint(self):
         """Parents of small children who cannot get a place cannot hold a full-time job."""
         A, p, rng = self.A, self.p, self.rng
-        places = p["childcare"]["places_full_time"] + p["childcare"]["childminder_places"] \
-            + (p["policy"]["childcare_places_added"] if p["policy"]["regime"] == "platform" else 0)
+        c = p["childcare"]
+        added = p["policy"]["childcare_places_added"] if p["policy"]["regime"] == "platform" else 0
         kids = np.flatnonzero(A["alive"] & (A["age"] >= 1) & (A["age"] <= 5) & (A["mother"] >= 0))
         if not len(kids):
             self.childcare_shortfall = 0
             return
-        mothers = A["mother"][kids]
-        wanting = np.unique(mothers[np.isin(A["status"][mothers], [PART, FULL, VENTURE])])
-        # places wanted beyond what exists without the lever: what the lever can usefully pay for
-        base = p["childcare"]["places_full_time"] + p["childcare"]["childminder_places"]
-        self.childcare_needed = max(0, len(wanting) - base)
-        shortfall = max(0, len(wanting) - places)
+        # 2.1: a place is a child's, so children are what is counted. Counting mothers, a mother of two wanted one
+        # place, the wish never reached what exists, and the lever bought nothing and changed nothing
+        wanting = kids[np.isin(A["status"][A["mother"][kids]], [PART, FULL, VENTURE])]
+        # 2.1: and the places are not all open to all ages. Places for 1-5 year olds together exceed the children whose
+        # parents want one, so a single count finds no shortage at all; the waiting lists are for one-year-olds, whom
+        # few leikskólar take, and childminders carry them. Places wanted beyond what exists without the lever, by
+        # age: what the lever can usefully pay for.
+        young = wanting[A["age"][wanting] == 1]
+        older = wanting[A["age"][wanting] > 1]
+        short_young = max(0, len(young) - c["places_age_1"] - c["childminder_places"])
+        short_older = max(0, len(older) - (c["places_full_time"] - c["places_age_1"]))
+        self.childcare_needed = short_young + short_older
+        shortfall = max(0, self.childcare_needed - added)
         self.childcare_shortfall = shortfall
         if shortfall > 0:
-            unlucky = rng.choice(wanting, min(shortfall, len(wanting)), replace=False)
+            pool = np.concatenate([young if short_young else young[:0], older if short_older else older[:0]])
+            unlucky = np.unique(A["mother"][rng.choice(pool, min(shortfall, len(pool)), replace=False)])
             full_time = unlucky[A["status"][unlucky] == FULL]
             A["status"][full_time] = PART   # a place-less parent drops to part time
             A["underemployed"][full_time] = True
@@ -3789,6 +4186,7 @@ class Society:
                   "in_work": (age_a < 67) & ~dis_a & ~studying & (st_a != NONWORK)}
         by_group = {f"income_{g}": float(np.median(equivalised[m])) if m.any() else np.nan for g, m in groups.items()}
         return {"real_income_median": median,
+                **self.poverty_detail(adults, equivalised, household, equiv, kids, line, anchored),
                 # Poverty against the 2025 median held fixed in real terms. The relative line above moves with the
                 # median, so a payment that lifts everyone can leave it unchanged; this says whether people actually
                 # climbed above what counted as poverty before the reform.
@@ -3813,6 +4211,53 @@ class Society:
                 **housing.snapshot(self),
                 **wellbeing}
 
+    def start_panel(self):
+        """2.1: note what each adult was, and had, before the first step: the baseline of the measures that follow
+        the same people (poverty_detail)."""
+        A = self.A
+        adults = np.flatnonzero(A["alive"] & (A["age"] >= 18))
+        _, equiv = self.housing_costs(adults)
+        A["income0"][adults] = self.household_real_income(adults, self.child_transfers()[0]) / equiv
+        age, dis = A["age"][adults], A["disabled"][adults]
+        A["group0"][adults] = np.select([age >= 67, dis, A["studying"][adults] > 0, A["status"][adults] == NONWORK],
+                                        [0, 1, 2, 3], default=4)
+        self._panel_started = True
+
+    def poverty_detail(self, adults, equivalised, household, equiv, kids, line, anchored):
+        """2.1: what the headline poverty rate hides. A relative line can stay put while everyone gets poorer, a
+        rate over all adults can hide one group's fall, and income before housing says nothing of rents."""
+        A = self.A
+        anchored = anchored if anchored else np.nan
+        # after housing, against 60% of the median after housing, as Britain's official series reads it
+        rent, mortgage, _ = self.macro.housing_costs()
+        host = A["host"][adults] if "host" in A else np.full(len(adults), -1)
+        pays = np.where(host >= 0, host, adults)
+        at_home = (A["age"][adults] < 20) & (A["partner"][adults] < 0)
+        after = (household - np.where(at_home, 0.0, pol_rules.housing_cost(A, pays, self.p, rent, mortgage))) / equiv
+        out = {"poverty_after_housing": float(np.mean(after < .6 * np.median(after)))}
+        below = dict(zip(adults, equivalised < .6 * anchored))
+        out["child_poverty_anchored"] = float(np.mean([below.get(m, False) for m in A["mother"][kids]])) \
+            if kids.any() else 0.0
+        women, foreign = A["sex"][adults] == 1, A["immigrant"][adults]
+        for name, m in (("women", women), ("men", ~women), ("foreign", foreign), ("native", ~foreign)):
+            out[f"poverty_{name}"] = float(np.mean(equivalised[m] < line)) if m.any() else np.nan
+            out[f"income_{name}"] = float(np.median(equivalised[m])) if m.any() else np.nan
+        start = A["group0"][adults]
+        for g, name in enumerate(START_GROUPS):
+            m = start == g
+            out[f"poverty_start_{name}"] = float(np.mean(equivalised[m] < line)) if m.any() else np.nan
+            out[f"anchored_start_{name}"] = float(np.mean(equivalised[m] < .6 * anchored)) if m.any() else np.nan
+        # Who lost, against what they themselves had in 2025, after prices. It is read against the status quo's own
+        # figure: people retire and fall ill in either run, and the same person cannot be compared across two runs,
+        # whose chance events differ, without counting those differences as losses.
+        was = A["income0"][adults]
+        known = np.isfinite(was) & (was > 0)
+        ratio = equivalised[known] / was[known]
+        out["lost_over_5"] = float(np.mean(ratio < .95)) if known.any() else 0.0
+        out["lost_over_10"] = float(np.mean(ratio < .90)) if known.any() else 0.0
+        out["gained_over_5"] = float(np.mean(ratio > 1.05)) if known.any() else 0.0
+        return out
+
     def structure_snapshot(self):
         """Structural measures: shortages in essential services, output, ownership, mobility and the tax mix."""
         A, p, mk = self.A, self.p, self.macro
@@ -3821,11 +4266,30 @@ class Society:
                         weights=self.hours_of(A["status"][alive & A["chooser"]]), minlength=N_OCC)
         D = self.demand(self.implied_paid_index(self.omega_new, self.p["policy"]["wage_setting"] == "free_market"),
                         supply=S)
-        gaps = np.clip(D - S, 0, None)
+        # unfilled posts: those sought and not filled, and those the state leaves empty at the pay asked
+        gaps = np.clip(D + np.asarray(getattr(self, "unsought", np.zeros(N_OCC))) - np.minimum(S, D), 0, None)
         essential = {"Nurses and midwives": "nurse", "Doctors": "doctor", "Primary and pre-school teachers": "teacher",
                      "Care assistants": "care", "Child-care workers": "childcare_staff"}
         out = {f"shortfall_{tag}": float(gaps[OCCUPATIONS.index(n)]) for n, tag in essential.items() if n in OCCUPATIONS}
         out["essential_services_gap"] = float(sum(out.values()))
+        # how far the haggling round's last sweep still moved pay (0 without a round): it should have settled
+        log = getattr(self, "round_log", None) or [{}]
+        out["round_pay_unsettled"] = float(log[-1].get("held", 0.0))
+        # 2.1: people working for themselves, as the labour survey counts them: in a trade on own account (ownrun.py:
+        # today's self-employed, and the owner-run work beyond today's in the trades households buy from), running a
+        # firm, or in self-directed work
+        st = A["status"]
+        working = alive & np.isin(st, [PART, FULL])
+        own = ownrun.heads(self)
+        o, s0 = self.p["owner_run"], np.zeros(N_OCC)
+        for name, t in o["trades"].items():
+            s0[OCCUPATIONS.index(name)] = t["share"]
+        extra = float(np.sum(own - s0 * np.bincount(A["occupation"][working], minlength=N_OCC))) if o["enabled"] else 0.0
+        out["owner_run_extra"] = extra
+        out["owner_run_workers"] = float(own.sum())
+        out["self_employed"] = float((working & A["self_employed"]).sum() + extra
+                                     + (alive & np.isin(st, [VENTURE, INDEP])).sum())
+        out["self_employed_share"] = out["self_employed"] / max(float((alive & np.isin(st, [PART, FULL, VENTURE, INDEP])).sum()), 1.0)
         out["social_distress_index"] = float(getattr(self, "distress", 1.0))
         # what the state is paying above the going rate to fill those posts, and what that costs it in a year
         prem = np.asarray(self.public_premium, float)
@@ -4169,7 +4633,8 @@ class Society:
                             + a["education_cost"] + a["infrastructure_capex"]
                             + a["health_cost"] - p["health"]["public_spending_bn"] * self.price
                             + a["crime_cost"] - p["crime"]["responsive_spending_bn"] * self.price
-                            + a["schooling_cost"] - p["schooling"]["spending_bn"] * self.price)
+                            + a["schooling_cost"] - p["schooling"]["spending_bn"] * self.price
+                            + a["exported_payments"])
         return a
 
     def balance(self, a):
@@ -4200,7 +4665,9 @@ class Society:
                                   **{f"subsidy_cut_{k}": v for k, v in P.energy_cuts(p).items()},
                                   "subsidy_cut_other": p["policy"]["subsidy_cut_other"],
                                   "customs_kept": p["policy"]["customs_kept"],
-                                  "vat_input_restriction_gain": p["policy"]["vat_input_restriction_gain"],
+                                  # 2.1: what holds after avoidance and disputes
+                                  "vat_input_restriction_gain": p["policy"]["vat_input_restriction_gain"]
+                                  * (1 - p["policy"].get("vat_input_avoidance", 0.0)),
                                   "pension_real_return": p["policy"]["pension_fund_real_return"],
                                   # kept earned pensions: the funds keep their returns to pay them
                                   "pension_return_share": p["policy"]["pension_fold"]
@@ -4415,7 +4882,7 @@ REAL_FLOWS = ("corporate_tax", "state_equity", "public_equity_dividends", "seed_
 NOMINAL_FLOWS = set(REAL_FLOWS) | {
     "income_tax", "social_security", "payroll_tax", "vat", "benefits", "child_payments", "ubi_adult",
     "pension_topup", "public_payroll", "child_invested", "occupational_pensions", "ubi_saved", "sick_pay_saved",
-    "leave_saved",
+    "leave_saved", "exported_payments",
     "benefit_old_age", "benefit_disability", "benefit_unemployment",
     "benefit_social_assistance", "benefit_housing_benefit", "benefit_fund_disability",
     "automation_tax", "automation_levy", "automation_dividends", "automation_stake_cost", "machine_income", "revenue", "expenditure",
@@ -4443,4 +4910,5 @@ def scenario(base_society, overrides):
     soc.history = []
     soc.own_history = []
     soc.year = 0
+    soc.abroad_age, soc.abroad_share = np.zeros(0), np.zeros(0)
     return soc

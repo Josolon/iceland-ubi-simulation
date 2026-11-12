@@ -80,12 +80,12 @@ published data, a figure from the literature, or a lever whose setting the reade
 
 | | Result in the model (reference reform, 2035) | Rests mainly on | Overturned if |
 |---|---|---|---|
-| R1 | The budget balances, with a surplus of several hundred ma.kr. a year | the yield of restricting VAT refunds to value-chain inputs (459.5 ma.kr., range 385–574), folding in the pension funds, abolishing the personal credit, the higher property tax | the VAT restriction yields less than about half of its estimate, other settings unchanged: on the fitted surface the 2035 balance is +375 ma.kr. in full, +177 at 75% of it, −17 at 50%, −94 at 40% and −387 without it, against −241 in the status quo (the lever *VAT refunds only on value-chain inputs*) |
+| R1 | The budget balances, with a surplus of several hundred ma.kr. a year | the yield of restricting VAT refunds to value-chain inputs (459.5 ma.kr. in full, range 385–574; 275–370 of the central figure after 20–40% is taken off for avoidance), folding in the pension funds, abolishing the personal credit, the higher property tax | the VAT restriction yields less than about half of its estimate, other settings unchanged: in 2.1, with the restriction's whole yield falling on someone, the reference reform runs a deficit even with it in full: on the fitted surface the 2035 balance is −405 ma.kr. in full, −518 at 75% of it, −635 at 50%, −683 at 40% and −883 without it, against −200 in the status quo (in the model, in full: −348 against −207; the lever *VAT refunds only on value-chain inputs*) |
 | R2 | Child poverty falls by about a third | the child payment, half of it paid to the family | largely mechanical: the payment lifts most families above the line; behaviour changes the size, and a low share paid to the family shrinks it (a lever) |
 | R3 | Work per adult falls by about 15% (7% in 1.0; 1.1's young adults and unemployment without a floor add about 4.5 points, the norm to work 2, hours within a job 1) | the income effect (M3) and how pay and hiring respond | the income effect is far from the evidence's range (M3 would then fail), or hiring responds to wages much more or less than estimated (a lever) |
 | R4 | Prices rise faster than in the status quo | the single VAT rate of 25%, and whether pay agreements compensate it | agreements index to prices net of the tax switch, as Denmark's do (a lever) |
 | R5 | Pensioners' median income falls unless topped up | the payment being below today's pensions | the top-up lever is used |
-| R6 | More people arrive than leave | the payment's pull against the residence rules | residence testing is strict (a lever) |
+| R6 | More people arrive than leave | the payment's pull against the residence rules | residence testing is strict (a lever; it reaches only EEA arrivals not in work, as Directive 2004/38 allows) |
 
 R1 is the result most exposed to error. Restricting input VAT in this way has not been applied anywhere, so its
 yield is an estimate from Skatturinn's records of reclaimed input VAT (997 ma.kr. in 2025) and Hagstofa's
@@ -93,7 +93,7 @@ supply-use tables, not an observation. From 2.0 the restriction also has a cost 
 goods are not value-chain inputs, so a firm can no longer reclaim the VAT on a machine or a building, and they cost
 it a quarter more. Under a borgaralaun of 350 þús. that leaves output per hour 3.7% lower by the twelfth year than the
 same reform without the restriction, and still falling; in the long run, with capital's share at a third, about a
-tenth. Within the run the yield outweighs it in the budget by far ([LIMITS.md](LIMITS.md) §7).
+tenth. Within the run the yield outweighs it in the budget by far ([LIMITS.md](LIMITS.md) §8).
 
 ## 5. Uncertainty
 

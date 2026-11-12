@@ -1,9 +1,10 @@
-# The known limits: what is known, and how 2.0 closes them
+# The known limits: what is known, and how the model handles them
 
 [VALIDATION.md](VALIDATION.md) §5 lists what the model leaves out. Six of those limits matter most to what it says
 about a basic income. This document gathers, for each, what the evidence says, what Iceland's own data give, and
-how the model will represent it, with the check that would show the mechanism wrong. The data come from
-`scripts/fetch_limits_data.py` and sit in `data/reference/`.
+how the model represents it, with the check that would show the mechanism wrong. The data come from
+`scripts/fetch_limits_data.py` and sit in `data/reference/`. Figures measured in the model are from when each
+mechanism was added, at the settings given beside them; they are not refreshed with each release.
 
 Each mechanism follows the rules the rest of the model keeps:
 
@@ -249,7 +250,7 @@ per unit of labour with elasticity 0.33, capital's share of income (EST). A run 
 the other parts are: the status quo is its own and nothing in it changes, since its output per hour already carries
 capital's growth in the productivity trend; a reform's capital per hour worked is set against the status quo's in the
 same year. The corporate tax and the staked share enter through the return; the real rate, and the VAT on capital
-goods that the restriction of refunds to value-chain inputs no longer refunds (§7), through the cost; wages
+goods that the restriction of refunds to value-chain inputs no longer refunds (§8), through the cost; wages
 outrunning prices through the profit margin.
 
 What it finds: fewer hours worked need less capital, and capital takes years to follow them down, so for a few
@@ -345,7 +346,25 @@ detection, which the enforcement lever applies to the static figure only.
 **Checks.** The status quo's tax lost on hidden earnings between 15 ma.kr. and 5% of GDP; no tax moved on or off
 the books in the status quo; a tenth higher income tax lowers the tax from earnings brought onto the books.
 
-## 7. The other mechanisms for 2.0
+## 7. Status-quo poverty settles above the survey
+
+In 2026 the model's child poverty is 13.8%, against 12.8% in EU-SILC. It then rises, to about 18% by 2030 and 19-21% by
+2035-45, and overall poverty rises from 8% to 10.5% by 2030 and 12% by 2045. Anchored child poverty, measured on a fixed line, falls over the same
+years. The rise is relative: the people at the bottom stop keeping up with the median.
+
+Three causes of the rise were found and removed: benefits indexed to prices alone, births drawn without regard to
+couples (children with a single parent reached 51%, now about 25%), and a disability stock that drained away. What
+remains is the base year's population settling into the model's own. In the base year almost every prime-age
+non-worker has a partner and 66% of couples with children both work; within four years people have sorted, 56% both
+work and 40% have one earner, and a single wage rarely keeps a couple with children above the line. A pull towards
+working alike within a couple was tried and changed none of this (poverty the same at every size tried), so it is not
+in the model. Benefit take-up is not the cause either: non-working parents add little to the rate.
+
+The status quo and the reform both carry this, so the comparison is between two settled states. It does flatter a
+reform on relative child poverty to the extent that the settled level overstates poverty, so the pages give anchored
+child poverty beside it.
+
+## 8. The other mechanisms
 
 * **Hours within a job (2.0, `hours.py`).** The choice of status — out of work, part time at 55%, full time, a
   firm, independent work — stays the large margin. Within a job each worker's week now moves too, set against the
@@ -367,7 +386,8 @@ the books in the status quo; a tenth higher income tax lowers the tax from earni
   Alþingi, 149th session, þskj. 714) — but they are not published, beyond a few industries in answers to
   parliament. The split of the 997 ma.kr. of input VAT into goods for resale, materials, energy, subcontracted
   work, other services and capital goods stays an estimate from the supply-use tables, scaled to the total the VAT
-  returns and the state accounts imply; the range (385–574 ma.kr.) stays as the lever. Skatturinn could settle it
+  returns and the state accounts imply; the range (385–574 ma.kr.) stays as the lever. From 2.1,
+  20–40% of what it raises is taken off for avoidance and disputes (30% in the model). Skatturinn could settle it
   with one table.
 
   What 2.0 adds is what the restriction does to investment. In every variant of the estimate, capital goods are not

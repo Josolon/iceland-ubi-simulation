@@ -4,8 +4,8 @@
     .venv/bin/python scripts/verify_scenarios.py --file data/processed/scenarios_page.json
     .venv/bin/python scripts/inject_scenarios.py               # writes SCENARIOS into the explorer page
 
---prepare collects the reference reform (the scenario the page opens on, read from the page) and the search's
-scenarios into data/processed/scenarios_page.json, levers as a dictionary. The second step reads that file and the
+--prepare collects the reference reform (the scenario the page opens on, build_emulator.REFERENCE_REFORM) and the
+search's scenarios into data/processed/scenarios_page.json, levers as a dictionary. The second step reads that file and the
 verification, writes each scenario's note from the model's run, and replaces the SCENARIOS line in the page.
 """
 import argparse
@@ -17,7 +17,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from build_emulator import KEYS  # noqa: E402
+from build_emulator import KEYS, reference_x  # noqa: E402
 
 PAGE = ROOT / "artifacts/explorer_v3/index.html"
 SEARCH = ROOT / "data/processed/scenarios_v3.json"
@@ -37,7 +37,7 @@ def page_scenarios():
 def prepare():
     current, _ = page_scenarios()
     own = next(sc for sc in current if sc["id"] == OWN)
-    out = [{"id": OWN, "name": own["name"], "x": own["x"], "own": True}]
+    out = [{"id": OWN, "name": own["name"], "x": reference_x(), "own": True}]
     for sc in json.loads(SEARCH.read_text()):
         if sc["name"] not in IDS:
             continue
@@ -55,17 +55,24 @@ def prepare():
 
 
 def note(sc, v):
+    """The scenario's 2035 figures from the full model, each beside the status quo it is compared with. The levers
+    it moves are listed by the page itself (SCENARIOS[].moved), in the page's own labels and units."""
     m = {k: r["model"] for k, r in v.items()}
-    parts = [f"in 2035 the budget is {m['balance']:+,.0f} ma.kr.", f"household income {m['net_income'] / 1000:,.0f} "
-             f"þús. a month", f"unemployment {100 * m['unemp']:.1f}%",
-             f"essential services short {m['essential_gap']:,.0f} posts", f"child poverty {100 * m['child_poverty']:.1f}%"]
-    text = "Run in the model itself, not only on the fitted surface: " + ", ".join(parts) + "."
+    q = {k: r.get("status_quo") for k, r in v.items()}
+    sd = v["balance"].get("sd_vs_status_quo")
+    seeds = f" (the difference varies by ±{sd:,.0f} between {v['balance']['seeds']} runs)" if sd else ""
+    sg = lambda x: f"{x:+,.0f}".replace("-", "−")
+    parts = [f"the budget {sg(m['balance'])} ma.kr. against the status quo's {sg(q['balance'])}{seeds}",
+             f"household income {m['net_income'] / 1000:,.0f} þús. a month per person against {q['net_income'] / 1000:,.0f}",
+             f"unemployment {100 * m['unemp']:.1f}% against {100 * q['unemp']:.1f}%",
+             f"essential services short of {m['essential_gap']:,.0f} full-time posts against {q['essential_gap']:,.0f}",
+             f"child poverty {100 * m['child_poverty']:.1f}% against {100 * q['child_poverty']:.1f}%"]
+    text = "In the full model, in 2035: " + "; ".join(parts) + "."
     if sc.get("surface_vs_sq") is not None:
-        text += (f" Over 2027-35 the fitted surface puts the budget {sc['surface_vs_sq']:+,.0f} ma.kr. against the "
-                 f"status quo.")
-    if sc.get("moved"):
-        text += " Levers moved: " + ", ".join(f"{k} {v:.1f}" if isinstance(v, (int, float)) else f"{k} {v}"
-                                             for k, v in list(sc["moved"].items())[:10]) + "."
+        text += (f" Over 2027-35 the fitted surface puts its budget {sc['surface_vs_sq']:,.0f} ma.kr. better than "
+                 f"the status quo's in total." if sc["surface_vs_sq"] >= 0 else
+                 f" Over 2027-35 the fitted surface puts its budget {-sc['surface_vs_sq']:,.0f} ma.kr. worse than "
+                 f"the status quo's in total.")
     return text
 
 
@@ -81,13 +88,14 @@ def inject():
         name = "300 þús., reference reform" if sc.get("own") else sc["name"]
         body = note(sc, v)
         if sc.get("own"):
-            body = "The reference reform, as the page opens. " + body
+            body = "The reference reform, the setting the Explorer opens on. " + body
         if sc.get("optimistic"):
-            body = ("An openly optimistic route to a larger payment, and the largest payment it carried in the "
-                    "search, 50 þús. at a time. Its budget was held to today's status quo — without the windfall or "
-                    "the robots, since they are what pays. The page compares it with a status quo that has them "
-                    "too, so there it shows what the payment costs against the windfall spent today's way. ") + body
-        out.append({"id": sc["id"], "name": name, "note": body, "x": sc["x"]})
+            body = ("An openly optimistic route to a larger payment: the largest payment, searched in steps of "
+                    "50 þús., that the gain in its name (a resource windfall, a robot dividend or both) can pay for "
+                    "while the budget does no worse than the status quo's without that gain. The figures below "
+                    "compare it with a status quo that has the same gain, so they show what the payment costs "
+                    "against that gain spent under today's rules. ") + body
+        out.append({"id": sc["id"], "name": name, "note": body, "moved": list(sc.get("moved", {})), "x": sc["x"]})
     s = PAGE.read_text()
     _, m = page_scenarios()
     s = s[:m.start()] + "const SCENARIOS = " + json.dumps(out, ensure_ascii=False) + ";" + s[m.end():]
