@@ -8,6 +8,17 @@ published: the model's own v0–v6.1 (2026-09-15 to 2026-09-18; sections 9–30 
 describe each step), then explorer versions v1 to v10 (from 2026-09-18). Comments in the code and in ABM.md refer to
 those development versions as v1, v2 and so on. From 1.0 on, each release is a git tag.
 
+## 2.1.2 (2026-11-13)
+
+No result changes.
+
+* **Lighter first load.** The runs behind "The past" and "The long view" (about 2.6 MB compressed) now load the
+  first time either tab opens, not with the page; most visitors never open them. The surface's weights were not
+  rounded to save more: rounding them to five significant digits moves the 2035 budget by up to 14 ma.kr.
+* **Both pages are tested in a browser.** A headless test opens the Explorer and the Guide, checks that every
+  example scenario's budget card shows the model's own 2035 figure, that every tab renders, that the long view's
+  runs load only when asked for, and that no script error occurs. It runs with the other checks on every push.
+
 ## 2.1.1 (2026-11-13)
 
 No result changes: the model's figures are those of 2.1.0. What the pages show of them, and how, changes.

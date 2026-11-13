@@ -295,8 +295,10 @@ footer p { margin: 0; }
 
 <script>
 /* The data arrive in three steps so the page is never a blank wait (about 57 MB, mostly the surface's kernel
-   weights, which do not compress further without refitting it). First what every view needs, and the page
-   starts; then the kernel weights, until which no fitted number is shown; then the long view. */
+   weights, which do not compress further without refitting it, and cannot be rounded: at five significant digits
+   instead of six the budget moves by up to 14 ma.kr.). First what every view needs, and the page starts; then the
+   kernel weights, until which no fitted number is shown; then, only when "The past" or "The long view" is first
+   opened, those tabs' runs (about 2.6 MB compressed, which most visitors never need). */
 window.UBI_LOAD = (() => {
   const STEPS = [["data.js", "emulator.js", "births.js", "past.js"],
                  ["emulator_k.js", "emulator_k2.js", "emulator_k3.js"], ["timeline.js", "past_grid.js"]];
@@ -323,17 +325,26 @@ window.UBI_LOAD = (() => {
     window.UBI_START();
   };
   st.ready = n => st.step > n;
+  /* The last step loads on demand: asked for before the surface is in, it follows it. */
+  const AUTO = STEPS.length - 1;
+  st.more = () => {
+    if (st.moreStarted) return;
+    if (st.step < AUTO) { st.wanted = true; return; }
+    st.moreStarted = true;
+    Promise.all(STEPS[AUTO].map(add)).then(() => { st.step = AUTO + 1; tell(); });
+  };
   (async () => {
     const main = document.getElementById("main");
     const show = () => { const p = main && main.querySelector(".loading"); if (p && st.step === 0) p.textContent = st.text(); };
     listeners.push(show);
     show();
-    for (let i = 0; i < STEPS.length; i++) {
+    for (let i = 0; i < AUTO; i++) {
       await Promise.all(STEPS[i].map(add));
       st.step = i + 1;
       if (i === 0) st.start();
       tell();
     }
+    if (st.wanted) st.more();
   })();
   return st;
 })();
@@ -1963,7 +1974,7 @@ function wirePast() {
 
 function past() {
   if (window.UBI_PAST_GRID) return pastGrid();
-  if (!window.UBI_LOAD.ready(2)) return '<p class="hint">The past is still loading; it comes in after the fitted surface.</p>';
+  if (!window.UBI_LOAD.ready(2)) return '<p class="hint">Loading the runs from 2015 (about 0.4 MB)…</p>';
   if (!PAST) return '<p class="hint">The counterfactual past has not been built for this page yet.</p>';
   const P = PAST, first = P.years[0];
   const two = (k, cap, fmt, note) => {
@@ -2080,7 +2091,7 @@ function tlChart(lines, years, marks, opts = {}) {
 
 function timeline() {
   if (!TL) return `<p class="hint">${window.UBI_LOAD.ready(2) ? "The long view has not been built for this page yet."
-    : "The long view is still loading; it comes in after the fitted surface."}</p>`;
+    : "Loading the long view's runs (about 2 MB)…"}</p>`;
   const t = state.tl;
   if (!TL.modes[t.mode]) t.mode = Object.keys(TL.modes)[0];
   const M = TL.modes[t.mode];
@@ -2275,6 +2286,7 @@ function render() {
 }
 function renderPage() {
   const shell = document.querySelector(".shell");
+  if (state.tab === "timeline" || state.tab === "past") window.UBI_LOAD.more();
   /* Until the kernel weights are in, a fitted number would be the polynomial alone, off by up to the kernel's
      share: show none. The guide's questions need no numbers and can be answered meanwhile. */
   if (E && !window.UBI_LOAD.ready(1)) {

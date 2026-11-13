@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: "Sólon"
     given-names: "Jónatan"
-version: "2.1.1"
+version: "2.1.2"
 date-released: 2026-11-13
 license: MIT
 repository-code: "https://github.com/Josolon/iceland-ubi-simulation"

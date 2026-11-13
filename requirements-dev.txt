@@ -1,0 +1,3 @@
+# For tests/test_pages.py (the pages in a headless browser). Not needed to run the model.
+-r requirements.txt
+playwright==1.65.1

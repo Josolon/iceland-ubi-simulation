@@ -29,7 +29,7 @@
  },
  "artifacts/explorer_v3/index.html": {
   "model": "6da197848b",
-  "sha": "099a5bf20ce6a605"
+  "sha": "1d2c9f8635806887"
  },
  "artifacts/explorer_v3/past.js": {
   "model": "6da197848b",
@@ -45,6 +45,6 @@
  },
  "artifacts/guided/index.html": {
   "model": "6da197848b",
-  "sha": "6c6a6292366a8946"
+  "sha": "972684a86ec70108"
  }
 }
