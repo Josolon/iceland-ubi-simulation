@@ -37,7 +37,7 @@ quo in the same year:
 | Public balance, ma.kr. a year | −348 | −207 |
 | Net public debt, % of GDP | 105 | 73 |
 | Household income after tax and transfers, þús. a month | 898 | 783 |
-| Work per adult, full-time equivalents | 0.59 | 0.69 |
+| Work per adult, full-time equivalents | 0.59 | 0.68 |
 | Unemployment | 3.7% | 4.4% |
 | Price level, 2025 = 1 | 2.20 | 1.39 |
 | Child poverty | 14.0% | 19.2% |

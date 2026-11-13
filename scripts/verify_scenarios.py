@@ -113,6 +113,17 @@ def main():
         out[name] = rec
     (ROOT / a.out).write_text(json.dumps(out, indent=1))
     print(f"\nwrote {ROOT / a.out}")
+    # Every year of the same runs, for the page to show the model's own figures while a scenario is selected: the
+    # mean over seeds for the scenario and its status quo, and the spread between seeds of their difference.
+    sd = lambda v: float(np.std(v, ddof=1)) if len(v) > 1 and None not in v else None
+    series = {name: {**got[name], **{"sd_" + short: [sd([r[short][y] - r["sq_" + short][y] for r in rs
+                                                        if r[short][y] is not None and r["sq_" + short][y] is not None])
+                                                    for y in range(a.years)] for short, _, _ in SHOW},
+                     "years": list(range(2026, 2026 + a.years)), "seeds": len(rs)}
+              for name, rs in runs.items()}
+    out_series = (ROOT / a.out).with_name((ROOT / a.out).stem + "_series.json")
+    out_series.write_text(json.dumps(series, indent=1))
+    print(f"wrote {out_series}")
 
 
 if __name__ == "__main__":

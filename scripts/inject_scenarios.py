@@ -23,6 +23,23 @@ PAGE = ROOT / "artifacts/explorer_v3/index.html"
 SEARCH = ROOT / "data/processed/scenarios_v3.json"
 PAGED = ROOT / "data/processed/scenarios_page.json"
 VERIFIED = ROOT / "data/processed/scenarios_verified.json"
+# every year of the same runs (verify_scenarios.py writes them beside the 2035 figures), and the Guide's start
+SERIES = ROOT / "data/processed/scenarios_verified_series.json"
+GUIDE_SERIES = ROOT / "data/processed/scenarios_guide_start_verified_series.json"
+GUIDE_NAME = "Guide start as the Guide shows it"
+# what the page's cards read from a scenario's own run (RUN_KEYS on the page)
+RUN_KEYS = ["balance", "net_income", "fte", "cpi", "debt", "unemp", "child_poverty", "poverty", "hardship"]
+
+
+def run_for(series):
+    """A scenario's own run for the page: the mean of its runs, its status quo's, and their spread, each year."""
+    if not series:
+        return None
+    r5 = lambda v: [None if x is None else float(f"{x:.5g}") for x in v]
+    out = {"years": series["years"], "seeds": series["seeds"]}
+    for k in RUN_KEYS:
+        out[k], out["sq_" + k], out["sd_" + k] = r5(series[k]), r5(series["sq_" + k]), r5(series["sd_" + k])
+    return out
 IDS = {"250, moderate": "s250", "300, standard": "std300", "300, fisheries fee as today": "fish300",
        "300, children paid to families": "kids300", "350, balanced mix": "bal350"}
 OWN = "yours300"
@@ -79,6 +96,7 @@ def note(sc, v):
 def inject():
     scen = json.loads(PAGED.read_text())
     ver = json.loads(VERIFIED.read_text())
+    runs = json.loads(SERIES.read_text()) if SERIES.exists() else {}
     out = []
     for sc in scen:
         v = ver.get(sc["name"])
@@ -95,10 +113,20 @@ def inject():
                     "while the budget does no worse than the status quo's without that gain. The figures below "
                     "compare it with a status quo that has the same gain, so they show what the payment costs "
                     "against that gain spent under today's rules. ") + body
-        out.append({"id": sc["id"], "name": name, "note": body, "moved": list(sc.get("moved", {})), "x": sc["x"]})
+        rec = {"id": sc["id"], "name": name, "note": body, "moved": list(sc.get("moved", {})), "x": sc["x"]}
+        if run_for(runs.get(sc["name"])):
+            rec["run"] = run_for(runs[sc["name"]])
+        else:
+            print(f"no yearly run for {sc['name']}: its cards show the surface")
+        out.append(rec)
     s = PAGE.read_text()
     _, m = page_scenarios()
     s = s[:m.start()] + "const SCENARIOS = " + json.dumps(out, ensure_ascii=False) + ";" + s[m.end():]
+    g = json.loads(GUIDE_SERIES.read_text()).get(GUIDE_NAME) if GUIDE_SERIES.exists() else None
+    s, n = re.subn(r"^const GUIDE_RUN = .*;$", lambda _: "const GUIDE_RUN = " + json.dumps(run_for(g)) + ";", s,
+                   count=1, flags=re.M)
+    if not n:
+        raise SystemExit("no GUIDE_RUN line in the page")
     PAGE.write_text(s)
     print(f"wrote {len(out)} scenarios into {PAGE.name}")
 

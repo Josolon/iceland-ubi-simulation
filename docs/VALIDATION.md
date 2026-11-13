@@ -153,7 +153,7 @@ every lever at its minimum gives net assets of nearly three times GDP by 2060, a
 below zero, the pages show zero.
 
 **Against the model's own runs** at the page's nine named scenarios, each the mean of five runs: the surface puts
-the 2035 budget between 15 below and 279 above the model, 96 on average in either direction (2.0: −62 to +104, 36 on
+the 2035 budget between 58 below and 280 above the model, 96 on average in either direction (2.0: −62 to +104, 36 on
 average). At the seven scenarios without a windfall the gap is 8 to 81; at the two with one, 240 and 279. It reads
 high at most of them for a reason that does not show on runs drawn at random: the scenarios are found by searching
 the surface for packages that keep up with the status quo, and a search finds the places where the surface errs on

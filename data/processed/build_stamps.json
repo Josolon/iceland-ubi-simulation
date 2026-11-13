@@ -9,7 +9,7 @@
  },
  "artifacts/explorer_v3/emulator.js": {
   "model": "6da197848b",
-  "sha": "3fde81a5a09d0819"
+  "sha": "c8ea3b9828e8a212"
  },
  "artifacts/explorer_v3/emulator_k.js": {
   "model": "6da197848b",
@@ -29,7 +29,7 @@
  },
  "artifacts/explorer_v3/index.html": {
   "model": "6da197848b",
-  "sha": "280c7d3f931dc262"
+  "sha": "099a5bf20ce6a605"
  },
  "artifacts/explorer_v3/past.js": {
   "model": "6da197848b",
@@ -43,48 +43,8 @@
   "model": "6da197848b",
   "sha": "477789b6b3b36140"
  },
- "artifacts/guided/births.js": {
-  "model": "6da197848b",
-  "sha": "25cd703bfe73ca37"
- },
- "artifacts/guided/data.js": {
-  "model": "6da197848b",
-  "sha": "c032491bceeed1df"
- },
- "artifacts/guided/emulator.js": {
-  "model": "6da197848b",
-  "sha": "3fde81a5a09d0819"
- },
- "artifacts/guided/emulator_k.js": {
-  "model": "6da197848b",
-  "sha": "1b2625f87e495290"
- },
- "artifacts/guided/emulator_k2.js": {
-  "model": "6da197848b",
-  "sha": "97b06055d0f77bb0"
- },
- "artifacts/guided/emulator_k3.js": {
-  "model": "6da197848b",
-  "sha": "0b081389d32ab162"
- },
- "artifacts/guided/emulator_pay.js": {
-  "model": "6da197848b",
-  "sha": "6a38b5040896046a"
- },
  "artifacts/guided/index.html": {
   "model": "6da197848b",
-  "sha": "7454a27c225a9c93"
- },
- "artifacts/guided/past.js": {
-  "model": "6da197848b",
-  "sha": "dd641e3987df11c3"
- },
- "artifacts/guided/past_grid.js": {
-  "model": "6da197848b",
-  "sha": "428a1b51a42f05b6"
- },
- "artifacts/guided/timeline.js": {
-  "model": "6da197848b",
-  "sha": "477789b6b3b36140"
+  "sha": "6c6a6292366a8946"
  }
 }

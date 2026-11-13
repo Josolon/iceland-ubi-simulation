@@ -56,6 +56,8 @@ second)
   scenarios second
   step verify_guide $PY scripts/verify_scenarios.py --file data/processed/scenarios_guide_page.json \
     --out data/processed/scenarios_guide_start_verified.json --workers 6
+  # again, now that the Guide's start has its own run for the page's cards (GUIDE_RUN)
+  step inject_guide $PY scripts/inject_scenarios.py
   step data $PY scripts/build_explorer_data.py
   step timeline $PY scripts/build_timeline.py --workers $W
   step births $PY scripts/build_births_grid.py --seeds 3 --years 10 --workers $W

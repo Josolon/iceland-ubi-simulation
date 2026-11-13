@@ -1,0 +1,21 @@
+# The checks that need no model run: the build gate (every page file from the current model), the Guide's options,
+# the scenarios' runs on the page, and the figures written into the text. The model's own tests need the calibrated
+# base, which is not in the repository, and skip here; run them locally before a release.
+name: checks
+on:
+  push:
+  pull_request:
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Unit tests
+        run: python -m unittest discover tests -v
+      - name: Every page file is from the current model
+        run: python scripts/build_stamp.py check

@@ -43,6 +43,9 @@ def load(path):
 def record(paths):
     stamps = load(STAMPS)
     for p in paths:
+        if (ROOT / p).is_symlink():   # the Guide's links to the explorer's data: the file they point at is recorded
+            stamps.pop(p, None)
+            continue
         stamps[p] = {"model": params_fingerprint(), "sha": digest(p)}
     STAMPS.write_text(json.dumps(stamps, indent=1, sort_keys=True) + "\n")
 
@@ -51,6 +54,13 @@ def stale():
     stamps, now, bad = load(STAMPS), params_fingerprint(), []
     for p in PAGES + GUIDED:
         s = stamps.get(p)
+        if (ROOT / p).is_symlink():
+            # since 2.1.1 the Guide links to the explorer's data files; it must link to the same file, which is checked
+            # in its own right
+            own = p.replace("artifacts/guided/", "artifacts/explorer_v3/")
+            if (ROOT / p).resolve() != (ROOT / own).resolve():
+                bad.append(f"{p}: links to {(ROOT / p).resolve()}, not {own}")
+            continue
         if not (ROOT / p).exists():
             bad.append(f"{p}: missing")
         elif not s:

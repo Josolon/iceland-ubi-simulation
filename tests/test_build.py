@@ -63,6 +63,41 @@ class Page(unittest.TestCase):
         for src in re.findall(r'<script src="([^"]+)"', page):
             self.assertTrue((ROOT / "artifacts/explorer_v3" / src).exists(), src)
 
+    def test_guide_options_are_levers_in_range(self):
+        """The surface's Guide rounds read each option with a regex (build_emulator.guide_answers_x) that skips a key
+        it does not know and clips a value out of range, so a typo would silently change what it was fitted to."""
+        page = (ROOT / "artifacts/explorer_v3/index.html").read_text()
+        block = page[page.index("const GUIDE = ["):page.index("\n];", page.index("const GUIDE = ["))]
+        questions = re.findall(r'id: "(\w+)".*?options: \[(.*?)\]\s*\}', block, re.S)
+        self.assertEqual(len(questions), len(re.findall(r'\{ id: "', block)), "a question the parser cannot read")
+        ranges = {lv[0]: (lv[3], lv[4]) for lv in be.LEVERS}
+        for qid, opts in questions:
+            choices = re.findall(r"\{([^{}]*)\}", opts)
+            self.assertTrue(choices, f"{qid}: no options")
+            for c in choices:
+                for k, v in re.findall(r"(\w+):\s*([^,}]+)", c):
+                    self.assertIn(k, ranges, f"{qid}: {k} is not a lever")
+                    self.assertRegex(v.strip(), r"^-?[\d.]+$", f"{qid}: {k} is not a number")
+                    lo, hi = ranges[k]
+                    self.assertTrue(lo <= float(v) <= hi, f"{qid}: {k} = {v} outside {lo}-{hi}")
+
+    def test_cards_runs_match_the_notes(self):
+        """A scenario's yearly run on the page ends on the 2035 figure its note gives."""
+        page = (ROOT / "artifacts/explorer_v3/index.html").read_text()
+        scen = json.loads(re.search(r"^const SCENARIOS = (\[.*\]);$", page, re.M).group(1))
+        ver = json.loads((ROOT / "data/processed/scenarios_verified.json").read_text())
+        names = {s["id"]: s["name"] for s in json.loads((ROOT / "data/processed/scenarios_page.json").read_text())}
+        for s in scen:
+            self.assertIn("run", s, s["id"])
+            v = ver[names[s["id"]]]
+            for k in ("balance", "net_income", "fte", "cpi", "debt"):
+                self.assertAlmostEqual(s["run"][k][-1], v[k]["model"], delta=abs(v[k]["model"]) * 1e-4, msg=f"{s['id']} {k}")
+                self.assertAlmostEqual(s["run"]["sq_" + k][-1], v[k]["status_quo"],
+                                       delta=abs(v[k]["status_quo"]) * 1e-4, msg=f"{s['id']} sq {k}")
+        guide = json.loads(re.search(r"^const GUIDE_RUN = (.*);$", page, re.M).group(1))
+        g = next(iter(json.loads((ROOT / "data/processed/scenarios_guide_start_verified.json").read_text()).values()))
+        self.assertAlmostEqual(guide["balance"][-1], g["balance"]["model"], delta=.1)
+
     def test_guide_record_is_complete(self):
         x = json.loads((ROOT / "data/processed/scenarios_guide_page.json").read_text())[0]["x"]
         self.assertFalse(set(be.KEYS) - set(x))

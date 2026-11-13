@@ -8,6 +8,51 @@ published: the model's own v0–v6.1 (2026-09-15 to 2026-09-18; sections 9–30 
 describe each step), then explorer versions v1 to v10 (from 2026-09-18). Comments in the code and in ABM.md refer to
 those development versions as v1, v2 and so on. From 1.0 on, each release is a git tag.
 
+## 2.1.1 (2026-11-13)
+
+No result changes: the model's figures are those of 2.1.0. What the pages show of them, and how, changes.
+
+* **The model's own figures on the cards.** While the levers stand exactly on an example scenario or the Guide's
+  start, the four headline cards show the model's own result for 2026-35, the mean of its five runs against their
+  status quo, with how far the runs differ, instead of the fitted surface. Moving any lever, or a year past 2035,
+  returns to the surface. The Explorer opened on −402 ma.kr. for the reference reform from the surface; the model's
+  own figure is −348. `verify_scenarios.py` now keeps every year of its runs (the rerun reproduced every 2035
+  figure exactly).
+* **Greyed where the surface cannot tell.** A card or table difference smaller than the surface's band is greyed
+  and says so. On the reference reform's budget in 2035 that is the case once a lever moves; by 2060 the band on
+  the budget is about ±19,000 ma.kr.
+* **A lever that did nothing** is off the Explorer board: the corporate tax where the state holds a stake acts
+  only with a deemed stake, which no setting on the pages turns on. The Guide's question on it went in 2.1.0.
+* **Two figures in the text were wrong.** Free health care's note said it makes about 15 of the 65 ma.kr. that
+  households pay out of pocket free; the model's figure is 15.7, so 16. Its slider said "of 65 ma.kr. taken over"
+  when it takes over only the 16 ma.kr. of fees. The README's table gave the status quo's work per adult as 0.69;
+  it is 0.68.
+* **On a scenario, the tabs say they are still the surface,** below cards that now show the model's own runs.
+
+For whoever works on the model:
+
+* `tests/test_prose_figures.py` checks the figures the pages, the lever notes and the README state in words
+  against the data they describe, so a rebuild cannot leave one stale without a test failing. It found the two
+  above. New tests also check that every Guide option names a lever within its range, and that each scenario's
+  run on the page ends on the 2035 figure its note gives.
+* A GitHub workflow runs the tests and the build gate on every push.
+* `scripts/release.sh VERSION` makes the release: checks, the commit on top of public/main and the tag, and with
+  `--push` the push and the GitHub release. It refuses while public/main has files this branch lacks.
+* `artifacts/guided/` links to the explorer's data files instead of copying them, which put about 60 MB into the
+  repository twice at every rebuild.
+
+* **The opening sentence** said every number on the pages is a model run. They come from the fitted surface; the
+  sentence now says so, and that each example scenario gives the model's own figures.
+* **The footer** still gave 2.0's surface: 4,300 runs, within about 140 ma.kr. of the model at the scenarios. It
+  now gives 2.1's: 5,800 runs, a held-out error of 265 ma.kr. on the 2035 budget, and 58 below to 280 above the
+  model at the nine examples. The 2.1.0 entry below and docs/VALIDATION.md had "15 below"; the reference reform
+  is 58 below.
+* **The band** on the cards: its explanation and the Summary's "How much to trust it" now say that two settings
+  closer than the band cannot be ranked from the page, and that the chances take the status quo as exact, which
+  holds only in the page's default world.
+* **On touch screens** the sliders are taller and the help buttons have a larger target; neither looks different.
+* The header labels its date as the date the results were built.
+
 ## 2.1.0 (2026-11-12)
 
 The first part of the path the review of 2.0 set out ([docs/REVIEW.md](docs/REVIEW.md) §4): a reference reform in a
@@ -63,7 +108,7 @@ quo is unchanged. The base year is recalibrated and the surface rebuilt.
 713 more kept out to score it: 600 sets of Guide answers and 113 runs that move one lever alone. A fourth round of
 runs is centred on the published scenarios and the Guide's start. On the held-out answer sets the 2035 budget is off
 by 265 ma.kr.; on single moves by 184. At the nine named scenarios, each now the mean of five runs, the surface is
-between 15 below and 279 above the model, 96 on average; at the seven without a windfall, 8 to 81. The scenarios
+between 58 below and 280 above the model, 96 on average; at the seven without a windfall, 8 to 81. The scenarios
 themselves show the model's own figures ([docs/VALIDATION.md](docs/VALIDATION.md) §4). Every scenario and the
 headline table stand in the page's own world; "the world as the last decade" remains a lever.
 

@@ -337,7 +337,7 @@ LEVERS = [
      "About 20 ma.kr. a year goes to foreign betting sites that pay no tax here. Norway blocks the payments "
      "(and, since 2025, the sites); it stops much of it, not all, and part moves to licensed domestic games."),
     ("free_health", "Free health care, GP first (Danish model)", "%", 0, 100, "policy.free_health_care", .01,
-     "No charge for seeing a GP or a specialist, outpatient care, tests or physiotherapy — about 15 of the 65 "
+     "No charge for seeing a GP or a specialist, outpatient care, tests or physiotherapy — about 16 of the 65 "
      "ma.kr. households pay out of pocket — and a GP referral before a specialist, as in Denmark. Medicines and "
      "adult dental care stay paid, as they are in Denmark. A little more care is used once visits are free; "
      "referral trims specialist use, half of that saving going on extra GP time."),
